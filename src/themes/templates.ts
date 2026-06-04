@@ -248,6 +248,7 @@ export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
       style: tr.style,
       gridW: 6,
       gridH: 6,
+      tiles: [],
       mapX: 120 + (i % 3) * 220,
       mapY: 140 + Math.floor(i / 3) * 200,
       orderIndex: i,

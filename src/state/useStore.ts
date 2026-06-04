@@ -8,6 +8,7 @@ import { applyGrade } from '../lib/srs';
 import type { Grade } from '../lib/srs';
 import { getTheme } from '../themes/styles';
 import { getObjectDef } from '../themes/objects';
+import { getRoomTiles, tileKey } from '../lib/floor';
 import type {
   Palace,
   Room,
@@ -40,6 +41,10 @@ interface State {
   deleteRoom: (id: string) => void;
   duplicateRoom: (id: string) => Room | null;
   toggleConnection: (palaceId: string, a: string, b: string) => void;
+
+  // floor plan
+  addFloorTile: (roomId: string, gx: number, gy: number) => void;
+  removeFloorTile: (roomId: string, gx: number, gy: number) => boolean;
 
   // objects
   addObject: (roomId: string, kind: string, gridX: number, gridY: number) => PObject;
@@ -80,13 +85,15 @@ export const useStore = create<State>((set, get) => ({
   init: async () => {
     if (get().loaded) return;
     // Load local cache first for instant boot.
-    const [palaces, rooms, connections, objects, memories] = await Promise.all([
+    const [palaces, rawRooms, connections, objects, memories] = await Promise.all([
       db.palaces.toArray(),
       db.rooms.toArray(),
       db.connections.toArray(),
       db.objects.toArray(),
       db.memories.toArray(),
     ]);
+    // Normalise legacy rooms that predate the tiles field.
+    const rooms = rawRooms.map((r) => ({ ...r, tiles: r.tiles ?? [] }));
     set({ palaces, rooms, connections, objects, memories, loaded: true });
 
     if (isCloudEnabled()) {
@@ -95,14 +102,14 @@ export const useStore = create<State>((set, get) => ({
       if (uid) {
         const ok = await pullAll();
         if (ok) {
-          const [p, r, c, o, m] = await Promise.all([
+          const [p, rawR, c, o, m] = await Promise.all([
             db.palaces.toArray(),
             db.rooms.toArray(),
             db.connections.toArray(),
             db.objects.toArray(),
             db.memories.toArray(),
           ]);
-          set({ palaces: p, rooms: r, connections: c, objects: o, memories: m });
+          set({ palaces: p, rooms: rawR.map((r) => ({ ...r, tiles: r.tiles ?? [] })), connections: c, objects: o, memories: m });
         }
         set({ cloud: ok ? 'on' : 'error' });
       } else {
@@ -189,6 +196,7 @@ export const useStore = create<State>((set, get) => ({
       style: partial?.style ?? 'cozy-apartment',
       gridW: partial?.gridW ?? 6,
       gridH: partial?.gridH ?? 6,
+      tiles: partial?.tiles ?? [],
       mapX: partial?.mapX ?? 120 + (idx % 4) * 200,
       mapY: partial?.mapY ?? 120 + Math.floor(idx / 4) * 180,
       orderIndex: partial?.orderIndex ?? idx,
@@ -248,6 +256,7 @@ export const useStore = create<State>((set, get) => ({
       style: room.style,
       gridW: room.gridW,
       gridH: room.gridH,
+      tiles: [...(room.tiles ?? [])],
     });
     const objects = s.objects.filter((o) => o.roomId === id);
     objects.forEach((o) => {
@@ -290,6 +299,32 @@ export const useStore = create<State>((set, get) => ({
       persist('connections', conn);
       set((st) => ({ connections: [...st.connections, conn] }));
     }
+  },
+
+  addFloorTile: (roomId, gx, gy) => {
+    const room = get().rooms.find((r) => r.id === roomId);
+    if (!room) return;
+    const tiles = getRoomTiles(room);
+    const key = tileKey(gx, gy);
+    if (tiles.includes(key)) return;
+    get().updateRoom(roomId, { tiles: [...tiles, key] });
+  },
+
+  removeFloorTile: (roomId, gx, gy) => {
+    const s = get();
+    const room = s.rooms.find((r) => r.id === roomId);
+    if (!room) return false;
+    const tiles = getRoomTiles(room);
+    if (tiles.length <= 1) return false; // never remove the last tile
+    const key = tileKey(gx, gy);
+    // Don't remove a tile that an object is sitting on.
+    const occupied = s.objects.some(
+      (o) => o.roomId === roomId && !o.deleted && tileKey(o.gridX, o.gridY) === key,
+    );
+    if (occupied) return false;
+    if (!tiles.includes(key)) return false;
+    get().updateRoom(roomId, { tiles: tiles.filter((t) => t !== key) });
+    return true;
   },
 
   addObject: (roomId, kind, gridX, gridY) => {

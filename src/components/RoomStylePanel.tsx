@@ -1,9 +1,12 @@
 import { useStore } from '../state/useStore';
+import { useUI } from '../state/useUI';
 import { ROOM_STYLES, ROOM_TYPES } from '../themes/styles';
 import type { Room } from '../types';
 
 export default function RoomStylePanel({ room }: { room: Room }) {
   const updateRoom = useStore((s) => s.updateRoom);
+  const floorEditing = useUI((s) => s.floorEditing);
+  const setFloorEditing = useUI((s) => s.setFloorEditing);
 
   return (
     <div>
@@ -27,10 +30,25 @@ export default function RoomStylePanel({ room }: { room: Room }) {
       </div>
 
       <div className="field">
-        <label>Room size</label>
+        <label>Floor plan</label>
+        <button
+          className={floorEditing ? 'primary' : ''}
+          style={{ width: '100%' }}
+          onClick={() => setFloorEditing(!floorEditing)}
+        >
+          {floorEditing ? '✓ Done editing floor' : '🧩 Edit floor plan'}
+        </button>
+        <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
+          Add or remove tiles to shape the room. Objects can only sit on flooring.
+        </div>
+      </div>
+
+        <div className="field" style={{ opacity: (room.tiles?.length ?? 0) > 0 ? 0.5 : 1 }}>
+          <label>Starter rectangle{(room.tiles?.length ?? 0) > 0 ? ' (custom floor active)' : ''}</label>
         <div className="row">
           <select
             value={room.gridW}
+            disabled={room.tiles.length > 0}
             onChange={(e) => updateRoom(room.id, { gridW: Number(e.target.value) })}
           >
             {[4, 5, 6, 7, 8, 9, 10].map((n) => (
@@ -41,6 +59,7 @@ export default function RoomStylePanel({ room }: { room: Room }) {
           </select>
           <select
             value={room.gridH}
+            disabled={room.tiles.length > 0}
             onChange={(e) => updateRoom(room.id, { gridH: Number(e.target.value) })}
           >
             {[4, 5, 6, 7, 8, 9, 10].map((n) => (

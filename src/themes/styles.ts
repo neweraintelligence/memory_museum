@@ -1,3 +1,13 @@
+export type FloorPattern = 'planks' | 'tatami' | 'tiles' | 'metal' | 'slab';
+export type WallPattern =
+  | 'shelves'
+  | 'panels'
+  | 'screens'
+  | 'tech'
+  | 'plain'
+  | 'glass'
+  | 'concrete';
+
 export interface RoomStyle {
   id: string;
   label: string;
@@ -8,6 +18,8 @@ export interface RoomStyle {
   accent: string;
   bg: string; // canvas background wash
   mood: string;
+  floorPattern: FloorPattern;
+  wallPattern: WallPattern;
 }
 
 export const ROOM_STYLES: RoomStyle[] = [
@@ -21,6 +33,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#caa86a',
     bg: '#1b1410',
     mood: 'Dark wood, candlelight, towering shelves.',
+    floorPattern: 'planks',
+    wallPattern: 'shelves',
   },
   {
     id: 'brutalist',
@@ -32,6 +46,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#e2552b',
     bg: '#5c5c5c',
     mood: 'Raw concrete, hard shadows, monumental.',
+    floorPattern: 'slab',
+    wallPattern: 'concrete',
   },
   {
     id: 'tea-room',
@@ -43,6 +59,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#8a5a44',
     bg: '#e7dcc6',
     mood: 'Tatami, paper screens, quiet warmth.',
+    floorPattern: 'tatami',
+    wallPattern: 'screens',
   },
   {
     id: 'spaceship',
@@ -54,6 +72,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#3ad7ff',
     bg: '#0b1020',
     mood: 'Cold metal, neon seams, deep space.',
+    floorPattern: 'metal',
+    wallPattern: 'tech',
   },
   {
     id: 'courtroom',
@@ -65,6 +85,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#d9c089',
     bg: '#39271a',
     mood: 'Dark oak, brass, solemn authority.',
+    floorPattern: 'planks',
+    wallPattern: 'panels',
   },
   {
     id: 'clinic',
@@ -76,6 +98,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#19b3a6',
     bg: '#eef6f7',
     mood: 'Sterile white, teal accents, clean light.',
+    floorPattern: 'tiles',
+    wallPattern: 'plain',
   },
   {
     id: 'greenhouse',
@@ -87,6 +111,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#3fa35a',
     bg: '#cfeede',
     mood: 'Glass panes, lush foliage, soft daylight.',
+    floorPattern: 'tiles',
+    wallPattern: 'glass',
   },
   {
     id: 'cozy-apartment',
@@ -98,6 +124,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#d97757',
     bg: '#efe2d2',
     mood: 'Warm wood, soft rugs, golden hour.',
+    floorPattern: 'planks',
+    wallPattern: 'panels',
   },
 ];
 

@@ -34,6 +34,8 @@ export default function PalaceWorkspace() {
   const addObject = useStore((s) => s.addObject);
   const updateObject = useStore((s) => s.updateObject);
   const gradeMemory = useStore((s) => s.gradeMemory);
+  const addFloorTile = useStore((s) => s.addFloorTile);
+  const removeFloorTile = useStore((s) => s.removeFloorTile);
 
   const mode = useUI((s) => s.mode);
   const setMode = useUI((s) => s.setMode);
@@ -41,6 +43,8 @@ export default function PalaceWorkspace() {
   const setPlacingKind = useUI((s) => s.setPlacingKind);
   const selectedId = useUI((s) => s.selectedObjectId);
   const setSelected = useUI((s) => s.setSelected);
+  const floorEditing = useUI((s) => s.floorEditing);
+  const setFloorEditing = useUI((s) => s.setFloorEditing);
 
   const [view, setView] = useState<'room' | 'map'>('room');
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
@@ -57,6 +61,11 @@ export default function PalaceWorkspace() {
       setCurrentRoomId(rooms[0].id);
     }
   }, [rooms, currentRoomId]);
+
+  // Leave floor-edit mode whenever the active room changes.
+  useEffect(() => {
+    setFloorEditing(false);
+  }, [currentRoomId, setFloorEditing]);
 
   // Handle deep-links from search (?room=..&obj=..).
   useEffect(() => {
@@ -127,17 +136,18 @@ export default function PalaceWorkspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, stepIndex, sequence.length]);
 
-  // Esc cancels placing / deselects.
+  // Esc cancels placing / floor editing / deselects.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (placingKind) setPlacingKind(null);
+        else if (floorEditing) setFloorEditing(false);
         else if (selectedId) setSelected(null);
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [placingKind, selectedId, setPlacingKind, setSelected]);
+  }, [placingKind, floorEditing, selectedId, setPlacingKind, setFloorEditing, setSelected]);
 
   if (!palace) {
     return (
@@ -283,6 +293,7 @@ export default function PalaceWorkspace() {
             memories={roomMemories}
             mode={mode}
             placingKind={placingKind}
+            floorEditing={floorEditing}
             selectedId={selectedId}
             highlightId={highlightId}
             focusHighlight={mode !== 'build'}
@@ -291,6 +302,8 @@ export default function PalaceWorkspace() {
             }}
             onPlace={handlePlace}
             onMove={(id, gx, gy) => updateObject(id, { gridX: gx, gridY: gy })}
+            onAddTile={(gx, gy) => addFloorTile(currentRoom.id, gx, gy)}
+            onRemoveTile={(gx, gy) => removeFloorTile(currentRoom.id, gx, gy)}
           />
 
           {(mode === 'walk' || mode === 'review') && (
