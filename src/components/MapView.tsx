@@ -1,0 +1,142 @@
+import { useMemo, useRef, useState } from 'react';
+import { useStore } from '../state/useStore';
+import { roomTypeIcon, getStyle } from '../themes/styles';
+
+const NODE_W = 150;
+const NODE_H = 78;
+
+export default function MapView({
+  palaceId,
+  onEnterRoom,
+}: {
+  palaceId: string;
+  onEnterRoom: (roomId: string) => void;
+}) {
+  const allRooms = useStore((s) => s.rooms);
+  const allConnections = useStore((s) => s.connections);
+  const objects = useStore((s) => s.objects);
+
+  const rooms = useMemo(
+    () => allRooms.filter((r) => r.palaceId === palaceId && !r.deleted),
+    [allRooms, palaceId],
+  );
+  const connections = useMemo(
+    () => allConnections.filter((c) => c.palaceId === palaceId && !c.deleted),
+    [allConnections, palaceId],
+  );
+  const updateRoom = useStore((s) => s.updateRoom);
+  const toggleConnection = useStore((s) => s.toggleConnection);
+  const createRoom = useStore((s) => s.createRoom);
+
+  const [connectFrom, setConnectFrom] = useState<string | null>(null);
+  const dragRef = useRef<{ id: string; dx: number; dy: number } | null>(null);
+
+  const roomById = (id: string) => rooms.find((r) => r.id === id);
+  const objectCount = (roomId: string) =>
+    objects.filter((o) => o.roomId === roomId && !o.deleted).length;
+
+  const onPointerDown = (e: React.PointerEvent, roomId: string) => {
+    const room = roomById(roomId);
+    if (!room) return;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    dragRef.current = { id: roomId, dx: e.clientX - room.mapX, dy: e.clientY - room.mapY };
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragRef.current) return;
+    const { id, dx, dy } = dragRef.current;
+    updateRoom(id, { mapX: Math.max(0, e.clientX - dx), mapY: Math.max(0, e.clientY - dy) });
+  };
+
+  const onPointerUp = () => {
+    dragRef.current = null;
+  };
+
+  const handleNodeClick = (roomId: string) => {
+    if (connectFrom) {
+      if (connectFrom !== roomId) toggleConnection(palaceId, connectFrom, roomId);
+      setConnectFrom(null);
+    } else {
+      onEnterRoom(roomId);
+    }
+  };
+
+  return (
+    <div className="canvas-wrap" style={{ background: 'var(--bg)' }}>
+      <div className="canvas-overlay">
+        <span className="pill">🗺️ Overview Map</span>
+        <button
+          className={connectFrom ? 'primary' : ''}
+          onClick={() => setConnectFrom(connectFrom ? null : '__pick__')}
+        >
+          {connectFrom ? 'Pick rooms to connect…' : '🔗 Connect rooms'}
+        </button>
+        <button onClick={() => createRoom(palaceId)}>+ Add room</button>
+        <span className="pill muted">Drag rooms · click to enter</span>
+      </div>
+
+      <div
+        style={{ position: 'absolute', inset: 0, overflow: 'auto' }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+          {connections.map((c) => {
+            const a = roomById(c.fromRoomId);
+            const b = roomById(c.toRoomId);
+            if (!a || !b) return null;
+            return (
+              <line
+                key={c.id}
+                x1={a.mapX + NODE_W / 2}
+                y1={a.mapY + NODE_H / 2}
+                x2={b.mapX + NODE_W / 2}
+                y2={b.mapY + NODE_H / 2}
+                stroke="#3a4470"
+                strokeWidth={3}
+                strokeDasharray="2 6"
+                strokeLinecap="round"
+              />
+            );
+          })}
+        </svg>
+
+        {rooms.map((r) => {
+          const style = getStyle(r.style);
+          const picking = connectFrom && connectFrom !== '__pick__';
+          return (
+            <div
+              key={r.id}
+              className="card"
+              style={{
+                position: 'absolute',
+                left: r.mapX,
+                top: r.mapY,
+                width: NODE_W,
+                minHeight: NODE_H,
+                padding: 12,
+                cursor: 'grab',
+                userSelect: 'none',
+                borderColor: connectFrom === r.id ? 'var(--gold)' : undefined,
+                background: `linear-gradient(160deg, ${style.wallRight}, ${style.bg})`,
+              }}
+              onPointerDown={(e) => onPointerDown(e, r.id)}
+              onClick={() => handleNodeClick(r.id)}
+              title={picking ? 'Click to connect' : 'Click to enter'}
+            >
+              <div style={{ fontSize: 22 }}>{roomTypeIcon(r.type)}</div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{r.name}</div>
+              <div className="meta">{objectCount(r.id)} objects</div>
+            </div>
+          );
+        })}
+
+        {rooms.length === 0 && (
+          <div className="empty" style={{ position: 'absolute', inset: 0 }}>
+            No rooms yet — add one to begin.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
