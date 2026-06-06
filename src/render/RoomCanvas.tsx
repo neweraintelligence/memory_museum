@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Stage, Layer, Line, Group, Text } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import IsoObject from './IsoObject';
@@ -14,11 +14,11 @@ import {
 import { shade, withAlpha } from '../lib/color';
 import { getStyle } from '../themes/styles';
 import { floorTileDecor, wallDecor } from './roomArt';
+import { objectArtHeight } from './objectArt';
 import {
   getRoomTiles,
   parseTileKey,
   tileKey,
-  tileBounds,
   ghostTiles,
   nearestTile,
 } from '../lib/floor';
@@ -29,6 +29,210 @@ const HALF_W = TILE_W / 2;
 const HALF_H = TILE_H / 2;
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
+
+type WallSeg = {
+  side: 'left' | 'right';
+  gx: number;
+  gy: number;
+  pts: number[];
+  p0: { x: number; y: number };
+  p1: { x: number; y: number };
+  depth: number;
+};
+
+const WALL_HIT_PAD_X = TILE_W * 0.36;
+const WALL_HIT_PAD_Y = TILE_H * 0.5;
+
+function aabbOverlap(
+  aMinX: number,
+  aMaxX: number,
+  aMinY: number,
+  aMaxY: number,
+  bMinX: number,
+  bMaxX: number,
+  bMinY: number,
+  bMaxY: number,
+): boolean {
+  return aMinX <= bMaxX && aMaxX >= bMinX && aMinY <= bMaxY && aMaxY >= bMinY;
+}
+
+/** Northwest of the wall tile in grid space (behind the camera-facing face). */
+function objectBehindWall(seg: WallSeg, ox: number, oy: number): boolean {
+  const { gx: wx, gy: wy } = seg;
+  if (ox === wx && oy === wy) return false;
+  const wSum = wx + wy;
+  const oSum = ox + oy;
+  if (oSum > wSum) return false;
+  // Same gx, lower gy → in front of this wall even when oSum < wSum
+  if (oy < wy && ox >= wx) return false;
+  if (oSum === wSum) return ox < wx || oy > wy;
+  return wSum - oSum <= 2;
+}
+
+/**
+ * Tight grid cone for tall upper panels only. Clears as soon as the object
+ * leaves the northwest (left wall) or west (right wall) neighborhood.
+ */
+function objectInUpperWallShadow(seg: WallSeg, ox: number, oy: number): boolean {
+  const { gx: wx, gy: wy, side } = seg;
+  if (ox === wx && oy === wy) return false;
+  const wSum = wx + wy;
+  const oSum = ox + oy;
+  if (oSum > wSum) return false;
+  if (oy < wy && ox >= wx) return false;
+  const depthGap = wSum - oSum;
+  if (depthGap > 3) return false;
+
+  const dx = wx - ox;
+  const dy = oy - wy;
+
+  if (side === 'left') {
+    // dy ≥ −1: one row south still sits under the tall upper panels
+    return dx >= 0 && dx <= 2 && dy >= -1 && dy <= 2;
+  }
+  return dx >= 0 && dx <= 2 && dy <= 1 && dy >= -2;
+}
+
+/**
+ * Does the object's sprite bounds overlap the wall face? Tall upper panels
+ * hide objects on diagonal / offset tiles, so upperOnly uses a wider zone.
+ */
+function objectOverlapsWallFace(
+  seg: WallSeg,
+  sx: number,
+  sy: number,
+  artHeight: number,
+  depthGap: number,
+  upperOnly: boolean,
+): boolean {
+  const xs = [seg.pts[0], seg.pts[2], seg.pts[4], seg.pts[6]];
+  const ys = [seg.pts[1], seg.pts[3], seg.pts[5], seg.pts[7]];
+  const wMinY = Math.min(...ys) - WALL_HIT_PAD_Y;
+  const wMaxY = Math.max(...ys) + 10;
+  const lateralExtra = TILE_W * (upperOnly ? 0.22 : 0.16) * Math.max(0, depthGap - 1);
+
+  const objHalfW = TILE_W * (upperOnly ? 0.4 : 0.36);
+  const oMinX = sx - objHalfW;
+  const oMaxX = sx + objHalfW;
+  const oMinY = sy - artHeight - 16;
+  const oMaxY = sy + TILE_H * 0.3;
+
+  if (!upperOnly) {
+    const wMinX = Math.min(...xs) - WALL_HIT_PAD_X - lateralExtra;
+    const wMaxX = Math.max(...xs) + WALL_HIT_PAD_X + lateralExtra;
+    return aabbOverlap(oMinX, oMaxX, oMinY, oMaxY, wMinX, wMaxX, wMinY, wMaxY);
+  }
+
+  const upperReach = WALL_HIT_PAD_X + lateralExtra + TILE_W * 0.34;
+  const upperMinX = Math.min(...xs) - upperReach;
+  const upperMaxX = Math.max(...xs) + upperReach;
+  const upperMaxY = wMinY + (wMaxY - wMinY) * 0.62;
+  return aabbOverlap(oMinX, oMaxX, oMinY, oMaxY, upperMinX, upperMaxX, wMinY, upperMaxY);
+}
+
+function shiftedScreenPos(
+  ox: number,
+  oy: number,
+  seg: WallSeg,
+  originX: number,
+  originY: number,
+  depthGap: number,
+): { x: number; y: number } {
+  const { x, y } = gridToScreen(ox, oy, originX, originY);
+  const wallTile = gridToScreen(seg.gx, seg.gy, originX, originY);
+  const shift = depthGap === 0 ? 0.4 : Math.min(0.32, depthGap * 0.14);
+  return {
+    x: x + (wallTile.x - x) * shift,
+    y: y + (wallTile.y - y) * shift,
+  };
+}
+
+/**
+ * Two-tier occlusion:
+ * 1) Full wall — strict behind + gap ≤ 2 (clears reliably when object moves).
+ * 2) Upper panels — tight grid shadow + screen overlap (offset / diagonal tiles).
+ */
+function wallOccludesObject(
+  seg: WallSeg,
+  ox: number,
+  oy: number,
+  kind: string,
+  originX: number,
+  originY: number,
+): boolean {
+  const wSum = seg.gx + seg.gy;
+  const oSum = ox + oy;
+  const depthGap = wSum - oSum;
+  const effectiveGap = depthGap === 0 ? 1 : Math.max(1, depthGap);
+  const artHeight = objectArtHeight(kind);
+  const { x, y } = gridToScreen(ox, oy, originX, originY);
+
+  // Tier 1 — adjacent / near tiles, full wall face
+  if (objectBehindWall(seg, ox, oy) && depthGap <= 2) {
+    if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, false)) return true;
+    if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, true)) return true;
+    if (depthGap === 0) {
+      const shifted = shiftedScreenPos(ox, oy, seg, originX, originY, 0);
+      if (objectOverlapsWallFace(seg, shifted.x, shifted.y, artHeight, 1, true)) return true;
+    }
+  }
+
+  // Tier 2 — tall upper panels on offset / diagonal tiles (grid-bounded so it clears)
+  if (!objectInUpperWallShadow(seg, ox, oy)) return false;
+  if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, true)) return true;
+
+  const shifted = shiftedScreenPos(ox, oy, seg, originX, originY, depthGap);
+  return objectOverlapsWallFace(seg, shifted.x, shifted.y, artHeight, effectiveGap, true);
+}
+
+function wallOccludesAny(
+  seg: WallSeg,
+  objects: PObject[],
+  originX: number,
+  originY: number,
+): boolean {
+  return objects.some((o) =>
+    wallOccludesObject(seg, o.gridX, o.gridY, o.kind, originX, originY),
+  );
+}
+
+function WallSegment({
+  seg,
+  style,
+  opacity,
+}: {
+  seg: WallSeg;
+  style: ReturnType<typeof getStyle>;
+  opacity: number;
+}) {
+  const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+  const lightEdge = shade(fill, 0.2);
+  return (
+    <Group listening={false} opacity={opacity}>
+      <Line
+        points={seg.pts}
+        closed
+        fillPriority="linear-gradient"
+        fillLinearGradientStartPoint={{ x: seg.p0.x, y: seg.p0.y - WALL_H }}
+        fillLinearGradientEndPoint={{ x: seg.p0.x, y: seg.p0.y }}
+        fillLinearGradientColorStops={[0, shade(fill, 0.16), 0.5, fill, 1, shade(fill, -0.18)]}
+        stroke={shade(fill, -0.18)}
+        strokeWidth={1}
+        listening={false}
+      />
+      <Group listening={false}>
+        {wallDecor(style.wallPattern, seg.p0, seg.p1, WALL_H, fill, style.accent)}
+      </Group>
+      <Line
+        points={[seg.p0.x, seg.p0.y - WALL_H, seg.p1.x, seg.p1.y - WALL_H]}
+        stroke={lightEdge}
+        strokeWidth={1.5}
+        opacity={0.6}
+        listening={false}
+      />
+    </Group>
+  );
+}
 
 interface Props {
   room: Room;
@@ -96,7 +300,6 @@ export default function RoomCanvas({
 
   const presentKeys = useMemo(() => getRoomTiles(room), [room]);
   const present = useMemo(() => new Set(presentKeys), [presentKeys]);
-  const bounds = useMemo(() => tileBounds(presentKeys), [presentKeys]);
 
   // Center the floor's screen bounding box inside the canvas.
   const origin = useMemo(() => {
@@ -153,9 +356,11 @@ export default function RoomCanvas({
     });
   }, [floorEditing, present, origin.x, origin.y]);
 
+  const roomObjects = useMemo(() => objects.filter((o) => !o.deleted), [objects]);
+
   const sortedObjects = useMemo(
-    () => [...objects].sort((a, b) => depthKey(a.gridX, a.gridY) - depthKey(b.gridX, b.gridY)),
-    [objects],
+    () => [...roomObjects].sort((a, b) => depthKey(a.gridX, a.gridY) - depthKey(b.gridX, b.gridY)),
+    [roomObjects],
   );
 
   // Per-tile wall segments: for each floor tile, draw an exposed face wherever
@@ -168,6 +373,8 @@ export default function RoomCanvas({
       p0: { x: number; y: number };
       p1: { x: number; y: number };
       depth: number;
+      gx: number;
+      gy: number;
     }> = [];
 
     for (const k of presentKeys) {
@@ -184,6 +391,8 @@ export default function RoomCanvas({
           p0,
           p1,
           depth: gx + gy,
+          gx,
+          gy,
         });
       }
 
@@ -197,6 +406,8 @@ export default function RoomCanvas({
           p0,
           p1,
           depth: gx + gy,
+          gx,
+          gy,
         });
       }
     }
@@ -205,22 +416,31 @@ export default function RoomCanvas({
     return segs.sort((a, b) => a.depth - b.depth);
   }, [presentKeys, present, origin.x, origin.y]);
 
-  // Interleave walls and floors in a single depth-sorted pass so a wall in
-  // front correctly occludes a floor tile behind it (and vice-versa). A wall
-  // renders just before its own tile's floor (z = depth - 0.5).
+  // Walls that cover an object behind them render in a third pass (on top of
+  // objects, semi-transparent). All other walls stay in the depth-sorted pass.
+  const { backWallSegs, frontWallSegs } = useMemo(() => {
+    const back: WallSeg[] = [];
+    const front: WallSeg[] = [];
+    for (const seg of wallSegs) {
+      if (wallOccludesAny(seg, roomObjects, origin.x, origin.y)) front.push(seg);
+      else back.push(seg);
+    }
+    return { backWallSegs: back, frontWallSegs: front };
+  }, [wallSegs, roomObjects, origin.x, origin.y]);
+
   const drawOrder = useMemo(() => {
     type Item =
-      | { z: number; t: 'wall'; key: string; seg: (typeof wallSegs)[number] }
+      | { z: number; t: 'wall'; key: string; seg: WallSeg }
       | { z: number; t: 'floor'; key: string; tile: (typeof tiles)[number] };
     const items: Item[] = [];
-    wallSegs.forEach((seg, i) =>
+    backWallSegs.forEach((seg, i) =>
       items.push({ z: seg.depth - 0.5, t: 'wall', key: `w${i}`, seg }),
     );
     for (const tile of tiles) {
       items.push({ z: tile.gx + tile.gy, t: 'floor', key: `f${tile.key}`, tile });
     }
     return items.sort((a, b) => a.z - b.z);
-  }, [wallSegs, tiles]);
+  }, [backWallSegs, tiles]);
 
   const handleTileClick = (gx: number, gy: number) => {
     if (floorEditing) {
@@ -279,9 +499,10 @@ export default function RoomCanvas({
         position: 'relative',
       }}
     >
+      {/* Guard: don't let Konva try to paint on a 0×0 canvas */}
       <Stage
-        width={size.w}
-        height={size.h}
+        width={size.w || 1}
+        height={size.h || 1}
         scaleX={zoom}
         scaleY={zoom}
         x={stagePos.x}
@@ -300,24 +521,19 @@ export default function RoomCanvas({
               Walls are per-tile edge quads, so they wrap any floor shape. */}
           {drawOrder.map((item) => {
             if (item.t === 'wall') {
-              const { seg } = item;
-              const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
-              return (
-                <Fragment key={item.key}>
-                  <Line points={seg.pts} closed fill={fill} stroke={shade(fill, -0.2)} strokeWidth={1} listening={false} />
-                  <Group listening={false}>
-                    {wallDecor(style.wallPattern, seg.p0, seg.p1, WALL_H, fill, style.accent)}
-                  </Group>
-                </Fragment>
-              );
+              return <WallSegment key={item.key} seg={item.seg} style={style} opacity={1} />;
             }
             const t = item.tile;
+            const floorBase = t.alt ? style.floorA : style.floorB;
             return (
               <Group key={item.key}>
                 <Line
                   points={t.pts}
                   closed
-                  fill={t.alt ? style.floorA : style.floorB}
+                  fillPriority="linear-gradient"
+                  fillLinearGradientStartPoint={{ x: t.cx, y: t.cy - HALF_H }}
+                  fillLinearGradientEndPoint={{ x: t.cx, y: t.cy + HALF_H }}
+                  fillLinearGradientColorStops={[0, shade(floorBase, 0.12), 1, shade(floorBase, -0.08)]}
                   stroke={floorEditing ? withAlpha('#ff8a8a', 0.5) : shade(style.floorA, -0.12)}
                   strokeWidth={floorEditing ? 1.5 : 1}
                   onClick={() => handleTileClick(t.gx, t.gy)}
@@ -339,6 +555,35 @@ export default function RoomCanvas({
               </Group>
             );
           })}
+
+          {/* Objects above floors; nearer floor tiles never paint over them. */}
+          {sortedObjects.map((o) => {
+            const s = gridToScreen(o.gridX, o.gridY, origin.x, origin.y);
+            const isHi = highlightId === o.id;
+            return (
+              <IsoObject
+                key={o.id}
+                obj={o}
+                x={s.x}
+                y={s.y}
+                draggable={mode === 'build' && !floorEditing}
+                selected={selectedId === o.id}
+                highlighted={isHi}
+                isAnchor={anchorIds.has(o.id)}
+                pulse={pulse}
+                dim={(focusHighlight && !!highlightId && !isHi) || floorEditing}
+                onSelect={onSelect}
+                onDragEnd={handleDragEnd}
+              />
+            );
+          })}
+
+          {/* Front walls that occlude an object — drawn on top, see-through. */}
+          {[...frontWallSegs]
+            .sort((a, b) => a.depth - b.depth)
+            .map((seg, i) => (
+              <WallSegment key={`fw${i}`} seg={seg} style={style} opacity={0.28} />
+            ))}
 
           {/* Ghost (addable) tiles in floor-edit mode */}
           {ghosts.map((g) => (
@@ -363,29 +608,7 @@ export default function RoomCanvas({
             />
           ))}
 
-          {/* Objects */}
-          {sortedObjects.map((o) => {
-            const s = gridToScreen(o.gridX, o.gridY, origin.x, origin.y);
-            const isHi = highlightId === o.id;
-            return (
-              <IsoObject
-                key={o.id}
-                obj={o}
-                x={s.x}
-                y={s.y}
-                draggable={mode === 'build' && !floorEditing}
-                selected={selectedId === o.id}
-                highlighted={isHi}
-                isAnchor={anchorIds.has(o.id)}
-                pulse={pulse}
-                dim={(focusHighlight && !!highlightId && !isHi) || floorEditing}
-                onSelect={onSelect}
-                onDragEnd={handleDragEnd}
-              />
-            );
-          })}
-
-          {objects.length === 0 && !floorEditing && (
+          {roomObjects.length === 0 && !floorEditing && (
             <Group x={size.w / 2} y={size.h / 2}>
               <Text
                 text={

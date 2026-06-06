@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { IconType } from 'react-icons';
 import { useStore } from '../state/useStore';
 import { useUI } from '../state/useUI';
-import { roomTypeIcon } from '../themes/styles';
+import { Icon } from '../themes/Icon';
+import { objectIcon, roomIcon, UI_ICONS } from '../themes/icons';
 
 interface Hit {
   palaceId: string;
@@ -11,7 +13,7 @@ interface Hit {
   roomName: string;
   roomType: string;
   objectId: string | null;
-  icon: string;
+  icon: IconType;
   label: string;
   snippet: string;
 }
@@ -69,7 +71,7 @@ export default function SearchModal() {
           roomName: room.name,
           roomType: room.type,
           objectId: o.id,
-          icon: o.icon,
+          icon: objectIcon(o.kind),
           label: mem?.title || o.label,
           snippet: mem?.prompt || mem?.answer || mem?.body || '',
         });
@@ -89,7 +91,7 @@ export default function SearchModal() {
           roomName: r.name,
           roomType: r.type,
           objectId: null,
-          icon: roomTypeIcon(r.type),
+          icon: roomIcon(r.type),
           label: r.name,
           snippet: 'Room',
         });
@@ -117,7 +119,9 @@ export default function SearchModal() {
     >
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <span style={{ fontSize: 18 }}>🔍</span>
+          <span style={{ lineHeight: 0, color: 'var(--text-dim)' }}>
+            <Icon icon={UI_ICONS.search} size={18} />
+          </span>
           <input
             ref={inputRef}
             value={q}
@@ -132,7 +136,9 @@ export default function SearchModal() {
           {q && hits.length === 0 && <div className="empty">No matches.</div>}
           {hits.map((h, i) => (
             <div key={i} className="search-result" onClick={() => go(h)}>
-              <span style={{ fontSize: 22 }}>{h.icon}</span>
+              <span style={{ lineHeight: 0, color: '#cdd5f0' }}>
+                <Icon icon={h.icon} size={22} />
+              </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 600 }}>{h.label}</div>
                 <div className="muted" style={{ fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

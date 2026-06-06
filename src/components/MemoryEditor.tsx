@@ -1,5 +1,7 @@
 import { useStore } from '../state/useStore';
 import { useUI } from '../state/useUI';
+import { Icon } from '../themes/Icon';
+import { objectIcon, iconTint } from '../themes/icons';
 import type { PObject } from '../types';
 
 const STATUS_COLOR: Record<string, string> = {
@@ -28,7 +30,9 @@ export default function MemoryEditor({ obj }: { obj: PObject }) {
   return (
     <div className="fade-in">
       <div className="row" style={{ marginBottom: 12 }}>
-        <span style={{ fontSize: 26 }}>{obj.icon}</span>
+        <span style={{ lineHeight: 0 }}>
+          <Icon icon={objectIcon(obj.kind)} size={26} color={iconTint(obj.color)} />
+        </span>
         <div style={{ flex: 1 }}>
           <input
             value={obj.label}

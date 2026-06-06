@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Line, Rect, Circle, Ellipse, Star } from 'react-konva';
+import { Line, Rect, Circle, Ellipse, Star, Group } from 'react-konva';
 import { shade, withAlpha } from '../lib/color';
 import {
   palette,
@@ -375,6 +375,266 @@ function book(p: Palette, _pulse: number, kind: string) {
   return <Fragment>{oneBook(0, p)}</Fragment>;
 }
 
+// ---- Furniture & props -----------------------------------------------------
+
+function bed(p: Palette) {
+  const frame = palette('#5b3d24');
+  const pillow = palette('#f3f5fb');
+  const hw = OBJ_HW * 1.28;
+  const hh = OBJ_HH * 1.28;
+  const fh = 9;
+  const mattressTop = -fh - 8;
+  const HB = 24;
+  return (
+    <Fragment>
+      {/* wooden frame */}
+      <IsoBox hw={hw} hh={hh} h={fh} p={frame} />
+      {/* mattress topped with the object-colored cover */}
+      <IsoBox hw={hw * 0.9} hh={hh * 0.9} h={8} baseY={-fh} p={p} />
+      {/* pillow near the back */}
+      <Group x={0} y={-hh * 0.42}>
+        <IsoBox hw={hw * 0.34} hh={hh * 0.4} h={5} baseY={mattressTop} p={pillow} />
+      </Group>
+      {/* headboard: two upright back faces meeting at the rear corner */}
+      <Line
+        points={[0, -fh - hh, -hw, -fh, -hw, -fh - HB, 0, -fh - hh - HB]}
+        closed
+        fill={frame.dark}
+        stroke={frame.outline}
+        strokeWidth={1}
+      />
+      <Line
+        points={[0, -fh - hh, hw, -fh, hw, -fh - HB, 0, -fh - hh - HB]}
+        closed
+        fill={frame.base}
+        stroke={frame.outline}
+        strokeWidth={1}
+      />
+    </Fragment>
+  );
+}
+
+function desk(p: Palette) {
+  const top = p;
+  const leg = palette(shade(p.base, -0.25));
+  const hw = OBJ_HW * 1.12;
+  const hh = OBJ_HH * 1.12;
+  const legH = 17;
+  const topH = 6;
+  const legSpots: Array<[number, number]> = [
+    [-hw * 0.74, 0],
+    [hw * 0.74, 0],
+    [0, -hh * 0.74],
+    [0, hh * 0.74],
+  ];
+  return (
+    <Fragment>
+      {legSpots.map(([lx, ly], i) => (
+        <Group key={i} x={lx} y={ly}>
+          <IsoBox hw={3} hh={2} h={legH} p={leg} outline={false} />
+        </Group>
+      ))}
+      <IsoBox hw={hw} hh={hh} h={topH} baseY={-legH} p={top} />
+    </Fragment>
+  );
+}
+
+function cabinet(p: Palette) {
+  const hw = OBJ_HW * 0.82;
+  const hh = OBJ_HH * 0.82;
+  const H = 46;
+  return (
+    <Fragment>
+      <IsoBox hw={hw} hh={hh} h={H} p={p} />
+      {/* door seams down each visible face */}
+      <Line points={[0, hh - H, 0, hh]} stroke={p.darker} strokeWidth={1.4} opacity={0.7} />
+      <Line points={[hw * 0.5, (hh - H) * 0.5 - hh * 0.0, hw * 0.5, hh * 0.5]} stroke={p.darker} strokeWidth={1} opacity={0.4} />
+      <Line points={[-hw * 0.5, (hh - H) * 0.5, -hw * 0.5, hh * 0.5]} stroke={p.darker} strokeWidth={1} opacity={0.4} />
+      {/* handles */}
+      <Circle x={-hw * 0.12} y={-H * 0.5 + hh * 0.5} radius={1.6} fill={p.lighter} />
+      <Circle x={hw * 0.12} y={-H * 0.5 + hh * 0.5} radius={1.6} fill={p.lighter} />
+      {/* base + cornice */}
+      <Line points={diamond(hw * 0.9, hh * 0.9, -H)} closed fill={p.lighter} opacity={0.4} />
+    </Fragment>
+  );
+}
+
+function chest(p: Palette) {
+  const wood = palette('#6b4a2c');
+  const hw = OBJ_HW * 0.98;
+  const hh = OBJ_HH * 0.98;
+  const baseH = 15;
+  const lidH = 9;
+  return (
+    <Fragment>
+      <IsoBox hw={hw} hh={hh} h={baseH} p={wood} />
+      {/* lid in the metal/accent color */}
+      <IsoBox hw={hw} hh={hh} h={lidH} baseY={-baseH} p={p} />
+      {/* metal bands wrapping the chest */}
+      <Line points={[0, hh, 0, hh - baseH - lidH]} stroke={p.lighter} strokeWidth={2} opacity={0.8} />
+      <Line points={[-hw * 0.5, hh * 0.5, -hw * 0.5, hh * 0.5 - baseH]} stroke={p.lighter} strokeWidth={1.5} opacity={0.6} />
+      <Line points={[hw * 0.5, hh * 0.5, hw * 0.5, hh * 0.5 - baseH]} stroke={p.lighter} strokeWidth={1.5} opacity={0.6} />
+      {/* lock plate at the front */}
+      <Rect x={-3} y={-baseH + 1} width={6} height={6} fill={p.light} stroke={wood.outline} strokeWidth={0.8} cornerRadius={1} />
+    </Fragment>
+  );
+}
+
+function door(p: Palette) {
+  const W = OBJ_HW * 1.15;
+  const H = 60;
+  const frame = palette(shade(p.base, -0.2));
+  return (
+    <Fragment>
+      {/* contact + frame */}
+      <Rect x={-W / 2 - 3} y={-H - 3} width={W + 6} height={H + 3} fill={frame.dark} stroke={frame.outline} strokeWidth={1} cornerRadius={2} />
+      <Rect x={-W / 2} y={-H} width={W} height={H} fill={p.base} stroke={p.outline} strokeWidth={1.2} cornerRadius={2} />
+      {/* recessed panels */}
+      <Rect x={-W / 2 + 4} y={-H + 5} width={W - 8} height={H * 0.42} fill={p.dark} opacity={0.5} cornerRadius={1} />
+      <Rect x={-W / 2 + 4} y={-H * 0.5} width={W - 8} height={H * 0.42} fill={p.dark} opacity={0.5} cornerRadius={1} />
+      {/* knob */}
+      <Circle x={W / 2 - 6} y={-H * 0.5} radius={2.2} fill={p.lighter} stroke={p.outline} strokeWidth={0.6} />
+    </Fragment>
+  );
+}
+
+function clock(p: Palette) {
+  const wood = palette('#4f3a26');
+  const hw = OBJ_HW * 0.5;
+  const hh = OBJ_HH * 0.5;
+  const H = 52;
+  return (
+    <Fragment>
+      <IsoBox hw={hw} hh={hh} h={H} p={wood} />
+      {/* clock face on the upper front-right face */}
+      <Circle x={hw * 0.45} y={-H + 11} radius={6.5} fill={p.lighter} stroke={wood.outline} strokeWidth={1} />
+      <Circle x={hw * 0.45} y={-H + 11} radius={6.5} stroke={shade(p.base, -0.3)} strokeWidth={0.6} />
+      <Line points={[hw * 0.45, -H + 11, hw * 0.45, -H + 6]} stroke={wood.outline} strokeWidth={1} />
+      <Line points={[hw * 0.45, -H + 11, hw * 0.45 + 4, -H + 12]} stroke={wood.outline} strokeWidth={1} />
+      {/* pendulum window */}
+      <Rect x={hw * 0.2} y={-H * 0.5} width={6} height={16} fill={shade(wood.base, -0.2)} cornerRadius={1} />
+      <Circle x={hw * 0.2 + 3} y={-H * 0.5 + 13} radius={2} fill={p.base} />
+    </Fragment>
+  );
+}
+
+function key(p: Palette) {
+  return (
+    <Fragment>
+      <Ellipse x={0} y={1} radiusX={OBJ_HW * 0.7} radiusY={OBJ_HH * 0.7} fill="rgba(0,0,0,0.18)" />
+      {/* bow */}
+      <Circle x={-11} y={-7} radius={6} stroke={p.base} strokeWidth={3} />
+      <Circle x={-11} y={-7} radius={2.4} fill={p.lighter} />
+      {/* shaft */}
+      <Line points={[-5, -7, 15, -7]} stroke={p.base} strokeWidth={3} lineCap="round" />
+      {/* teeth */}
+      <Line points={[15, -7, 15, -1]} stroke={p.base} strokeWidth={3} lineCap="round" />
+      <Line points={[10, -7, 10, -2]} stroke={p.base} strokeWidth={3} lineCap="round" />
+      {/* sheen */}
+      <Line points={[-3, -8.5, 13, -8.5]} stroke={p.lighter} strokeWidth={1} opacity={0.8} />
+    </Fragment>
+  );
+}
+
+function weapon(p: Palette) {
+  const steel = palette('#c7ced6');
+  const grip = palette('#5b3d24');
+  return (
+    <Fragment>
+      {/* blade */}
+      <Line points={[0, -14, 0, -48]} stroke={steel.light} strokeWidth={4} lineCap="round" />
+      <Line points={[1, -16, 1, -46]} stroke={steel.lighter} strokeWidth={1} opacity={0.9} />
+      <Line points={[-2, -45, 0, -52, 2, -45]} closed fill={steel.lighter} stroke={steel.outline} strokeWidth={0.6} />
+      {/* cross guard (accent color) */}
+      <Line points={[-9, -14, 9, -14]} stroke={p.base} strokeWidth={3} lineCap="round" />
+      {/* grip + pommel */}
+      <Line points={[0, -14, 0, -3]} stroke={grip.base} strokeWidth={3} lineCap="round" />
+      <Circle x={0} y={-2} radius={2.6} fill={p.base} stroke={p.outline} strokeWidth={0.6} />
+    </Fragment>
+  );
+}
+
+function hourglass(p: Palette) {
+  const wood = palette('#6b4a2c');
+  const glass = 'rgba(191,227,242,0.45)';
+  return (
+    <Fragment>
+      {/* frame caps */}
+      <Line points={[-11, -2, 11, -2]} stroke={wood.base} strokeWidth={3} lineCap="round" />
+      <Line points={[-11, -40, 11, -40]} stroke={wood.base} strokeWidth={3} lineCap="round" />
+      {/* glass bulbs */}
+      <Line points={[-8, -4, 8, -4, 0, -21]} closed fill={glass} stroke="#9fb6c2" strokeWidth={1} />
+      <Line points={[-8, -38, 8, -38, 0, -21]} closed fill={glass} stroke="#9fb6c2" strokeWidth={1} />
+      {/* sand */}
+      <Line points={[-6, -38, 6, -38, 0, -27]} closed fill={p.base} opacity={0.9} />
+      <Line points={[-6, -6, 6, -6, 0, -13]} closed fill={p.base} opacity={0.9} />
+      <Line points={[0, -21, 0, -13]} stroke={p.base} strokeWidth={1} opacity={0.8} />
+      {/* posts */}
+      <Line points={[-9, -3, -9, -39]} stroke={wood.dark} strokeWidth={2} />
+      <Line points={[9, -3, 9, -39]} stroke={wood.dark} strokeWidth={2} />
+    </Fragment>
+  );
+}
+
+function vessel(p: Palette, kind: string) {
+  const glass = 'rgba(207,233,245,0.45)';
+  const rim = '#9fb6c2';
+  if (kind === 'flask') {
+    // Erlenmeyer flask
+    return (
+      <Fragment>
+        <Ellipse x={0} y={1} radiusX={OBJ_HW * 0.7} radiusY={OBJ_HH * 0.7} fill="rgba(0,0,0,0.18)" />
+        <Line points={[-3, -34, 3, -34, 12, -3, -12, -3]} closed fill={glass} stroke={rim} strokeWidth={1} />
+        {/* liquid */}
+        <Line points={[-9, -12, 9, -12, 11, -4, -11, -4]} closed fill={p.base} opacity={0.85} />
+        <Ellipse x={0} y={-12} radiusX={9} radiusY={2} fill={p.light} opacity={0.85} />
+        {/* neck + lip */}
+        <Line points={[-3, -34, -3, -36, 3, -36, 3, -34]} closed fill={rim} />
+        {/* shine */}
+        <Line points={[-6, -10, -8, -5]} stroke="#ffffff" strokeWidth={1} opacity={0.5} />
+      </Fragment>
+    );
+  }
+  // specimen jar
+  return (
+    <Fragment>
+      <Ellipse x={0} y={1} radiusX={OBJ_HW * 0.7} radiusY={OBJ_HH * 0.7} fill="rgba(0,0,0,0.18)" />
+      <Line points={[-9, -5, -9, -27, 9, -27, 9, -5]} closed fill={glass} stroke={rim} strokeWidth={1} />
+      <Ellipse x={0} y={-27} radiusX={9} radiusY={3} fill={glass} stroke={rim} strokeWidth={1} />
+      {/* liquid + specimen */}
+      <Line points={[-8, -16, 8, -16, 8, -6, -8, -6]} closed fill={p.base} opacity={0.7} />
+      <Ellipse x={0} y={-16} radiusX={8} radiusY={2} fill={p.light} opacity={0.7} />
+      <Circle x={0} y={-11} radius={3} fill={p.lighter} opacity={0.8} />
+      {/* lid */}
+      <Ellipse x={0} y={-5} radiusX={9} radiusY={3} fill={rim} />
+      <Ellipse x={0} y={-30} radiusX={7} radiusY={2.4} fill={shade(rim, 0.1)} />
+      {/* shine */}
+      <Line points={[-5, -24, -5, -9]} stroke="#ffffff" strokeWidth={1} opacity={0.4} />
+    </Fragment>
+  );
+}
+
+function machine(p: Palette) {
+  const metal = palette('#7f8c8d');
+  const hw = OBJ_HW * 0.9;
+  const hh = OBJ_HH * 0.9;
+  const H = 26;
+  return (
+    <Fragment>
+      <IsoBox hw={hw} hh={hh} h={H} p={metal} />
+      {/* big gear on the front-right face */}
+      <Star x={hw * 0.4} y={-H + 9} numPoints={8} innerRadius={4} outerRadius={7.5} fill={p.base} stroke={metal.outline} strokeWidth={1} />
+      <Circle x={hw * 0.4} y={-H + 9} radius={2.2} fill={metal.darker} />
+      {/* dial on the front-left face */}
+      <Circle x={-hw * 0.4} y={-H + 11} radius={3.4} fill={metal.lighter} stroke={metal.outline} strokeWidth={0.8} />
+      <Line points={[-hw * 0.4, -H + 11, -hw * 0.4 + 2, -H + 9]} stroke={metal.outline} strokeWidth={1} />
+      {/* exhaust pipe */}
+      <Line points={[0, -H, 0, -H - 9]} stroke={metal.base} strokeWidth={3} lineCap="round" />
+      <Ellipse x={0} y={-H - 9} radiusX={3} radiusY={1.5} fill={metal.light} />
+    </Fragment>
+  );
+}
+
 // ---- Public renderer -------------------------------------------------------
 
 export function renderObjectArt(kind: string, color: string, pulse: number) {
@@ -390,6 +650,28 @@ export function renderObjectArt(kind: string, color: string, pulse: number) {
       return figure(p, pulse, kind);
     case 'book':
       return book(p, pulse, kind);
+    case 'bed':
+      return bed(p);
+    case 'desk':
+      return desk(p);
+    case 'cabinet':
+      return cabinet(p);
+    case 'chest':
+      return chest(p);
+    case 'door':
+      return door(p);
+    case 'clock':
+      return clock(p);
+    case 'key':
+      return key(p);
+    case 'weapon':
+      return weapon(p);
+    case 'hourglass':
+      return hourglass(p);
+    case 'vessel':
+      return vessel(p, kind);
+    case 'machine':
+      return machine(p);
     default:
       return crate(p);
   }
@@ -408,6 +690,28 @@ export function objectArtHeight(kind: string): number {
       return kind === 'pillar' ? 64 : 52;
     case 'book':
       return kind === 'books' ? 30 : 18;
+    case 'bed':
+      return 50;
+    case 'desk':
+      return 26;
+    case 'cabinet':
+      return 50;
+    case 'chest':
+      return 28;
+    case 'door':
+      return 64;
+    case 'clock':
+      return 56;
+    case 'key':
+      return 18;
+    case 'weapon':
+      return 54;
+    case 'hourglass':
+      return 44;
+    case 'vessel':
+      return kind === 'flask' ? 38 : 32;
+    case 'machine':
+      return 38;
     default:
       return 34;
   }

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../state/useStore';
 import { PALACE_THEMES } from '../themes/styles';
+import { Icon } from '../themes/Icon';
+import { UI_ICONS } from '../themes/icons';
 import { PALACE_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
 
 export default function Dashboard() {
@@ -80,7 +82,9 @@ export default function Dashboard() {
               className="card clickable"
               onClick={() => navigate(`/palace/${p.id}`)}
             >
-              <div className="card-emoji">🏛️</div>
+              <div className="card-emoji">
+                <Icon icon={UI_ICONS.palace} size={30} color="var(--gold)" />
+              </div>
               <h3>{p.name}</h3>
               <div className="meta">
                 {roomCount(p.id)} room{roomCount(p.id) === 1 ? '' : 's'} ·{' '}
@@ -108,7 +112,9 @@ export default function Dashboard() {
       <div className="grid">
         {PALACE_TEMPLATES.map((t) => (
           <div key={t.id} className="card clickable" onClick={() => handleTemplate(t.id)}>
-            <div className="card-emoji">📦</div>
+            <div className="card-emoji">
+              <Icon icon={UI_ICONS.template} size={30} color="var(--accent)" />
+            </div>
             <h3>{t.name}</h3>
             <div className="meta">{t.description}</div>
             <div className="row" style={{ marginTop: 12 }}>

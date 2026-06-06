@@ -1,6 +1,8 @@
 import { useStore } from '../state/useStore';
 import { useUI } from '../state/useUI';
 import { ROOM_STYLES, ROOM_TYPES } from '../themes/styles';
+import { Icon } from '../themes/Icon';
+import { roomIcon } from '../themes/icons';
 import type { Room } from '../types';
 
 export default function RoomStylePanel({ room }: { room: Room }) {
@@ -20,13 +22,22 @@ export default function RoomStylePanel({ room }: { room: Room }) {
 
       <div className="field">
         <label>Room type</label>
-        <select value={room.type} onChange={(e) => updateRoom(room.id, { type: e.target.value })}>
-          {ROOM_TYPES.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.icon} {t.label}
-            </option>
-          ))}
-        </select>
+        <div className="row" style={{ gap: 8 }}>
+          <span style={{ lineHeight: 0, color: 'var(--text-dim)' }}>
+            <Icon icon={roomIcon(room.type)} size={20} />
+          </span>
+          <select
+            style={{ flex: 1 }}
+            value={room.type}
+            onChange={(e) => updateRoom(room.id, { type: e.target.value })}
+          >
+            {ROOM_TYPES.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="field">
@@ -48,7 +59,7 @@ export default function RoomStylePanel({ room }: { room: Room }) {
         <div className="row">
           <select
             value={room.gridW}
-            disabled={room.tiles.length > 0}
+            disabled={(room.tiles?.length ?? 0) > 0}
             onChange={(e) => updateRoom(room.id, { gridW: Number(e.target.value) })}
           >
             {[4, 5, 6, 7, 8, 9, 10].map((n) => (
@@ -59,7 +70,7 @@ export default function RoomStylePanel({ room }: { room: Room }) {
           </select>
           <select
             value={room.gridH}
-            disabled={room.tiles.length > 0}
+            disabled={(room.tiles?.length ?? 0) > 0}
             onChange={(e) => updateRoom(room.id, { gridH: Number(e.target.value) })}
           >
             {[4, 5, 6, 7, 8, 9, 10].map((n) => (

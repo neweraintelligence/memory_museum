@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { OBJECT_LIBRARY, OBJECT_CATEGORIES } from '../themes/objects';
+import { Icon } from '../themes/Icon';
+import { objectIcon, iconTint } from '../themes/icons';
 import { useUI } from '../state/useUI';
 
 export default function ObjectLibrary() {
@@ -40,7 +42,9 @@ export default function ObjectLibrary() {
             title={`${o.label} — click then tap a tile`}
             onClick={() => setPlacingKind(placingKind === o.kind ? null : o.kind)}
           >
-            <span className="emoji">{o.icon}</span>
+            <span className="glyph">
+              <Icon icon={objectIcon(o.kind)} size={26} color={iconTint(o.color)} />
+            </span>
             <span className="name">{o.label}</span>
           </div>
         ))}

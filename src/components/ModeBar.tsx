@@ -1,5 +1,7 @@
 import { GRADES } from '../lib/srs';
 import type { Grade } from '../lib/srs';
+import { Icon } from '../themes/Icon';
+import { objectIcon, iconTint, UI_ICONS } from '../themes/icons';
 import type { PObject, Memory } from '../types';
 
 interface Props {
@@ -42,8 +44,9 @@ export default function ModeBar({
   return (
     <div className="modebar fade-in">
       <div className="row" style={{ justifyContent: 'space-between' }}>
-        <span className="muted" style={{ fontSize: 12 }}>
-          {mode === 'walk' ? '🚶 Walk-through' : '🧠 Review'} · {roomName}
+        <span className="muted row" style={{ fontSize: 12, gap: 5 }}>
+          <Icon icon={mode === 'walk' ? UI_ICONS.walk : UI_ICONS.review} size={13} />
+          {mode === 'walk' ? 'Walk-through' : 'Review'} · {roomName}
         </span>
         <span className="muted" style={{ fontSize: 12 }}>
           {index + 1} / {total}
@@ -51,7 +54,9 @@ export default function ModeBar({
       </div>
 
       <div className="row" style={{ gap: 10, marginTop: 8, alignItems: 'flex-start' }}>
-        <span style={{ fontSize: 30 }}>{obj?.icon}</span>
+        <span style={{ lineHeight: 0, marginTop: 2 }}>
+          {obj && <Icon icon={objectIcon(obj.kind)} size={30} color={iconTint(obj.color)} />}
+        </span>
         <div style={{ flex: 1 }}>
           <div style={{ fontWeight: 700, fontSize: 16 }}>
             {mode === 'review' && !revealed ? (memory?.prompt || obj?.label || 'Recall this') : memory?.title || obj?.label}

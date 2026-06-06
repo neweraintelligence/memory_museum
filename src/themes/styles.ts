@@ -1,4 +1,15 @@
-export type FloorPattern = 'planks' | 'tatami' | 'tiles' | 'metal' | 'slab';
+export type FloorPattern =
+  | 'none'
+  | 'planks'
+  | 'tatami'
+  | 'tiles'
+  | 'metal'
+  | 'slab'
+  | 'marble'
+  | 'parquet'
+  | 'brick'
+  | 'carpet'
+  | 'stone';
 export type WallPattern =
   | 'shelves'
   | 'panels'
@@ -6,7 +17,11 @@ export type WallPattern =
   | 'tech'
   | 'plain'
   | 'glass'
-  | 'concrete';
+  | 'concrete'
+  | 'brick'
+  | 'stone'
+  | 'wood'
+  | 'wallpaper';
 
 export interface RoomStyle {
   id: string;
@@ -33,7 +48,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#caa86a',
     bg: '#1b1410',
     mood: 'Dark wood, candlelight, towering shelves.',
-    floorPattern: 'planks',
+    floorPattern: 'none',
     wallPattern: 'shelves',
   },
   {
@@ -85,7 +100,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#d9c089',
     bg: '#39271a',
     mood: 'Dark oak, brass, solemn authority.',
-    floorPattern: 'planks',
+    floorPattern: 'none',
     wallPattern: 'panels',
   },
   {
@@ -124,8 +139,73 @@ export const ROOM_STYLES: RoomStyle[] = [
     accent: '#d97757',
     bg: '#efe2d2',
     mood: 'Warm wood, soft rugs, golden hour.',
-    floorPattern: 'planks',
+    floorPattern: 'slab',
     wallPattern: 'panels',
+  },
+  {
+    id: 'marble-hall',
+    label: 'Marble Hall',
+    floorA: '#e9e6df',
+    floorB: '#dcd8cf',
+    wallLeft: '#c9c3b6',
+    wallRight: '#d8d2c6',
+    accent: '#b89b5e',
+    bg: '#cfcabd',
+    mood: 'Veined marble, ashlar stone, grand and cool.',
+    floorPattern: 'marble',
+    wallPattern: 'stone',
+  },
+  {
+    id: 'victorian-parlor',
+    label: 'Victorian Parlor',
+    floorA: '#8a5a32',
+    floorB: '#7e4f2b',
+    wallLeft: '#5e3550',
+    wallRight: '#6e3f5e',
+    accent: '#d7b56a',
+    bg: '#2c1b27',
+    mood: 'Herringbone parquet, damask wallpaper, candlelit.',
+    floorPattern: 'parquet',
+    wallPattern: 'wallpaper',
+  },
+  {
+    id: 'stone-keep',
+    label: 'Stone Keep',
+    floorA: '#8f8a82',
+    floorB: '#84807a',
+    wallLeft: '#6f6a63',
+    wallRight: '#7c776f',
+    accent: '#caa86a',
+    bg: '#3a3733',
+    mood: 'Cut flagstones, heavy masonry, torch-lit keep.',
+    floorPattern: 'stone',
+    wallPattern: 'stone',
+  },
+  {
+    id: 'industrial-loft',
+    label: 'Industrial Loft',
+    floorA: '#7d6a5a',
+    floorB: '#73604f',
+    wallLeft: '#8a4a3a',
+    wallRight: '#9c5443',
+    accent: '#e2552b',
+    bg: '#241c18',
+    mood: 'Worn planks, exposed red brick, warehouse light.',
+    floorPattern: 'planks',
+    wallPattern: 'brick',
+  },
+  {
+    id: 'reading-study',
+    label: 'Reading Study',
+    floorA: '#7c2f2f',
+    floorB: '#732a2a',
+    wallLeft: '#5a4632',
+    wallRight: '#6a543c',
+    accent: '#d9b25a',
+    bg: '#241712',
+    mood: 'Plush carpet, walnut paneling, lamplit calm.',
+    floorPattern: 'carpet',
+    wallPattern: 'wood',
   },
 ];
 

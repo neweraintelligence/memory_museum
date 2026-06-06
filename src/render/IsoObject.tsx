@@ -1,8 +1,9 @@
-import { Group, Text, Ellipse, Circle } from 'react-konva';
+import { Group, Image as KonvaImage, Ellipse, Circle } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { withAlpha } from '../lib/color';
 import { TILE_W, TILE_H } from '../lib/iso';
 import { renderObjectArt, objectArtHeight } from './objectArt';
+import { objectIcon, useIconImage } from '../themes/icons';
 import type { PObject } from '../types';
 
 interface Props {
@@ -37,6 +38,7 @@ export default function IsoObject({
 }: Props) {
   const lift = highlighted ? 8 + pulse * 4 : 0;
   const topY = -objectArtHeight(obj.kind);
+  const badgeImg = useIconImage(objectIcon(obj.kind), '#eef2ff', 36);
 
   return (
     <Group
@@ -54,6 +56,7 @@ export default function IsoObject({
       }}
       onClick={() => onSelect(obj.id)}
       onTap={() => onSelect(obj.id)}
+      onDragStart={(e) => e.target.moveToTop()}
       onDragEnd={(e) => onDragEnd(obj.id, e)}
     >
       {/* contact shadow */}
@@ -81,10 +84,12 @@ export default function IsoObject({
       {/* the detailed object art */}
       {renderObjectArt(obj.kind, obj.color, pulse)}
 
-      {/* small glyph badge floating above for instant recognition */}
+      {/* small icon badge floating above for instant recognition */}
       <Group y={topY - 14} opacity={highlighted ? 1 : 0.92}>
-        <Circle x={0} y={0} radius={11} fill="rgba(12,14,22,0.72)" stroke={withAlpha(obj.color, 0.8)} strokeWidth={1} />
-        <Text text={obj.icon} fontSize={13} width={26} align="center" x={-13} y={-7} />
+        <Circle x={0} y={0} radius={11} fill="rgba(12,14,22,0.78)" stroke={withAlpha(obj.color, 0.85)} strokeWidth={1.2} />
+        {badgeImg && (
+          <KonvaImage image={badgeImg} x={-7} y={-7} width={14} height={14} listening={false} />
+        )}
       </Group>
     </Group>
   );

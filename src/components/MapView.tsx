@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import { useStore } from '../state/useStore';
-import { roomTypeIcon, getStyle } from '../themes/styles';
+import { getStyle } from '../themes/styles';
+import { Icon } from '../themes/Icon';
+import { roomIcon, UI_ICONS } from '../themes/icons';
 
 const NODE_W = 150;
 const NODE_H = 78;
@@ -64,14 +66,24 @@ export default function MapView({
   return (
     <div className="canvas-wrap" style={{ background: 'var(--bg)' }}>
       <div className="canvas-overlay">
-        <span className="pill">🗺️ Overview Map</span>
+        <span className="pill row" style={{ gap: 6 }}>
+          <Icon icon={UI_ICONS.map} size={15} /> Overview Map
+        </span>
         <button
           className={connectFrom ? 'primary' : ''}
           onClick={() => setConnectFrom(connectFrom ? null : '__pick__')}
         >
-          {connectFrom ? 'Pick rooms to connect…' : '🔗 Connect rooms'}
+          {connectFrom ? (
+            'Pick rooms to connect…'
+          ) : (
+            <>
+              <Icon icon={UI_ICONS.connect} size={15} /> Connect rooms
+            </>
+          )}
         </button>
-        <button onClick={() => createRoom(palaceId)}>+ Add room</button>
+        <button onClick={() => createRoom(palaceId)}>
+          <Icon icon={UI_ICONS.add} size={15} /> Add room
+        </button>
         <span className="pill muted">Drag rooms · click to enter</span>
       </div>
 
@@ -124,7 +136,9 @@ export default function MapView({
               onClick={() => handleNodeClick(r.id)}
               title={picking ? 'Click to connect' : 'Click to enter'}
             >
-              <div style={{ fontSize: 22 }}>{roomTypeIcon(r.type)}</div>
+              <div style={{ lineHeight: 0, marginBottom: 4, color: '#f2f5ff' }}>
+                <Icon icon={roomIcon(r.type)} size={22} />
+              </div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{r.name}</div>
               <div className="meta">{objectCount(r.id)} objects</div>
             </div>

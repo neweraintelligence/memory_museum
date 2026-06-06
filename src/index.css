@@ -52,7 +52,16 @@ button {
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+/* Keep react-icon SVGs crisply aligned with adjacent text everywhere. */
+svg {
+  flex: none;
 }
 
 button:hover {
@@ -138,6 +147,8 @@ a {
 
 .brand .logo {
   font-size: 20px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .spacer {
@@ -265,6 +276,11 @@ a {
 .card-emoji {
   font-size: 30px;
   margin-bottom: 8px;
+  line-height: 0;
+}
+
+.card-emoji svg {
+  display: block;
 }
 
 .row {
@@ -372,6 +388,13 @@ a {
 
 .palette-item .emoji {
   font-size: 22px;
+}
+
+.palette-item .glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
 }
 
 .palette-item .name {

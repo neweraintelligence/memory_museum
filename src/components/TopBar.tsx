@@ -1,12 +1,15 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import type { IconType } from 'react-icons';
 import { useUI } from '../state/useUI';
 import { useStore } from '../state/useStore';
+import { Icon } from '../themes/Icon';
+import { UI_ICONS } from '../themes/icons';
 import type { AppMode } from '../types';
 
-const MODES: { id: AppMode; label: string; icon: string }[] = [
-  { id: 'build', label: 'Build', icon: '🛠️' },
-  { id: 'walk', label: 'Walk', icon: '🚶' },
-  { id: 'review', label: 'Review', icon: '🧠' },
+const MODES: { id: AppMode; label: string; icon: IconType }[] = [
+  { id: 'build', label: 'Build', icon: UI_ICONS.build },
+  { id: 'walk', label: 'Walk', icon: UI_ICONS.walk },
+  { id: 'review', label: 'Review', icon: UI_ICONS.review },
 ];
 
 const CLOUD_LABEL: Record<string, string> = {
@@ -28,7 +31,9 @@ export default function TopBar() {
   return (
     <div className="topbar">
       <div className="brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-        <span className="logo">🏛️</span>
+        <span className="logo">
+          <Icon icon={UI_ICONS.palace} size={22} color="var(--gold)" />
+        </span>
         <span>Memory Palace</span>
       </div>
 
@@ -40,7 +45,7 @@ export default function TopBar() {
               className={mode === m.id ? 'active' : ''}
               onClick={() => setMode(m.id)}
             >
-              {m.icon} {m.label}
+              <Icon icon={m.icon} size={15} /> {m.label}
             </button>
           ))}
         </div>
@@ -49,10 +54,11 @@ export default function TopBar() {
       <div className="spacer" />
 
       <button className="ghost" onClick={() => setSearchOpen(true)}>
-        🔍 Search <span className="kbd">/</span>
+        <Icon icon={UI_ICONS.search} size={15} /> Search <span className="kbd">/</span>
       </button>
 
       <div className="cloud-pill" title={CLOUD_LABEL[cloud]}>
+        <Icon icon={cloud === 'error' || cloud === 'off' ? UI_ICONS.cloudOff : UI_ICONS.cloudOn} size={14} />
         <span className={`dot ${cloud}`} />
         {CLOUD_LABEL[cloud]}
       </div>

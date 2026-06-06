@@ -56,7 +56,18 @@ export type Archetype =
   | 'plant'
   | 'panel'
   | 'figure'
-  | 'book';
+  | 'book'
+  | 'bed'
+  | 'desk'
+  | 'cabinet'
+  | 'chest'
+  | 'door'
+  | 'clock'
+  | 'key'
+  | 'weapon'
+  | 'hourglass'
+  | 'vessel'
+  | 'machine';
 
 // Route every object kind to a drawing archetype.
 const ARCHETYPE_BY_KIND: Record<string, Archetype> = {
@@ -89,6 +100,19 @@ const ARCHETYPE_BY_KIND: Record<string, Archetype> = {
   book: 'book',
   books: 'book',
   scroll: 'book',
+  // dedicated furniture / props
+  bed: 'bed',
+  desk: 'desk',
+  cabinet: 'cabinet',
+  chest: 'chest',
+  door: 'door',
+  clock: 'clock',
+  key: 'key',
+  weapon: 'weapon',
+  hourglass: 'hourglass',
+  flask: 'vessel',
+  jar: 'vessel',
+  machine: 'machine',
   // everything else falls back to a detailed crate
 };
 
