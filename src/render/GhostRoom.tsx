@@ -5,7 +5,7 @@ import FloorTileSurface from './FloorTileSurface';
 import WallSegmentFace, { WallSegmentTopEdge } from './WallSegmentFace';
 import IsoObject from './IsoObject';
 import { usePublicImage } from './usePublicImage';
-import { renderWallFeature } from './wallFeature';
+import { WallFeatureSprite } from './wallFeature';
 import { TILE_W, TILE_H, tileDiamond, gridToScreen } from '../lib/iso';
 import { getStyle } from '../themes/styles';
 import { getRoomTiles, parseTileKey } from '../lib/floor';
@@ -137,7 +137,6 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
         if (item.t === 'wall') {
           const seg = wallSegs[item.idx];
           const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
-          const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
           const useWallTexture = !!(
             style.wallTextures && (seg.side === 'left' ? wallTexLeft : wallTexRight)
           );
@@ -150,8 +149,6 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
                 texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
                 feature={!!feature}
               />
-              {feature &&
-                renderWallFeature(feature.kind, feature.color, seg.p0, seg.p1, WALL_H, fill)}
               <WallSegmentTopEdge
                 seg={seg}
                 style={style}
@@ -174,6 +171,24 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
             placingKind={null}
             blockViewportPan={noop}
             onTileClick={onPick}
+          />
+        );
+      })}
+
+      {wallSegs.map((seg, i) => {
+        const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
+        if (!feature) return null;
+        const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+        return (
+          <WallFeatureSprite
+            key={`wall-feature-${i}`}
+            kind={feature.kind}
+            color={feature.color}
+            p0={seg.p0}
+            p1={seg.p1}
+            wallH={WALL_H}
+            wallFill={fill}
+            side={seg.side}
           />
         );
       })}

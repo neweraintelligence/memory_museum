@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth:*)",
+      "Bash(git config --global --list)",
+      "Bash(git config --local --list)",
+      "Bash(cmdkey:*)",
+      "Bash(git config:*)",
+      "Bash(powershell.exe:*)"
+    ]
+  }
+}

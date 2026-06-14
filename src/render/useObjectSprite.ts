@@ -10,9 +10,17 @@ export interface SpriteMetrics {
   centerX: number;
   /** 0–1: distance from sprite top to first opaque content row. */
   topY: number;
+  bottomY: number;
+  bboxCenterX: number;
 }
 
-const DEFAULT_METRICS: SpriteMetrics = { groundY: 1, centerX: 0, topY: 0 };
+const DEFAULT_METRICS: SpriteMetrics = {
+  groundY: 1,
+  centerX: 0,
+  topY: 0,
+  bottomY: 1,
+  bboxCenterX: 0,
+};
 
 /**
  * Find floor contact + horizontal center from weighted mass in the lower band.
@@ -37,15 +45,33 @@ function detectSpriteMetrics(img: HTMLImageElement): SpriteMetrics {
   const { data } = ctx.getImageData(0, 0, w, h);
 
   let topRow = 0;
+  let bottomRow = h - 1;
+  let leftCol = w - 1;
+  let rightCol = 0;
+  let found = false;
   outer: for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       if (data[(y * w + x) * 4 + 3] > 48) {
         topRow = y;
+        found = true;
         break outer;
       }
     }
   }
+  if (!found) return DEFAULT_METRICS;
+
+  for (let y = topRow; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (data[(y * w + x) * 4 + 3] > 48) {
+        bottomRow = y;
+        leftCol = Math.min(leftCol, x);
+        rightCol = Math.max(rightCol, x);
+      }
+    }
+  }
   const topY = topRow / h;
+  const bottomY = (bottomRow + 1) / h;
+  const bboxCenterX = ((leftCol + rightCol + 1) / 2) / w - 0.5;
 
   const bandStart = Math.floor(h * 0.72);
   let sumY = 0;
@@ -68,12 +94,14 @@ function detectSpriteMetrics(img: HTMLImageElement): SpriteMetrics {
       groundY: (sumY / sumA + 1) / h,
       centerX: sumX / sumA / w - 0.5,
       topY,
+      bottomY,
+      bboxCenterX,
     };
     metricsCache.set(key, metrics);
     return metrics;
   }
 
-  const fallback: SpriteMetrics = { groundY: 1, centerX: 0, topY };
+  const fallback: SpriteMetrics = { groundY: bottomY, centerX: bboxCenterX, topY, bottomY, bboxCenterX };
   metricsCache.set(key, fallback);
   return fallback;
 }
@@ -96,9 +124,15 @@ export function useObjectSprite(url: string | undefined): ObjectSpriteLoad {
 
   useEffect(() => {
     if (!url) {
-      setImage(null);
-      setMetrics(DEFAULT_METRICS);
-      return;
+      let alive = true;
+      queueMicrotask(() => {
+        if (!alive) return;
+        setImage(null);
+        setMetrics(DEFAULT_METRICS);
+      });
+      return () => {
+        alive = false;
+      };
     }
 
     let img = imageCache.get(url);

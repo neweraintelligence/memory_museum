@@ -4,7 +4,10 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import { shade, withAlpha } from '../lib/color';
 import { palette } from './art';
 import { objectIcon, useIconImage } from '../themes/icons';
+import { objectSpriteFrame } from '../themes/objectSprites';
 import type { PObject } from '../types';
+import type { WallSide } from '../types';
+import { useObjectSprite } from './useObjectSprite';
 
 interface Pt {
   x: number;
@@ -29,7 +32,7 @@ export interface WallFeatureLayout {
 export function wallFeatureLayout(kind: string, wallH: number): WallFeatureLayout {
   switch (kind) {
     case 'door':
-      return { t0: 0.1, t1: 0.9, h0: 2, h1: wallH * 0.96 };
+      return { t0: 0.1, t1: 0.9, h0: -12, h1: wallH * 0.84 };
     case 'window':
       return { t0: 0.18, t1: 0.82, h0: wallH * 0.28, h1: wallH * 0.8 };
     case 'mirror':
@@ -104,17 +107,17 @@ export function renderWallFeature(
   const outer = wallFeaturePts(p0, p1, layout);
   const inner = insetQuad(p0, p1, layout, 0.04, 5);
   const p = palette(color);
-  const frame = palette(kind === 'window' ? '#7d8a96' : kind === 'door' ? shade(color, -0.2) : '#6b4a2c');
+  const frame = palette(kind === 'window' || kind === 'door' || kind === 'mirror' ? '#b8742f' : '#6b4a2c');
   const dark = shade(wallFill, -0.28);
 
   const midT = (layout.t0 + layout.t1) / 2;
   const midH = (layout.h0 + layout.h1) / 2;
 
   let innerFill: string;
-  let extras: React.ReactNode = null;
+  let extras: React.ReactNode;
 
   if (kind === 'window') {
-    innerFill = withAlpha('#bfe3f2', 0.92);
+    innerFill = withAlpha('#b8dce8', 0.92);
     extras = (
       <Fragment>
         {vSeg(p0, p1, midT, layout.h0 + 4, layout.h1 - 4, 'vm', frame.dark, 2)}
@@ -143,7 +146,7 @@ export function renderWallFeature(
       </Fragment>
     );
   } else if (kind === 'mirror') {
-    innerFill = p.light;
+    innerFill = withAlpha('#d7e5e2', 0.94);
     const shine0 = lift(interp(p0, p1, layout.t0 + 0.06), layout.h0 + 8);
     const shine1 = lift(interp(p0, p1, layout.t1 - 0.12), layout.h1 - 14);
     extras = (
@@ -156,7 +159,8 @@ export function renderWallFeature(
       />
     );
   } else if (kind === 'door') {
-    innerFill = p.base;
+    innerFill = '#c98738';
+    const panelFill = shade(innerFill, -0.16);
     const knob = lift(interp(p0, p1, layout.t1 - 0.1), midH);
     const panelTop = lift(interp(p0, p1, layout.t0 + 0.06), layout.h0 + 8);
     const panelBot = lift(interp(p0, p1, layout.t1 - 0.06), midH - 4);
@@ -172,8 +176,8 @@ export function renderWallFeature(
             panelTop.x, panelBot.y,
           ]}
           closed
-          fill={p.dark}
-          opacity={0.45}
+          fill={panelFill}
+          opacity={0.5}
           listening={false}
         />
         <Line
@@ -184,11 +188,11 @@ export function renderWallFeature(
             panelTop2.x, panelBot2.y,
           ]}
           closed
-          fill={p.dark}
-          opacity={0.45}
+          fill={panelFill}
+          opacity={0.5}
           listening={false}
         />
-        <Circle x={knob.x} y={knob.y} radius={2.2} fill={p.lighter} stroke={p.outline} strokeWidth={0.6} listening={false} />
+        <Circle x={knob.x} y={knob.y} radius={2.2} fill="#f3c55e" stroke={frame.outline} strokeWidth={0.6} listening={false} />
       </Fragment>
     );
   } else {
@@ -214,6 +218,52 @@ export function renderWallFeature(
       <Line points={inner} closed fill={innerFill} stroke={frame.dark} strokeWidth={1} listening={false} />
       {extras}
     </Fragment>
+  );
+}
+
+interface WallFeatureSpriteProps {
+  kind: string;
+  color: string;
+  p0: Pt;
+  p1: Pt;
+  wallH: number;
+  wallFill: string;
+  side: WallSide;
+}
+
+/** Draw generated wall-object sprites on the wall face, with procedural art as fallback. */
+export function WallFeatureSprite({
+  kind,
+  color,
+  p0,
+  p1,
+  wallH,
+  wallFill,
+  side,
+}: WallFeatureSpriteProps) {
+  const frame = objectSpriteFrame(kind, side === 'left' ? 0 : 1);
+  const { image, topY, bottomY, bboxCenterX } = useObjectSprite(frame?.url);
+
+  if (!frame || !image) {
+    return <Fragment>{renderWallFeature(kind, color, p0, p1, wallH, wallFill)}</Fragment>;
+  }
+
+  const layout = wallFeatureLayout(kind, wallH);
+  const midT = (layout.t0 + layout.t1) / 2;
+  const bottom = lift(interp(p0, p1, midT), layout.h0);
+  const targetContentHeight = layout.h1 - layout.h0;
+  const contentRatio = Math.max(0.2, bottomY - topY);
+  const imageSize = targetContentHeight / contentRatio;
+
+  return (
+    <KonvaImage
+      image={image}
+      x={bottom.x - imageSize * (0.5 + bboxCenterX)}
+      y={bottom.y - imageSize * bottomY}
+      width={imageSize}
+      height={imageSize}
+      listening={false}
+    />
   );
 }
 

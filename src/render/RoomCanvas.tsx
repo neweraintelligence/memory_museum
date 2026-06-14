@@ -7,7 +7,7 @@ import GhostRoom from './GhostRoom';
 import FloorTileSurface from './FloorTileSurface';
 import WallSegmentFace, { WallSegmentTopEdge, RoomCornerSeam } from './WallSegmentFace';
 import { usePublicImage } from './usePublicImage';
-import { renderWallFeature, WallFeatureInteract } from './wallFeature';
+import { WallFeatureSprite, WallFeatureInteract } from './wallFeature';
 import {
   TILE_W,
   TILE_H,
@@ -279,7 +279,6 @@ function WallSegment({
   feature,
   wallTexLeft,
   wallTexRight,
-  interact,
 }: {
   seg: WallSeg;
   style: ReturnType<typeof getStyle>;
@@ -287,18 +286,7 @@ function WallSegment({
   feature?: PObject | null;
   wallTexLeft: HTMLImageElement | null;
   wallTexRight: HTMLImageElement | null;
-  interact?: {
-    draggable: boolean;
-    selected: boolean;
-    highlighted: boolean;
-    isAnchor: boolean;
-    pulse: number;
-    dim: boolean;
-    onSelect: (id: string) => void;
-    onDragEnd: (id: string, e: KonvaEventObject<DragEvent>) => void;
-  };
 }) {
-  const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
   const texture = seg.side === 'left' ? wallTexLeft : wallTexRight;
   const useWallTexture = !!(style.wallTextures && texture);
   return (
@@ -310,28 +298,7 @@ function WallSegment({
         texture={texture}
         feature={!!feature}
       />
-      {feature && (
-        <Group listening={false}>
-          {renderWallFeature(feature.kind, feature.color, seg.p0, seg.p1, WALL_H, fill)}
-        </Group>
-      )}
       <WallSegmentTopEdge seg={seg} style={style} wallH={WALL_H} useTexture={useWallTexture} />
-      {feature && interact && (
-        <WallFeatureInteract
-          obj={feature}
-          p0={seg.p0}
-          p1={seg.p1}
-          wallH={WALL_H}
-          draggable={interact.draggable}
-          selected={interact.selected}
-          highlighted={interact.highlighted}
-          isAnchor={interact.isAnchor}
-          pulse={interact.pulse}
-          dim={interact.dim}
-          onSelect={interact.onSelect}
-          onDragEnd={interact.onDragEnd}
-        />
-      )}
     </Group>
   );
 }
@@ -678,7 +645,7 @@ export default function RoomCanvas({
     onMove(id, t.gx, t.gy, null);
   };
 
-  const handleWallDragEnd = (id: string, _e: KonvaEventObject<DragEvent>) => {
+  const handleWallDragEnd = (id: string) => {
     const pos = viewportRef.current?.getRelativePointerPosition();
     if (!pos) return;
     const seg = nearestWallSeg(wallSegs, pos.x, pos.y, WALL_H);
@@ -785,7 +752,6 @@ export default function RoomCanvas({
                   feature={feature}
                   wallTexLeft={wallTexLeft}
                   wallTexRight={wallTexRight}
-                  interact={feature ? wallInteract(feature) : undefined}
                 />
               );
             }
@@ -817,7 +783,45 @@ export default function RoomCanvas({
             />
           ))}
 
-          {/* Floor objects above tiles; wall-mounted objects render with their wall. */}
+          {/* Wall objects sit proud of the wall/floor join, so their bases overlap
+              the floor tiles instead of being tucked behind the tile pass. */}
+          {wallSegs.map((seg, i) => {
+            const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
+            if (!feature) return null;
+            const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+            const interact = wallInteract(feature);
+            return (
+              <Group key={`wall-feature-${i}`}>
+                <Group listening={false}>
+                  <WallFeatureSprite
+                    kind={feature.kind}
+                    color={feature.color}
+                    p0={seg.p0}
+                    p1={seg.p1}
+                    wallH={WALL_H}
+                    wallFill={fill}
+                    side={seg.side}
+                  />
+                </Group>
+                <WallFeatureInteract
+                  obj={feature}
+                  p0={seg.p0}
+                  p1={seg.p1}
+                  wallH={WALL_H}
+                  draggable={interact.draggable}
+                  selected={interact.selected}
+                  highlighted={interact.highlighted}
+                  isAnchor={interact.isAnchor}
+                  pulse={interact.pulse}
+                  dim={interact.dim}
+                  onSelect={interact.onSelect}
+                  onDragEnd={interact.onDragEnd}
+                />
+              </Group>
+            );
+          })}
+
+          {/* Floor objects above tiles; wall-mounted sprites already overlap the floor edge. */}
           {sortedFloorObjects.map((o) => {
             const s = objectScreenPos(o, origin.x, origin.y);
             const isHi = highlightId === o.id;
