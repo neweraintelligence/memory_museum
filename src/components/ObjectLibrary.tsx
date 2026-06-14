@@ -1,8 +1,13 @@
 import { useMemo, useState } from 'react';
-import { OBJECT_LIBRARY, OBJECT_CATEGORIES } from '../themes/objects';
-import { Icon } from '../themes/Icon';
-import { objectIcon, iconTint } from '../themes/icons';
+import { OBJECT_LIBRARY, OBJECT_CATEGORIES, isWallAttachable, mustStack } from '../themes/objects';
+import { ObjectMenuIcon } from '../themes/ObjectMenuIcon';
 import { useUI } from '../state/useUI';
+
+function placementTarget(kind: string): string {
+  if (isWallAttachable(kind)) return 'a wall';
+  if (mustStack(kind)) return 'a dining table or bed';
+  return 'a floor tile';
+}
 
 export default function ObjectLibrary() {
   const placingKind = useUI((s) => s.placingKind);
@@ -30,7 +35,7 @@ export default function ObjectLibrary() {
 
       {placingKind && (
         <div className="tag" style={{ marginBottom: 10, display: 'inline-block' }}>
-          Placing — click a floor tile · Esc to cancel
+          Placing — click {placementTarget(placingKind)} · Esc to cancel
         </div>
       )}
 
@@ -39,11 +44,11 @@ export default function ObjectLibrary() {
           <div
             key={o.kind}
             className={`palette-item ${placingKind === o.kind ? 'active' : ''}`}
-            title={`${o.label} — click then tap a tile`}
+            title={`${o.label} — click then place on ${placementTarget(o.kind)}`}
             onClick={() => setPlacingKind(placingKind === o.kind ? null : o.kind)}
           >
             <span className="glyph">
-              <Icon icon={objectIcon(o.kind)} size={26} color={iconTint(o.color)} />
+              <ObjectMenuIcon kind={o.kind} size={26} />
             </span>
             <span className="name">{o.label}</span>
           </div>

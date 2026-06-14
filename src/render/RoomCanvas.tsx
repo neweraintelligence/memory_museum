@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Stage, Layer, Line, Group, Text } from 'react-konva';
+import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import IsoObject from './IsoObject';
+import GhostRoom from './GhostRoom';
+import FloorTileSurface from './FloorTileSurface';
+import WallSegmentFace, { WallSegmentTopEdge, RoomCornerSeam } from './WallSegmentFace';
+import { usePublicImage } from './usePublicImage';
+import { renderWallFeature, WallFeatureInteract } from './wallFeature';
 import {
   TILE_W,
   TILE_H,
@@ -9,39 +15,43 @@ import {
   gridToScreen,
   screenToGrid,
   clamp,
-  depthKey,
 } from '../lib/iso';
 import { shade, withAlpha } from '../lib/color';
 import { getStyle } from '../themes/styles';
-import { floorTileDecor, wallDecor } from './roomArt';
 import { objectArtHeight } from './objectArt';
 import {
   getRoomTiles,
   parseTileKey,
-  tileKey,
   ghostTiles,
   nearestTile,
 } from '../lib/floor';
-import type { Room, PObject, Memory, AppMode } from '../types';
+import {
+  canPlaceObject,
+  findSurfaceUnder,
+  footprintDepthKey,
+  footprintTileKeys,
+  footprintTiles,
+  objectScreenPos,
+} from '../lib/objectPlacement';
+import { defaultObjectRotation, isWallAttachable, mustStack, surfaceStackLift } from '../themes/objects';
+import { buildWallSegs, nearestWallSeg, type WallSeg } from '../lib/wallAttach';
+import type { Room, PObject, Memory, AppMode, WallSide } from '../types';
 
 const WALL_H = 110;
+/** Vertical nudge for locked room view (− = lower on screen), as a fraction of wall height. */
+const ROOM_VIEW_Y_BIAS = WALL_H * -0.50 + 20;
 const HALF_W = TILE_W / 2;
 const HALF_H = TILE_H / 2;
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
 
-type WallSeg = {
-  side: 'left' | 'right';
-  gx: number;
-  gy: number;
-  pts: number[];
-  p0: { x: number; y: number };
-  p1: { x: number; y: number };
-  depth: number;
-};
-
 const WALL_HIT_PAD_X = TILE_W * 0.36;
 const WALL_HIT_PAD_Y = TILE_H * 0.5;
+
+/** Keep viewport pan from stealing clicks meant for room objects / tiles. */
+function blockViewportPan(e: KonvaEventObject<MouseEvent>) {
+  e.cancelBubble = true;
+}
 
 function aabbOverlap(
   aMinX: number,
@@ -56,9 +66,11 @@ function aabbOverlap(
   return aMinX <= bMaxX && aMaxX >= bMinX && aMinY <= bMaxY && aMaxY >= bMinY;
 }
 
-/** Northwest of the wall tile in grid space (behind the camera-facing face). */
-function objectBehindWall(seg: WallSeg, ox: number, oy: number): boolean {
-  const { gx: wx, gy: wy } = seg;
+/**
+ * Left-wall (NW face) version of the "behind" test. The right wall (NE face) is
+ * the exact mirror of this under a gx<->gy swap, so `objectBehindWall` reuses it.
+ */
+function behindLeftWall(wx: number, wy: number, ox: number, oy: number): boolean {
   if (ox === wx && oy === wy) return false;
   const wSum = wx + wy;
   const oSum = ox + oy;
@@ -67,6 +79,58 @@ function objectBehindWall(seg: WallSeg, ox: number, oy: number): boolean {
   if (oy < wy && ox >= wx) return false;
   if (oSum === wSum) return ox < wx || oy > wy;
   return wSum - oSum <= 2;
+}
+
+/** Left-wall version of the "in front" test (see `behindLeftWall`). */
+function inFrontOfLeftWall(wx: number, wy: number, ox: number, oy: number): boolean {
+  if (ox === wx && oy === wy) return false;
+  const wSum = wx + wy;
+  const oSum = ox + oy;
+  if (oSum > wSum) return true;
+  if (oy < wy && ox >= wx) return true;
+  if (oSum === wSum) return ox > wx && oy < wy;
+  return ox > wx && oy <= wy;
+}
+
+/** Northwest of the wall tile in grid space (behind the camera-facing face). */
+function objectBehindWall(seg: WallSeg, ox: number, oy: number): boolean {
+  // Right walls are the gx<->gy mirror of left walls.
+  if (seg.side === 'right') return behindLeftWall(seg.gy, seg.gx, oy, ox);
+  return behindLeftWall(seg.gx, seg.gy, ox, oy);
+}
+
+/** Southeast of the wall tile — closer to camera; must not trigger see-through alone. */
+function objectInFrontOfWall(seg: WallSeg, ox: number, oy: number): boolean {
+  if (seg.side === 'right') return inFrontOfLeftWall(seg.gy, seg.gx, oy, ox);
+  return inFrontOfLeftWall(seg.gx, seg.gy, ox, oy);
+}
+
+/** Along the wall face laterally (east of left wall / south of right wall), not behind. */
+function objectBesideWall(seg: WallSeg, ox: number, oy: number): boolean {
+  const { gx: wx, gy: wy, side } = seg;
+  const dx = ox - wx;
+  const dy = oy - wy;
+  if (side === 'left') return dy === 0 && dx > 0;
+  return dx === 0 && dy > 0;
+}
+
+/**
+ * Object sits on the tile directly west of a left-wall tile (corner / beside the
+ * arm). Not behind the face — the wall stays solid.
+ */
+function objectBesideLeftWallFace(seg: WallSeg, ox: number, oy: number): boolean {
+  if (seg.side !== 'left') return false;
+  const { gx: wx, gy: wy } = seg;
+  return ox === wx - 1 && oy <= wy;
+}
+
+/**
+ * Object sits on the tile directly north of a right-wall tile (corner / beside).
+ */
+function objectBesideRightWallFace(seg: WallSeg, ox: number, oy: number): boolean {
+  if (seg.side !== 'right') return false;
+  const { gx: wx, gy: wy } = seg;
+  return oy === wy - 1 && ox <= wx;
 }
 
 /**
@@ -160,6 +224,15 @@ function wallOccludesObject(
   originX: number,
   originY: number,
 ): boolean {
+  if (
+    objectInFrontOfWall(seg, ox, oy) ||
+    objectBesideWall(seg, ox, oy) ||
+    objectBesideLeftWallFace(seg, ox, oy) ||
+    objectBesideRightWallFace(seg, ox, oy)
+  ) {
+    return false;
+  }
+
   const wSum = seg.gx + seg.gy;
   const oSum = ox + oy;
   const depthGap = wSum - oSum;
@@ -191,47 +264,81 @@ function wallOccludesAny(
   originX: number,
   originY: number,
 ): boolean {
-  return objects.some((o) =>
-    wallOccludesObject(seg, o.gridX, o.gridY, o.kind, originX, originY),
-  );
+  return objects.some((o) => {
+    if (o.wallSide) return false;
+    return footprintTiles(o).some((t) =>
+      wallOccludesObject(seg, t.gx, t.gy, o.kind, originX, originY),
+    );
+  });
 }
 
 function WallSegment({
   seg,
   style,
   opacity,
+  feature,
+  wallTexLeft,
+  wallTexRight,
+  interact,
 }: {
   seg: WallSeg;
   style: ReturnType<typeof getStyle>;
   opacity: number;
+  feature?: PObject | null;
+  wallTexLeft: HTMLImageElement | null;
+  wallTexRight: HTMLImageElement | null;
+  interact?: {
+    draggable: boolean;
+    selected: boolean;
+    highlighted: boolean;
+    isAnchor: boolean;
+    pulse: number;
+    dim: boolean;
+    onSelect: (id: string) => void;
+    onDragEnd: (id: string, e: KonvaEventObject<DragEvent>) => void;
+  };
 }) {
   const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
-  const lightEdge = shade(fill, 0.2);
+  const texture = seg.side === 'left' ? wallTexLeft : wallTexRight;
+  const useWallTexture = !!(style.wallTextures && texture);
   return (
-    <Group listening={false} opacity={opacity}>
-      <Line
-        points={seg.pts}
-        closed
-        fillPriority="linear-gradient"
-        fillLinearGradientStartPoint={{ x: seg.p0.x, y: seg.p0.y - WALL_H }}
-        fillLinearGradientEndPoint={{ x: seg.p0.x, y: seg.p0.y }}
-        fillLinearGradientColorStops={[0, shade(fill, 0.16), 0.5, fill, 1, shade(fill, -0.18)]}
-        stroke={shade(fill, -0.18)}
-        strokeWidth={1}
-        listening={false}
+    <Group opacity={opacity}>
+      <WallSegmentFace
+        seg={seg}
+        style={style}
+        wallH={WALL_H}
+        texture={texture}
+        feature={!!feature}
       />
-      <Group listening={false}>
-        {wallDecor(style.wallPattern, seg.p0, seg.p1, WALL_H, fill, style.accent)}
-      </Group>
-      <Line
-        points={[seg.p0.x, seg.p0.y - WALL_H, seg.p1.x, seg.p1.y - WALL_H]}
-        stroke={lightEdge}
-        strokeWidth={1.5}
-        opacity={0.6}
-        listening={false}
-      />
+      {feature && (
+        <Group listening={false}>
+          {renderWallFeature(feature.kind, feature.color, seg.p0, seg.p1, WALL_H, fill)}
+        </Group>
+      )}
+      <WallSegmentTopEdge seg={seg} style={style} wallH={WALL_H} useTexture={useWallTexture} />
+      {feature && interact && (
+        <WallFeatureInteract
+          obj={feature}
+          p0={seg.p0}
+          p1={seg.p1}
+          wallH={WALL_H}
+          draggable={interact.draggable}
+          selected={interact.selected}
+          highlighted={interact.highlighted}
+          isAnchor={interact.isAnchor}
+          pulse={interact.pulse}
+          dim={interact.dim}
+          onSelect={interact.onSelect}
+          onDragEnd={interact.onDragEnd}
+        />
+      )}
     </Group>
   );
+}
+
+interface NeighborRoom {
+  room: Room;
+  objects: PObject[];
 }
 
 interface Props {
@@ -240,15 +347,39 @@ interface Props {
   memories: Memory[];
   mode: AppMode;
   placingKind: string | null;
+  placingRotation: number;
   floorEditing: boolean;
   selectedId: string | null;
   highlightId: string | null;
   focusHighlight: boolean;
+  /** Faded neighbour rooms shown in the same canvas, to the SW / SE. */
+  swNeighbor?: NeighborRoom | null;
+  seNeighbor?: NeighborRoom | null;
+  onPickRoom?: (id: string) => void;
   onSelect: (id: string | null) => void;
-  onPlace: (gx: number, gy: number) => void;
-  onMove: (id: string, gx: number, gy: number) => void;
+  onPlace: (gx: number, gy: number, wallSide?: WallSide | null, rotation?: number) => void;
+  onMove: (id: string, gx: number, gy: number, wallSide?: WallSide | null) => void;
   onAddTile: (gx: number, gy: number) => void;
   onRemoveTile: (gx: number, gy: number) => void;
+}
+
+const NEIGHBOR_GAP = 6;
+const NEIGHBOR_OPACITY = 0.3;
+
+function gridBounds(keys: string[]) {
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const k of keys) {
+    const { gx, gy } = parseTileKey(k);
+    if (gx < minX) minX = gx;
+    if (gx > maxX) maxX = gx;
+    if (gy < minY) minY = gy;
+    if (gy > maxY) maxY = gy;
+  }
+  if (!isFinite(minX)) return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+  return { minX, maxX, minY, maxY };
 }
 
 export default function RoomCanvas({
@@ -257,10 +388,14 @@ export default function RoomCanvas({
   memories,
   mode,
   placingKind,
+  placingRotation,
   floorEditing,
   selectedId,
   highlightId,
   focusHighlight,
+  swNeighbor,
+  seNeighbor,
+  onPickRoom,
   onSelect,
   onPlace,
   onMove,
@@ -268,18 +403,34 @@ export default function RoomCanvas({
   onRemoveTile,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<Konva.Group>(null);
   const [size, setSize] = useState({ w: 800, h: 600 });
   const [pulse, setPulse] = useState(0);
   const [zoom, setZoom] = useState(1);
-  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
 
+  // Track container size. Ignore transient 0×0 layout frames during flex reflow.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setSize({ w: el.clientWidth, h: el.clientHeight }));
+
+    let raf = 0;
+    const apply = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      if (w < 2 || h < 2) return;
+      setSize({ w, h });
+    };
+
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(apply);
+    });
     ro.observe(el);
-    setSize({ w: el.clientWidth, h: el.clientHeight });
-    return () => ro.disconnect();
+    apply();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -297,6 +448,10 @@ export default function RoomCanvas({
   }, []);
 
   const style = getStyle(room.style);
+  const floorTexA = usePublicImage(style.floorTextures?.[0]);
+  const floorTexB = usePublicImage(style.floorTextures?.[1]);
+  const wallTexLeft = usePublicImage(style.wallTextures?.left);
+  const wallTexRight = usePublicImage(style.wallTextures?.right);
 
   const presentKeys = useMemo(() => getRoomTiles(room), [room]);
   const present = useMemo(() => new Set(presentKeys), [presentKeys]);
@@ -318,9 +473,54 @@ export default function RoomCanvas({
     if (!isFinite(minSx)) return { x: size.w / 2, y: size.h / 2 };
     return {
       x: size.w / 2 - (minSx + maxSx) / 2,
-      y: size.h / 2 - (minSy + maxSy) / 2 - WALL_H * 0.45,
+      y: size.h / 2 - (minSy + maxSy) / 2 - ROOM_VIEW_Y_BIAS,
     };
   }, [presentKeys, size.w, size.h]);
+
+  // Fixed anchor for zoom — matches the room center computed by `origin`.
+  const viewCx = size.w / 2;
+  const viewCy = size.h / 2 - ROOM_VIEW_Y_BIAS;
+
+  // Offset origins so neighbour rooms sit diagonally adjacent (same scale) —
+  // SE along the +gx axis (bottom-right), SW along the +gy axis (bottom-left).
+  const neighborOrigin = (neighborRoom: Room, dir: 'sw' | 'se') => {
+    const mb = gridBounds(presentKeys);
+    const nb = gridBounds(getRoomTiles(neighborRoom));
+    const mainCenter = gridToScreen(
+      (mb.minX + mb.maxX) / 2,
+      (mb.minY + mb.maxY) / 2,
+      origin.x,
+      origin.y,
+    );
+    const nbCx = (nb.minX + nb.maxX) / 2;
+    const nbCy = (nb.minY + nb.maxY) / 2;
+    let centerX: number;
+    let centerY: number;
+    if (dir === 'se') {
+      const k = (mb.maxX - mb.minX + 1) / 2 + (nb.maxX - nb.minX + 1) / 2 + NEIGHBOR_GAP;
+      centerX = mainCenter.x + k * HALF_W;
+      centerY = mainCenter.y + k * HALF_H;
+    } else {
+      const k = (mb.maxY - mb.minY + 1) / 2 + (nb.maxY - nb.minY + 1) / 2 + NEIGHBOR_GAP;
+      centerX = mainCenter.x - k * HALF_W;
+      centerY = mainCenter.y + k * HALF_H;
+    }
+    return {
+      x: centerX - (nbCx - nbCy) * HALF_W,
+      y: centerY - (nbCx + nbCy) * HALF_H,
+    };
+  };
+
+  const swOrigin = useMemo(
+    () => (swNeighbor ? neighborOrigin(swNeighbor.room, 'sw') : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [swNeighbor, presentKeys, origin.x, origin.y],
+  );
+  const seOrigin = useMemo(
+    () => (seNeighbor ? neighborOrigin(seNeighbor.room, 'se') : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [seNeighbor, presentKeys, origin.x, origin.y],
+  );
 
   const anchorIds = useMemo(() => {
     const set = new Set<string>();
@@ -358,63 +558,61 @@ export default function RoomCanvas({
 
   const roomObjects = useMemo(() => objects.filter((o) => !o.deleted), [objects]);
 
-  const sortedObjects = useMemo(
-    () => [...roomObjects].sort((a, b) => depthKey(a.gridX, a.gridY) - depthKey(b.gridX, b.gridY)),
+  const floorObjects = useMemo(
+    () => roomObjects.filter((o) => !o.wallSide && !isWallAttachable(o.kind)),
     [roomObjects],
   );
 
-  // Per-tile wall segments: for each floor tile, draw an exposed face wherever
-  // the adjacent back-left (gx-1) or back-right (gy-1) neighbour is absent.
-  // This makes walls hug any custom floor shape with no gaps.
-  const wallSegs = useMemo(() => {
-    const segs: Array<{
-      side: 'left' | 'right';
-      pts: number[];
-      p0: { x: number; y: number };
-      p1: { x: number; y: number };
-      depth: number;
-      gx: number;
-      gy: number;
-    }> = [];
+  const wallObjects = useMemo(
+    () => roomObjects.filter((o) => !!o.wallSide),
+    [roomObjects],
+  );
 
-    for (const k of presentKeys) {
-      const { gx, gy } = parseTileKey(k);
-      const { x: cx, y: cy } = gridToScreen(gx, gy, origin.x, origin.y);
+  const sortedFloorObjects = useMemo(
+    () =>
+      [...floorObjects].sort((a, b) => {
+        const d = footprintDepthKey(a) - footprintDepthKey(b);
+        if (d !== 0) return d;
+        // At equal depth, stacked props paint above their surface.
+        return (mustStack(a.kind) ? 1 : 0) - (mustStack(b.kind) ? 1 : 0);
+      }),
+    [floorObjects],
+  );
 
-      // Left face (upper-left diamond edge) → exposed when no tile at (gx-1, gy)
-      if (!present.has(tileKey(gx - 1, gy))) {
-        const p0 = { x: cx - HALF_W, y: cy };
-        const p1 = { x: cx, y: cy - HALF_H };
-        segs.push({
-          side: 'left',
-          pts: [p0.x, p0.y, p1.x, p1.y, p1.x, p1.y - WALL_H, p0.x, p0.y - WALL_H],
-          p0,
-          p1,
-          depth: gx + gy,
-          gx,
-          gy,
-        });
-      }
-
-      // Right face (upper-right diamond edge) → exposed when no tile at (gx, gy-1)
-      if (!present.has(tileKey(gx, gy - 1))) {
-        const p0 = { x: cx, y: cy - HALF_H };
-        const p1 = { x: cx + HALF_W, y: cy };
-        segs.push({
-          side: 'right',
-          pts: [p0.x, p0.y, p1.x, p1.y, p1.x, p1.y - WALL_H, p0.x, p0.y - WALL_H],
-          p0,
-          p1,
-          depth: gx + gy,
-          gx,
-          gy,
-        });
-      }
+  // Lift amount for each must-stack prop resting on a surface (table / bed).
+  const stackLiftById = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const o of floorObjects) {
+      if (!mustStack(o.kind)) continue;
+      const surface = findSurfaceUnder(floorObjects, room.id, footprintTiles(o), o.id);
+      if (surface) map.set(o.id, surfaceStackLift(surface.kind));
     }
+    return map;
+  }, [floorObjects, room.id]);
 
-    // Painter's algorithm: render back (low gx+gy) to front
-    return segs.sort((a, b) => a.depth - b.depth);
-  }, [presentKeys, present, origin.x, origin.y]);
+  const wallSegs = useMemo(
+    () => buildWallSegs(presentKeys, present, origin.x, origin.y, HALF_W, HALF_H, WALL_H),
+    [presentKeys, present, origin.x, origin.y],
+  );
+
+  // Inner corners: a tile exposing both a left (NW) and right (NE) wall folds
+  // into a vertical crease at its shared top vertex. One subtle seam per corner.
+  const cornerSeams = useMemo(() => {
+    const sides = new Map<string, { left?: WallSeg; right?: WallSeg }>();
+    for (const seg of wallSegs) {
+      const key = `${seg.gx},${seg.gy}`;
+      const entry = sides.get(key) ?? {};
+      entry[seg.side] = seg;
+      sides.set(key, entry);
+    }
+    const seams: { x: number; baseY: number; key: string }[] = [];
+    for (const [key, { left, right }] of sides) {
+      if (left && right) seams.push({ x: left.p1.x, baseY: left.p1.y, key });
+    }
+    return seams;
+  }, [wallSegs]);
+
+  const placingOnWall = !!(placingKind && isWallAttachable(placingKind));
 
   // Walls that cover an object behind them render in a third pass (on top of
   // objects, semi-transparent). All other walls stay in the depth-sorted pass.
@@ -445,120 +643,183 @@ export default function RoomCanvas({
   const handleTileClick = (gx: number, gy: number) => {
     if (floorEditing) {
       onRemoveTile(gx, gy);
-    } else if (placingKind) {
-      onPlace(gx, gy);
-    } else {
+    } else if (placingKind && !placingOnWall) {
+      onPlace(gx, gy, null, placingRotation);
+    } else if (!placingKind) {
       onSelect(null);
     }
   };
 
-  const handleDragEnd = (id: string, e: KonvaEventObject<DragEvent>) => {
+  const handleWallPlace = (seg: WallSeg) => {
+    if (!placingOnWall) return;
+    onPlace(seg.gx, seg.gy, seg.side);
+  };
+
+  const handleFloorDragEnd = (id: string, e: KonvaEventObject<DragEvent>) => {
     const node = e.target;
+    const obj = roomObjects.find((o) => o.id === id);
+    if (!obj) return;
     const { gx, gy } = screenToGrid(node.x(), node.y(), origin.x, origin.y);
     const t = nearestTile(present, gx, gy);
     if (!t) return;
-    const snapped = gridToScreen(t.gx, t.gy, origin.x, origin.y);
+    if (
+      !canPlaceObject(room, roomObjects, obj.kind, t.gx, t.gy, obj.rotation, null, id)
+    ) {
+      const snapped = objectScreenPos(obj, origin.x, origin.y);
+      node.position({ x: snapped.x, y: snapped.y });
+      return;
+    }
+    const snapped = objectScreenPos(
+      { ...obj, gridX: t.gx, gridY: t.gy },
+      origin.x,
+      origin.y,
+    );
     node.position({ x: snapped.x, y: snapped.y });
-    onMove(id, t.gx, t.gy);
+    onMove(id, t.gx, t.gy, null);
   };
 
-  // ---- zoom + pan ----
-  const applyZoom = (newScaleRaw: number, center: { x: number; y: number }) => {
-    const oldScale = zoom;
-    const newScale = clamp(newScaleRaw, MIN_ZOOM, MAX_ZOOM);
-    const mp = { x: (center.x - stagePos.x) / oldScale, y: (center.y - stagePos.y) / oldScale };
-    setZoom(newScale);
-    setStagePos({ x: center.x - mp.x * newScale, y: center.y - mp.y * newScale });
+  const handleWallDragEnd = (id: string, _e: KonvaEventObject<DragEvent>) => {
+    const pos = viewportRef.current?.getRelativePointerPosition();
+    if (!pos) return;
+    const seg = nearestWallSeg(wallSegs, pos.x, pos.y, WALL_H);
+    if (!seg) return;
+    onMove(id, seg.gx, seg.gy, seg.side);
+  };
+
+  // ---- zoom (room stays centered; panning disabled) ----
+  const applyZoom = (newScaleRaw: number) => {
+    setZoom(clamp(newScaleRaw, MIN_ZOOM, MAX_ZOOM));
   };
 
   const onWheel = (e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
-    const stage = e.target.getStage();
-    const pointer = stage?.getPointerPosition();
-    if (!pointer) return;
     const factor = e.evt.deltaY > 0 ? 1 / 1.12 : 1.12;
-    applyZoom(zoom * factor, pointer);
+    applyZoom(zoom * factor);
   };
 
-  const zoomButton = (factor: number) => applyZoom(zoom * factor, { x: size.w / 2, y: size.h / 2 });
-  const resetView = () => {
-    setZoom(1);
-    setStagePos({ x: 0, y: 0 });
-  };
+  const zoomButton = (factor: number) => applyZoom(zoom * factor);
+  const resetView = () => setZoom(1);
 
-  const cursor = placingKind ? 'copy' : floorEditing ? 'pointer' : 'grab';
+  const cursor = placingKind ? 'copy' : floorEditing ? 'pointer' : 'default';
+
+  const wallMountsBySeg = useMemo(() => {
+    const map = new Map<string, PObject>();
+    for (const o of wallObjects) {
+      if (!o.wallSide) continue;
+      map.set(`${o.gridX},${o.gridY},${o.wallSide}`, o);
+    }
+    return map;
+  }, [wallObjects]);
+
+  const wallInteract = (o: PObject) => ({
+    draggable: mode === 'build' && !floorEditing,
+    selected: selectedId === o.id,
+    highlighted: highlightId === o.id,
+    isAnchor: anchorIds.has(o.id),
+    pulse,
+    dim: (focusHighlight && !!highlightId && highlightId !== o.id) || floorEditing,
+    onSelect,
+    onDragEnd: handleWallDragEnd,
+  });
 
   return (
     <div
       ref={containerRef}
       style={{
+        flex: 1,
         width: '100%',
-        height: '100%',
+        minHeight: 0,
         background: `radial-gradient(circle at 50% 38%, ${shade(style.bg, 0.12)} 0%, ${style.bg} 70%)`,
         cursor,
         position: 'relative',
       }}
     >
-      {/* Guard: don't let Konva try to paint on a 0×0 canvas */}
-      <Stage
-        width={size.w || 1}
-        height={size.h || 1}
-        scaleX={zoom}
-        scaleY={zoom}
-        x={stagePos.x}
-        y={stagePos.y}
-        draggable
-        onWheel={onWheel}
-        onDragEnd={(e) => {
-          // only the stage itself panning (not a child object) updates the view
-          if (e.target === e.target.getStage()) {
-            setStagePos({ x: e.target.x(), y: e.target.y() });
-          }
-        }}
-      >
+      <Stage width={size.w} height={size.h} onWheel={onWheel}>
         <Layer>
+          {/* Zoom around the room center; no pan so the view never drifts. */}
+          <Group
+            ref={viewportRef}
+            name="viewport"
+            x={viewCx}
+            y={viewCy}
+            offsetX={viewCx}
+            offsetY={viewCy}
+            scaleX={zoom}
+            scaleY={zoom}
+          >
+          {/* Faded neighbour rooms in the same canvas — drawn first so the
+              active room paints over any overlap. Click to switch rooms. */}
+          {swNeighbor && swOrigin && onPickRoom && (
+            <GhostRoom
+              room={swNeighbor.room}
+              objects={swNeighbor.objects}
+              originX={swOrigin.x}
+              originY={swOrigin.y}
+              opacity={NEIGHBOR_OPACITY}
+              onPick={() => onPickRoom(swNeighbor.room.id)}
+            />
+          )}
+          {seNeighbor && seOrigin && onPickRoom && (
+            <GhostRoom
+              room={seNeighbor.room}
+              objects={seNeighbor.objects}
+              originX={seOrigin.x}
+              originY={seOrigin.y}
+              opacity={NEIGHBOR_OPACITY}
+              onPick={() => onPickRoom(seNeighbor.room.id)}
+            />
+          )}
+
           {/* Walls + floor tiles, interleaved by depth so they never overlap.
               Walls are per-tile edge quads, so they wrap any floor shape. */}
           {drawOrder.map((item) => {
             if (item.t === 'wall') {
-              return <WallSegment key={item.key} seg={item.seg} style={style} opacity={1} />;
+              const seg = item.seg;
+              const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
+              return (
+                <WallSegment
+                  key={item.key}
+                  seg={seg}
+                  style={style}
+                  opacity={1}
+                  feature={feature}
+                  wallTexLeft={wallTexLeft}
+                  wallTexRight={wallTexRight}
+                  interact={feature ? wallInteract(feature) : undefined}
+                />
+              );
             }
             const t = item.tile;
-            const floorBase = t.alt ? style.floorA : style.floorB;
             return (
-              <Group key={item.key}>
-                <Line
-                  points={t.pts}
-                  closed
-                  fillPriority="linear-gradient"
-                  fillLinearGradientStartPoint={{ x: t.cx, y: t.cy - HALF_H }}
-                  fillLinearGradientEndPoint={{ x: t.cx, y: t.cy + HALF_H }}
-                  fillLinearGradientColorStops={[0, shade(floorBase, 0.12), 1, shade(floorBase, -0.08)]}
-                  stroke={floorEditing ? withAlpha('#ff8a8a', 0.5) : shade(style.floorA, -0.12)}
-                  strokeWidth={floorEditing ? 1.5 : 1}
-                  onClick={() => handleTileClick(t.gx, t.gy)}
-                  onTap={() => handleTileClick(t.gx, t.gy)}
-                  onMouseEnter={(e) => {
-                    const stage = e.target.getStage();
-                    if (!stage) return;
-                    if (placingKind) stage.container().style.cursor = 'copy';
-                    else if (floorEditing) stage.container().style.cursor = 'not-allowed';
-                  }}
-                  onMouseLeave={(e) => {
-                    const stage = e.target.getStage();
-                    if (stage) stage.container().style.cursor = cursor;
-                  }}
-                />
-                <Group listening={false}>
-                  {floorTileDecor(style.floorPattern, t.cx, t.cy, style, t.alt)}
-                </Group>
-              </Group>
+              <FloorTileSurface
+                key={item.key}
+                tile={t}
+                style={style}
+                floorEditing={floorEditing}
+                textureA={floorTexA}
+                textureB={floorTexB}
+                cursor={cursor}
+                placingKind={placingKind}
+                blockViewportPan={blockViewportPan}
+                onTileClick={handleTileClick}
+              />
             );
           })}
 
-          {/* Objects above floors; nearer floor tiles never paint over them. */}
-          {sortedObjects.map((o) => {
-            const s = gridToScreen(o.gridX, o.gridY, origin.x, origin.y);
+          {/* Subtle crease where the left and right walls meet at a top corner. */}
+          {cornerSeams.map((c) => (
+            <RoomCornerSeam
+              key={`corner-${c.key}`}
+              x={c.x}
+              baseY={c.baseY}
+              wallH={WALL_H}
+              style={style}
+            />
+          ))}
+
+          {/* Floor objects above tiles; wall-mounted objects render with their wall. */}
+          {sortedFloorObjects.map((o) => {
+            const s = objectScreenPos(o, origin.x, origin.y);
             const isHi = highlightId === o.id;
             return (
               <IsoObject
@@ -572,18 +833,93 @@ export default function RoomCanvas({
                 isAnchor={anchorIds.has(o.id)}
                 pulse={pulse}
                 dim={(focusHighlight && !!highlightId && !isHi) || floorEditing}
+                stackLift={stackLiftById.get(o.id) ?? 0}
                 onSelect={onSelect}
-                onDragEnd={handleDragEnd}
+                onDragEnd={handleFloorDragEnd}
               />
             );
           })}
 
+          {/* Valid placement footprint preview */}
+          {placingKind &&
+            !placingOnWall &&
+            !floorEditing &&
+            (() => {
+              const rot = placingRotation ?? defaultObjectRotation(placingKind);
+              const highlighted = new Set<string>();
+              for (const t of tiles) {
+                if (canPlaceObject(room, roomObjects, placingKind, t.gx, t.gy, rot)) {
+                  for (const k of footprintTileKeys({
+                    kind: placingKind,
+                    gridX: t.gx,
+                    gridY: t.gy,
+                    rotation: rot,
+                  })) {
+                    highlighted.add(k);
+                  }
+                }
+              }
+              return tiles
+                .filter((t) => highlighted.has(t.key))
+                .map((t) => (
+                  <Line
+                    key={`ph${t.key}`}
+                    points={t.pts}
+                    closed
+                    fill={withAlpha(style.accent, 0.14)}
+                    stroke={withAlpha(style.accent, 0.55)}
+                    strokeWidth={1.5}
+                    dash={[4, 3]}
+                    listening={false}
+                  />
+                ));
+            })()}
+
           {/* Front walls that occlude an object — drawn on top, see-through. */}
           {[...frontWallSegs]
             .sort((a, b) => a.depth - b.depth)
-            .map((seg, i) => (
-              <WallSegment key={`fw${i}`} seg={seg} style={style} opacity={0.28} />
-            ))}
+            .map((seg, i) => {
+              const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
+              return (
+                <WallSegment
+                  key={`fw${i}`}
+                  seg={seg}
+                  style={style}
+                  opacity={0.28}
+                  feature={feature}
+                  wallTexLeft={wallTexLeft}
+                  wallTexRight={wallTexRight}
+                />
+              );
+            })}
+
+          {/* Clickable wall targets while placing wall-mounted objects */}
+          {placingOnWall &&
+            wallSegs.map((seg, i) => {
+              const occupied = wallMountsBySeg.has(`${seg.gx},${seg.gy},${seg.side}`);
+              return (
+              <Line
+                key={`wp${i}`}
+                points={seg.pts}
+                closed
+                fill={withAlpha(style.accent, occupied ? 0.08 : 0.18)}
+                stroke={withAlpha(style.accent, occupied ? 0.35 : 0.75)}
+                strokeWidth={2}
+                dash={occupied ? [6, 4] : undefined}
+                onMouseDown={blockViewportPan}
+                onClick={() => handleWallPlace(seg)}
+                onTap={() => handleWallPlace(seg)}
+                onMouseEnter={(e) => {
+                  const stage = e.target.getStage();
+                  if (stage) stage.container().style.cursor = 'copy';
+                }}
+                onMouseLeave={(e) => {
+                  const stage = e.target.getStage();
+                  if (stage) stage.container().style.cursor = cursor;
+                }}
+              />
+              );
+            })}
 
           {/* Ghost (addable) tiles in floor-edit mode */}
           {ghosts.map((g) => (
@@ -595,6 +931,7 @@ export default function RoomCanvas({
               stroke={withAlpha(style.accent, 0.7)}
               strokeWidth={1.5}
               dash={[5, 4]}
+              onMouseDown={blockViewportPan}
               onClick={() => onAddTile(g.gx, g.gy)}
               onTap={() => onAddTile(g.gx, g.gy)}
               onMouseEnter={(e) => {
@@ -609,11 +946,15 @@ export default function RoomCanvas({
           ))}
 
           {roomObjects.length === 0 && !floorEditing && (
-            <Group x={size.w / 2} y={size.h / 2}>
+            <Group x={origin.x} y={origin.y + 48} listening={false}>
               <Text
                 text={
                   placingKind
-                    ? 'Click a floor tile to place the object'
+                    ? placingOnWall
+                      ? 'Click a wall to add a window, door, or mirror'
+                      : mustStack(placingKind)
+                        ? 'Add a dining table or bed first — this object must rest on one'
+                        : 'Click a floor tile to place the object'
                     : 'Empty room — pick an object from the library to place it'
                 }
                 fontSize={15}
@@ -624,6 +965,7 @@ export default function RoomCanvas({
               />
             </Group>
           )}
+          </Group>
         </Layer>
       </Stage>
 

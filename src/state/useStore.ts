@@ -7,14 +7,21 @@ import { ensureAuth, isCloudEnabled } from '../lib/supabase';
 import { applyGrade } from '../lib/srs';
 import type { Grade } from '../lib/srs';
 import { getTheme } from '../themes/styles';
-import { getObjectDef } from '../themes/objects';
+import { getObjectDef, isSurface, isWallAttachable } from '../themes/objects';
 import { getRoomTiles, tileKey } from '../lib/floor';
+import {
+  canPlaceObject,
+  footprintTileKeys,
+  normalizeRotation,
+  stackedItemsOn,
+} from '../lib/objectPlacement';
 import type {
   Palace,
   Room,
   Connection,
   PObject,
   Memory,
+  WallSide,
 } from '../types';
 
 export type CloudStatus = 'off' | 'connecting' | 'on' | 'error';
@@ -47,7 +54,14 @@ interface State {
   removeFloorTile: (roomId: string, gx: number, gy: number) => boolean;
 
   // objects
-  addObject: (roomId: string, kind: string, gridX: number, gridY: number) => PObject;
+  addObject: (
+    roomId: string,
+    kind: string,
+    gridX: number,
+    gridY: number,
+    wallSide?: WallSide | null,
+    rotation?: number,
+  ) => PObject | null;
   updateObject: (id: string, patch: Partial<PObject>) => void;
   deleteObject: (id: string) => void;
 
@@ -319,7 +333,10 @@ export const useStore = create<State>((set, get) => ({
     const key = tileKey(gx, gy);
     // Don't remove a tile that an object is sitting on.
     const occupied = s.objects.some(
-      (o) => o.roomId === roomId && !o.deleted && tileKey(o.gridX, o.gridY) === key,
+      (o) =>
+        o.roomId === roomId &&
+        !o.deleted &&
+        footprintTileKeys(o).includes(key),
     );
     if (occupied) return false;
     if (!tiles.includes(key)) return false;
@@ -327,9 +344,16 @@ export const useStore = create<State>((set, get) => ({
     return true;
   },
 
-  addObject: (roomId, kind, gridX, gridY) => {
+  addObject: (roomId, kind, gridX, gridY, wallSide = null, rotation?) => {
+    if (isWallAttachable(kind) && !wallSide) return null;
     const def = getObjectDef(kind);
     const s = get();
+    const room = s.rooms.find((r) => r.id === roomId);
+    if (!room) return null;
+    const rot = normalizeRotation(rotation ?? def.defaultRotation ?? 0);
+    if (!canPlaceObject(room, s.objects, kind, gridX, gridY, rot, wallSide ?? null)) {
+      return null;
+    }
     const idx = s.objects.filter((o) => o.roomId === roomId).length;
     const ts = now();
     const obj: PObject = {
@@ -339,7 +363,8 @@ export const useStore = create<State>((set, get) => ({
       label: def.label,
       gridX,
       gridY,
-      rotation: 0,
+      wallSide: wallSide ?? null,
+      rotation: rot,
       color: def.color,
       icon: def.icon,
       orderIndex: idx,
@@ -355,26 +380,60 @@ export const useStore = create<State>((set, get) => ({
   },
 
   updateObject: (id, patch) => {
-    set((s) => ({
-      objects: s.objects.map((o) => {
-        if (o.id !== id) return o;
-        const next = { ...o, ...patch, updatedAt: now() };
-        persist('objects', next);
-        return next;
-      }),
-    }));
+    set((s) => {
+      const target = s.objects.find((o) => o.id === id);
+      if (!target) return {};
+
+      // When a surface (table / bed) is dragged to a new tile, carry the props
+      // stacked on top of it along by the same grid delta.
+      const dx = (patch.gridX ?? target.gridX) - target.gridX;
+      const dy = (patch.gridY ?? target.gridY) - target.gridY;
+      const carrying =
+        (dx !== 0 || dy !== 0) &&
+        !target.wallSide &&
+        !patch.wallSide &&
+        isSurface(target.kind);
+      const riderIds = carrying
+        ? new Set(stackedItemsOn(s.objects, target).map((o) => o.id))
+        : null;
+
+      const ts = now();
+      return {
+        objects: s.objects.map((o) => {
+          if (o.id === id) {
+            const next = { ...o, ...patch, updatedAt: ts };
+            persist('objects', next);
+            return next;
+          }
+          if (riderIds?.has(o.id)) {
+            const next = { ...o, gridX: o.gridX + dx, gridY: o.gridY + dy, updatedAt: ts };
+            persist('objects', next);
+            return next;
+          }
+          return o;
+        }),
+      };
+    });
   },
 
   deleteObject: (id) => {
     const ts = now();
     const s = get();
     const obj = s.objects.find((o) => o.id === id);
-    if (obj) persist('objects', { ...obj, deleted: 1, updatedAt: ts });
-    const mem = s.memories.find((m) => m.objectId === id);
-    if (mem) persist('memories', { ...mem, deleted: 1, updatedAt: ts });
+    const toDelete = new Set<string>([id]);
+    // Deleting a surface also removes whatever is stacked on top of it.
+    if (obj && !obj.wallSide && isSurface(obj.kind)) {
+      for (const rider of stackedItemsOn(s.objects, obj)) toDelete.add(rider.id);
+    }
+    for (const did of toDelete) {
+      const o = s.objects.find((x) => x.id === did);
+      if (o) persist('objects', { ...o, deleted: 1, updatedAt: ts });
+      const mem = s.memories.find((m) => m.objectId === did);
+      if (mem) persist('memories', { ...mem, deleted: 1, updatedAt: ts });
+    }
     set((st) => ({
-      objects: st.objects.filter((o) => o.id !== id),
-      memories: st.memories.filter((m) => m.objectId !== id),
+      objects: st.objects.filter((o) => !toDelete.has(o.id)),
+      memories: st.memories.filter((m) => !toDelete.has(m.objectId)),
     }));
   },
 

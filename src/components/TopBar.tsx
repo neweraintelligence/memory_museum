@@ -5,6 +5,7 @@ import { useStore } from '../state/useStore';
 import { Icon } from '../themes/Icon';
 import { UI_ICONS } from '../themes/icons';
 import type { AppMode } from '../types';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const MODES: { id: AppMode; label: string; icon: IconType }[] = [
   { id: 'build', label: 'Build', icon: UI_ICONS.build },
@@ -32,9 +33,9 @@ export default function TopBar() {
     <div className="topbar">
       <div className="brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
         <span className="logo">
-          <Icon icon={UI_ICONS.palace} size={22} color="var(--gold)" />
+          <span className="brand-icon" aria-hidden="true" />
         </span>
-        <span>Memory Palace</span>
+        <span className="brand-text">Memory Palace{'\u00A0\u00A0\u00A0\u00A0\u00A0'}</span>
       </div>
 
       {showModes && (
@@ -44,8 +45,10 @@ export default function TopBar() {
               key={m.id}
               className={mode === m.id ? 'active' : ''}
               onClick={() => setMode(m.id)}
+              title={m.label}
+              aria-label={m.label}
             >
-              <Icon icon={m.icon} size={15} /> {m.label}
+              <Icon icon={m.icon} size={15} /> <span className="mode-label">{m.label}</span>
             </button>
           ))}
         </div>
@@ -53,14 +56,17 @@ export default function TopBar() {
 
       <div className="spacer" />
 
-      <button className="ghost" onClick={() => setSearchOpen(true)}>
-        <Icon icon={UI_ICONS.search} size={15} /> Search <span className="kbd">/</span>
+      <button className="ghost" onClick={() => setSearchOpen(true)} title="Search">
+        <Icon icon={UI_ICONS.search} size={15} /> <span className="topbar-btn-label">Search</span>{' '}
+        <span className="kbd">/</span>
       </button>
+
+      <ThemeSwitcher />
 
       <div className="cloud-pill" title={CLOUD_LABEL[cloud]}>
         <Icon icon={cloud === 'error' || cloud === 'off' ? UI_ICONS.cloudOff : UI_ICONS.cloudOn} size={14} />
         <span className={`dot ${cloud}`} />
-        {CLOUD_LABEL[cloud]}
+        <span className="cloud-pill-label">{CLOUD_LABEL[cloud]}</span>
       </div>
     </div>
   );

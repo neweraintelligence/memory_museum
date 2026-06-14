@@ -45,6 +45,8 @@ export interface Connection {
   deleted: number;
 }
 
+export type WallSide = 'left' | 'right';
+
 export interface PObject {
   id: ID;
   roomId: ID;
@@ -52,6 +54,9 @@ export interface PObject {
   label: string;
   gridX: number;
   gridY: number;
+  /** When set, the object is mounted on this wall face of tile (gridX, gridY). */
+  wallSide: WallSide | null;
+  /** Isometric facing: 0 = +gx, 1 = +gy, 2 = −gx, 3 = −gy. */
   rotation: number;
   color: string;
   icon: string;

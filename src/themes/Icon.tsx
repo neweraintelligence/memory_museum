@@ -16,7 +16,7 @@ export function Icon({ icon, size = 20, color, className, style, title }: IconPr
   return createElement(icon, {
     size,
     color,
-    className,
+    className: ['ui-icon', className].filter(Boolean).join(' ') || undefined,
     style: { flex: 'none', ...style },
     title,
   });

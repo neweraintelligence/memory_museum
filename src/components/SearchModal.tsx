@@ -136,7 +136,7 @@ export default function SearchModal() {
           {q && hits.length === 0 && <div className="empty">No matches.</div>}
           {hits.map((h, i) => (
             <div key={i} className="search-result" onClick={() => go(h)}>
-              <span style={{ lineHeight: 0, color: '#cdd5f0' }}>
+              <span style={{ lineHeight: 0, color: 'var(--text)' }}>
                 <Icon icon={h.icon} size={22} />
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>

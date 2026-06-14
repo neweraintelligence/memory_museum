@@ -51,3 +51,14 @@ export function withAlpha(hex: string, alpha: number): string {
   const { r, g, b } = hexToRgb(hex);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
+
+/** True when a hex fill reads as a light background (WCAG relative luminance). */
+export function isLightBackground(hex: string, threshold = 0.55): boolean {
+  try {
+    const { r, g, b } = hexToRgb(hex);
+    const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    return luminance > threshold;
+  } catch {
+    return false;
+  }
+}

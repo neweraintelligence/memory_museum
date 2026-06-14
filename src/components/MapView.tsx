@@ -31,7 +31,8 @@ export default function MapView({
   const createRoom = useStore((s) => s.createRoom);
 
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
-  const dragRef = useRef<{ id: string; dx: number; dy: number } | null>(null);
+  const dragRef = useRef<{ id: string; dx: number; dy: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
 
   const roomById = (id: string) => rooms.find((r) => r.id === id);
   const objectCount = (roomId: string) =>
@@ -41,23 +42,33 @@ export default function MapView({
     const room = roomById(roomId);
     if (!room) return;
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    dragRef.current = { id: roomId, dx: e.clientX - room.mapX, dy: e.clientY - room.mapY };
+    dragRef.current = { id: roomId, dx: e.clientX - room.mapX, dy: e.clientY - room.mapY, moved: false };
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
+    dragRef.current.moved = true;
     const { id, dx, dy } = dragRef.current;
     updateRoom(id, { mapX: Math.max(0, e.clientX - dx), mapY: Math.max(0, e.clientY - dy) });
   };
 
   const onPointerUp = () => {
+    if (dragRef.current?.moved) suppressClickRef.current = true;
     dragRef.current = null;
   };
 
   const handleNodeClick = (roomId: string) => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
     if (connectFrom) {
-      if (connectFrom !== roomId) toggleConnection(palaceId, connectFrom, roomId);
-      setConnectFrom(null);
+      if (connectFrom === '__pick__') {
+        setConnectFrom(roomId);
+      } else {
+        if (connectFrom !== roomId) toggleConnection(palaceId, connectFrom, roomId);
+        setConnectFrom(null);
+      }
     } else {
       onEnterRoom(roomId);
     }
@@ -84,7 +95,9 @@ export default function MapView({
         <button onClick={() => createRoom(palaceId)}>
           <Icon icon={UI_ICONS.add} size={15} /> Add room
         </button>
-        <span className="pill muted">Drag rooms · click to enter</span>
+        <span className="pill muted">
+          {connectFrom ? 'Click two rooms to connect' : 'Drag rooms · click to enter'}
+        </span>
       </div>
 
       <div
@@ -100,11 +113,12 @@ export default function MapView({
             return (
               <line
                 key={c.id}
+                className="map-connection-line"
                 x1={a.mapX + NODE_W / 2}
                 y1={a.mapY + NODE_H / 2}
                 x2={b.mapX + NODE_W / 2}
                 y2={b.mapY + NODE_H / 2}
-                stroke="#3a4470"
+                stroke="var(--map-connection-stroke, #3a4470)"
                 strokeWidth={3}
                 strokeDasharray="2 6"
                 strokeLinecap="round"
@@ -116,10 +130,12 @@ export default function MapView({
         {rooms.map((r) => {
           const style = getStyle(r.style);
           const picking = connectFrom && connectFrom !== '__pick__';
+          const isConnected = connections.some((c) => c.fromRoomId === r.id || c.toRoomId === r.id);
+          
           return (
             <div
               key={r.id}
-              className="card"
+              className={`card map-room-card ${picking ? 'picking' : ''} ${isConnected ? 'connected' : 'unconnected'}`}
               style={{
                 position: 'absolute',
                 left: r.mapX,
@@ -130,16 +146,17 @@ export default function MapView({
                 cursor: 'grab',
                 userSelect: 'none',
                 borderColor: connectFrom === r.id ? 'var(--gold)' : undefined,
-                background: `linear-gradient(160deg, ${style.wallRight}, ${style.bg})`,
-              }}
+                '--room-color-1': style.wallRight,
+                '--room-color-2': style.bg,
+              } as React.CSSProperties}
               onPointerDown={(e) => onPointerDown(e, r.id)}
               onClick={() => handleNodeClick(r.id)}
               title={picking ? 'Click to connect' : 'Click to enter'}
             >
-              <div style={{ lineHeight: 0, marginBottom: 4, color: '#f2f5ff' }}>
+              <div className="map-room-icon">
                 <Icon icon={roomIcon(r.type)} size={22} />
               </div>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>{r.name}</div>
+              <div className="map-room-title">{r.name}</div>
               <div className="meta">{objectCount(r.id)} objects</div>
             </div>
           );

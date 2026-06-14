@@ -9,6 +9,9 @@ import {
   OBJ_HW,
   OBJ_HH,
 } from './art';
+import { TILE_W, TILE_H } from '../lib/iso';
+import { footprintSpansGy } from '../lib/objectPlacement';
+import { objectSpriteHeight } from '../themes/objectSprites';
 import type { Palette } from './art';
 
 /** A shaded isometric box with outline + a top highlight inset. */
@@ -377,23 +380,35 @@ function book(p: Palette, _pulse: number, kind: string) {
 
 // ---- Furniture & props -----------------------------------------------------
 
-function bed(p: Palette) {
+function bed(p: Palette, twoTile: boolean, rotation: number) {
   const frame = palette('#5b3d24');
   const pillow = palette('#f3f5fb');
-  const hw = OBJ_HW * 1.28;
-  const hh = OBJ_HH * 1.28;
+  const alongGy = twoTile && footprintSpansGy(rotation);
+  const hw = twoTile
+    ? alongGy
+      ? TILE_W * 0.24
+      : TILE_W * 0.42
+    : OBJ_HW * 1.28;
+  const hh = twoTile
+    ? alongGy
+      ? TILE_H * 0.52
+      : TILE_H * 0.3
+    : OBJ_HH * 1.28;
   const fh = 9;
   const mattressTop = -fh - 8;
   const HB = 24;
+  const pillowY = alongGy ? -hw * 0.38 : hh * 0.38;
+  const pillowHw = alongGy ? hh * 0.22 : hw * 0.34;
+  const pillowHh = alongGy ? hw * 0.38 : hh * 0.4;
   return (
     <Fragment>
       {/* wooden frame */}
       <IsoBox hw={hw} hh={hh} h={fh} p={frame} />
       {/* mattress topped with the object-colored cover */}
       <IsoBox hw={hw * 0.9} hh={hh * 0.9} h={8} baseY={-fh} p={p} />
-      {/* pillow near the back */}
-      <Group x={0} y={-hh * 0.42}>
-        <IsoBox hw={hw * 0.34} hh={hh * 0.4} h={5} baseY={mattressTop} p={pillow} />
+      {/* pillow at the foot end */}
+      <Group x={0} y={pillowY}>
+        <IsoBox hw={pillowHw} hh={pillowHh} h={5} baseY={mattressTop} p={pillow} />
       </Group>
       {/* headboard: two upright back faces meeting at the rear corner */}
       <Line
@@ -637,8 +652,15 @@ function machine(p: Palette) {
 
 // ---- Public renderer -------------------------------------------------------
 
-export function renderObjectArt(kind: string, color: string, pulse: number) {
+export function renderObjectArt(
+  kind: string,
+  color: string,
+  pulse: number,
+  footprint = 1,
+  rotation = 0,
+) {
   const p = palette(color);
+  const twoTile = footprint > 1;
   switch (archetypeFor(kind)) {
     case 'light':
       return light(p, pulse, kind);
@@ -651,7 +673,7 @@ export function renderObjectArt(kind: string, color: string, pulse: number) {
     case 'book':
       return book(p, pulse, kind);
     case 'bed':
-      return bed(p);
+      return bed(p, twoTile, rotation);
     case 'desk':
       return desk(p);
     case 'cabinet':
@@ -678,7 +700,10 @@ export function renderObjectArt(kind: string, color: string, pulse: number) {
 }
 
 /** Approx height (screen px above the base) used to place the glyph badge. */
-export function objectArtHeight(kind: string): number {
+export function objectArtHeight(kind: string, footprint = 1, _rotation = 0): number {
+  const spriteH = objectSpriteHeight(kind);
+  if (spriteH != null) return spriteH;
+
   switch (archetypeFor(kind)) {
     case 'light':
       return kind === 'fountain' ? 44 : 50;
@@ -691,7 +716,7 @@ export function objectArtHeight(kind: string): number {
     case 'book':
       return kind === 'books' ? 30 : 18;
     case 'bed':
-      return 50;
+      return footprint > 1 ? 52 : 50;
     case 'desk':
       return 26;
     case 'cabinet':

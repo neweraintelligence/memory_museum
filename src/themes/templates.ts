@@ -1,5 +1,5 @@
 import { newId, now } from '../lib/id';
-import { getObjectDef } from './objects';
+import { getObjectDef, defaultObjectRotation } from './objects';
 import type { Palace, Room, Connection, PObject, Memory } from '../types';
 
 interface TObject {
@@ -277,7 +277,8 @@ export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
         label: to.title ?? def.label,
         gridX: to.gx,
         gridY: to.gy,
-        rotation: 0,
+        wallSide: null,
+        rotation: defaultObjectRotation(to.kind),
         color: def.color,
         icon: def.icon,
         orderIndex: j,

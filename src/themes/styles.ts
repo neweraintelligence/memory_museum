@@ -23,6 +23,12 @@ export type WallPattern =
   | 'wood'
   | 'wallpaper';
 
+import { INDUSTRIAL_LOFT_FLOOR } from './floorTilesets/industrialLoftFloor';
+import { INDUSTRIAL_LOFT_WALL } from './wallTilesets/industrialLoftWall';
+import { VICTORIAN_PARLOR_FLOOR } from './floorTilesets/victorianParlorFloor';
+import { VICTORIAN_PARLOR_WALL } from './wallTilesets/victorianParlorWall';
+import { STYLE_TEXTURES } from './styleTextures';
+
 export interface RoomStyle {
   id: string;
   label: string;
@@ -35,6 +41,14 @@ export interface RoomStyle {
   mood: string;
   floorPattern: FloorPattern;
   wallPattern: WallPattern;
+  /** PNG paths [checker A, checker B] relative to /public — replaces gradient + pattern. */
+  floorTextures?: [string, string];
+  /** Degrees to rotate floor textures (Konva: negative = left/CCW). */
+  floorTextureRotation?: number;
+  /** 'iso' = native 2:1 diamond PNG; 'square' = square canvas (default). */
+  floorTextureAspect?: 'square' | 'iso';
+  /** PNG paths for left/right wall faces — replaces gradient + wallPattern decor. */
+  wallTextures?: { left: string; right: string };
 }
 
 export const ROOM_STYLES: RoomStyle[] = [
@@ -50,6 +64,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Dark wood, candlelight, towering shelves.',
     floorPattern: 'none',
     wallPattern: 'shelves',
+    ...STYLE_TEXTURES['gothic-library'],
   },
   {
     id: 'brutalist',
@@ -63,6 +78,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Raw concrete, hard shadows, monumental.',
     floorPattern: 'slab',
     wallPattern: 'concrete',
+    ...STYLE_TEXTURES.brutalist,
   },
   {
     id: 'tea-room',
@@ -76,6 +92,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Tatami, paper screens, quiet warmth.',
     floorPattern: 'tatami',
     wallPattern: 'screens',
+    ...STYLE_TEXTURES['tea-room'],
   },
   {
     id: 'spaceship',
@@ -89,6 +106,21 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cold metal, neon seams, deep space.',
     floorPattern: 'metal',
     wallPattern: 'tech',
+    ...STYLE_TEXTURES.spaceship,
+  },
+  {
+    id: 'enterprise-d',
+    label: 'Enterprise-D',
+    floorA: '#7b6767',
+    floorB: '#6b5858',
+    wallLeft: '#8e5b64',
+    wallRight: '#986561',
+    accent: '#f1e6dd',
+    bg: '#2d2025',
+    mood: 'Padded rose wall panels, muted mauve carpet, soft starship lighting.',
+    floorPattern: 'carpet',
+    wallPattern: 'tech',
+    ...STYLE_TEXTURES['enterprise-d'],
   },
   {
     id: 'courtroom',
@@ -102,6 +134,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Dark oak, brass, solemn authority.',
     floorPattern: 'none',
     wallPattern: 'panels',
+    ...STYLE_TEXTURES.courtroom,
   },
   {
     id: 'clinic',
@@ -115,6 +148,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Sterile white, teal accents, clean light.',
     floorPattern: 'tiles',
     wallPattern: 'plain',
+    ...STYLE_TEXTURES.clinic,
   },
   {
     id: 'greenhouse',
@@ -128,6 +162,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Glass panes, lush foliage, soft daylight.',
     floorPattern: 'tiles',
     wallPattern: 'glass',
+    ...STYLE_TEXTURES.greenhouse,
   },
   {
     id: 'cozy-apartment',
@@ -141,6 +176,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Warm wood, soft rugs, golden hour.',
     floorPattern: 'slab',
     wallPattern: 'panels',
+    ...STYLE_TEXTURES['cozy-apartment'],
   },
   {
     id: 'marble-hall',
@@ -154,6 +190,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Veined marble, ashlar stone, grand and cool.',
     floorPattern: 'marble',
     wallPattern: 'stone',
+    ...STYLE_TEXTURES['marble-hall'],
   },
   {
     id: 'victorian-parlor',
@@ -167,6 +204,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Herringbone parquet, damask wallpaper, candlelit.',
     floorPattern: 'parquet',
     wallPattern: 'wallpaper',
+    ...VICTORIAN_PARLOR_FLOOR,
+    ...VICTORIAN_PARLOR_WALL,
   },
   {
     id: 'stone-keep',
@@ -180,6 +219,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cut flagstones, heavy masonry, torch-lit keep.',
     floorPattern: 'stone',
     wallPattern: 'stone',
+    ...STYLE_TEXTURES['stone-keep'],
   },
   {
     id: 'industrial-loft',
@@ -193,6 +233,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Worn planks, exposed red brick, warehouse light.',
     floorPattern: 'planks',
     wallPattern: 'brick',
+    ...INDUSTRIAL_LOFT_FLOOR,
+    ...INDUSTRIAL_LOFT_WALL,
   },
   {
     id: 'reading-study',
@@ -206,13 +248,20 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Plush carpet, walnut paneling, lamplit calm.',
     floorPattern: 'carpet',
     wallPattern: 'wood',
+    ...STYLE_TEXTURES['reading-study'],
   },
 ];
 
 export const DEFAULT_STYLE = ROOM_STYLES[0].id;
 
+export function canonicalStyleId(id: string): string {
+  if (id === 'enterprise-c') return 'enterprise-d';
+  return id;
+}
+
 export function getStyle(id: string): RoomStyle {
-  return ROOM_STYLES.find((s) => s.id === id) ?? ROOM_STYLES[0];
+  const canonicalId = canonicalStyleId(id);
+  return ROOM_STYLES.find((s) => s.id === canonicalId) ?? ROOM_STYLES[0];
 }
 
 export interface PalaceTheme {
@@ -246,8 +295,8 @@ export const ROOM_TYPES: { id: string; label: string; icon: string }[] = [
   { id: 'office', label: 'Office', icon: '💼' },
   { id: 'tower', label: 'Tower', icon: '🗼' },
   { id: 'basement', label: 'Basement', icon: '🕯️' },
-  { id: 'corridor', label: 'Corridor', icon: '🚪' },
-  { id: 'custom', label: 'Custom', icon: '✨' },
+  { id: 'corridor', label: 'Corridor', icon: '🖼️🖼️🖼️' },
+  { id: 'custom', label: 'Custom', icon: '🚪' },
 ];
 
 export function roomTypeIcon(type: string): string {

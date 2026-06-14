@@ -2,7 +2,10 @@ import { Group, Image as KonvaImage, Ellipse, Circle } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { withAlpha } from '../lib/color';
 import { TILE_W, TILE_H } from '../lib/iso';
+import { isoArtTransform, objectFootprint } from '../lib/objectPlacement';
 import { renderObjectArt, objectArtHeight } from './objectArt';
+import { useObjectSprite } from './useObjectSprite';
+import { hasObjectSprites, objectSpriteFrame, objectSpriteGround, objectSpriteHeight, objectSpriteXOffset, objectSpriteYOffset } from '../themes/objectSprites';
 import { objectIcon, useIconImage } from '../themes/icons';
 import type { PObject } from '../types';
 
@@ -16,6 +19,8 @@ interface Props {
   isAnchor: boolean;
   pulse: number; // 0..1
   dim: boolean;
+  /** Screen-px lift when the object is stacked on a surface (table / bed). */
+  stackLift?: number;
   onSelect: (id: string) => void;
   onDragEnd: (id: string, e: KonvaEventObject<DragEvent>) => void;
 }
@@ -33,12 +38,29 @@ export default function IsoObject({
   isAnchor,
   pulse,
   dim,
+  stackLift = 0,
   onSelect,
   onDragEnd,
 }: Props) {
   const lift = highlighted ? 8 + pulse * 4 : 0;
-  const topY = -objectArtHeight(obj.kind);
+  const footprint = objectFootprint(obj.kind);
+  const artTransform = isoArtTransform(obj.rotation, footprint);
+  const spriteFrame = objectSpriteFrame(obj.kind, obj.rotation);
+  const { image: spriteImg, groundY: detectedGroundY, centerX: detectedCenterX, topY: detectedTopY } =
+    useObjectSprite(spriteFrame?.url);
+  const spriteH = objectSpriteHeight(obj.kind) ?? 96;
+  const groundY = objectSpriteGround(obj.kind) ?? detectedGroundY;
+  const spriteYOffset = objectSpriteYOffset(obj.kind);
+  const spriteXOffset = objectSpriteXOffset(obj.kind);
+  const spriteX = detectedCenterX * spriteH + spriteXOffset;
+  const proceduralTopY = -objectArtHeight(obj.kind, footprint, obj.rotation);
   const badgeImg = useIconImage(objectIcon(obj.kind), '#eef2ff', 36);
+  const shadowScale = footprint > 1 ? 1.75 : 1.1;
+  const useSprite = hasObjectSprites(obj.kind) && !!spriteImg;
+  const spriteImageTop = -spriteH * groundY + spriteYOffset;
+  const spriteVisualTop = spriteImageTop + detectedTopY * spriteH;
+  const badgeY = (useSprite ? spriteVisualTop : proceduralTopY) - 14;
+  const haloY = useSprite ? spriteVisualTop * 0.6 : proceduralTopY * 0.6;
 
   return (
     <Group
@@ -46,6 +68,9 @@ export default function IsoObject({
       y={y - lift}
       draggable={draggable}
       opacity={dim ? 0.35 : 1}
+      onMouseDown={(e) => {
+        e.cancelBubble = true;
+      }}
       onMouseEnter={(e) => {
         const stage = e.target.getStage();
         if (stage) stage.container().style.cursor = draggable ? 'grab' : 'pointer';
@@ -59,16 +84,27 @@ export default function IsoObject({
       onDragStart={(e) => e.target.moveToTop()}
       onDragEnd={(e) => onDragEnd(obj.id, e)}
     >
-      {/* contact shadow */}
-      <Ellipse x={0} y={2} radiusX={HW * 1.1} radiusY={HH * 1.1} fill="rgba(0,0,0,0.22)" />
+      {/* Stacked props ride on top of their surface; lift only the visuals so
+          the group origin stays on the tile for drag / snap math. */}
+      <Group y={-stackLift}>
+      {/* contact shadow (sprites include their own) */}
+      {!useSprite && (
+        <Ellipse
+          x={0}
+          y={2}
+          radiusX={HW * shadowScale}
+          radiusY={HH * shadowScale}
+          fill="rgba(0,0,0,0.22)"
+        />
+      )}
 
       {/* anchor / selection ring on the floor */}
       {(isAnchor || selected || highlighted) && (
         <Ellipse
           x={0}
           y={0}
-          radiusX={HW * (1.3 + (highlighted ? pulse * 0.25 : 0))}
-          radiusY={HH * (1.3 + (highlighted ? pulse * 0.25 : 0))}
+          radiusX={HW * (footprint > 1 ? 1.85 : 1.3 + (highlighted ? pulse * 0.25 : 0))}
+          radiusY={HH * (footprint > 1 ? 1.85 : 1.3 + (highlighted ? pulse * 0.25 : 0))}
           stroke={highlighted ? '#ffe27a' : selected ? '#7dd3fc' : withAlpha(obj.color, 0.9)}
           strokeWidth={highlighted ? 3 : 2}
           opacity={isAnchor && !selected && !highlighted ? 0.4 + pulse * 0.4 : 0.95}
@@ -78,18 +114,42 @@ export default function IsoObject({
 
       {/* highlight halo behind tall art when walking/reviewing */}
       {highlighted && (
-        <Circle x={0} y={topY * 0.6} radius={26 + pulse * 6} fill={withAlpha('#ffe27a', 0.18 + pulse * 0.12)} />
+        <Circle x={0} y={haloY} radius={26 + pulse * 6} fill={withAlpha('#ffe27a', 0.18 + pulse * 0.12)} listening={false} />
       )}
 
-      {/* the detailed object art */}
-      {renderObjectArt(obj.kind, obj.color, pulse)}
+      {/* the detailed object art, rotated to face */}
+      {useSprite ? (
+        <Group scaleX={spriteFrame?.flipX ? -1 : 1} scaleY={1}>
+          <KonvaImage
+            image={spriteImg}
+            x={-spriteH / 2 + spriteX}
+            y={spriteImageTop}
+            width={spriteH}
+            height={spriteH}
+          />
+        </Group>
+      ) : (
+        <Group scaleX={artTransform.scaleX} scaleY={artTransform.scaleY}>
+          {renderObjectArt(obj.kind, obj.color, pulse, footprint, obj.rotation)}
+        </Group>
+      )}
 
-      {/* small icon badge floating above for instant recognition */}
-      <Group y={topY - 14} opacity={highlighted ? 1 : 0.92}>
-        <Circle x={0} y={0} radius={11} fill="rgba(12,14,22,0.78)" stroke={withAlpha(obj.color, 0.85)} strokeWidth={1.2} />
-        {badgeImg && (
-          <KonvaImage image={badgeImg} x={-7} y={-7} width={14} height={14} listening={false} />
-        )}
+      {(selected || highlighted) && (
+        <Group y={badgeY} listening={false}>
+          <Circle
+            x={0}
+            y={0}
+            radius={11}
+            fill="rgba(12,14,22,0.78)"
+            stroke={withAlpha(highlighted ? '#ffe27a' : obj.color, 0.85)}
+            strokeWidth={1.2}
+            listening={false}
+          />
+          {badgeImg && (
+            <KonvaImage image={badgeImg} x={-7} y={-7} width={14} height={14} listening={false} />
+          )}
+        </Group>
+      )}
       </Group>
     </Group>
   );

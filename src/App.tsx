@@ -1,16 +1,21 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Dashboard from './components/Dashboard';
 import PalaceWorkspace from './components/PalaceWorkspace';
 import SearchModal from './components/SearchModal';
 import { useStore } from './state/useStore';
 import { useUI } from './state/useUI';
+import { useTheme } from './state/useTheme';
 
 export default function App() {
   const init = useStore((s) => s.init);
   const loaded = useStore((s) => s.loaded);
   const setSearchOpen = useUI((s) => s.setSearchOpen);
+  const themeId = useTheme((s) => s.themeId);
+  const location = useLocation();
+  const palaceFocus =
+    themeId === 'project-manager' && location.pathname.startsWith('/palace/');
 
   useEffect(() => {
     void init();
@@ -30,7 +35,7 @@ export default function App() {
   }, [setSearchOpen]);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${palaceFocus ? ' palace-focus' : ''}`}>
       <TopBar />
       {!loaded ? (
         <div className="empty">Loading your palaces…</div>

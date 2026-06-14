@@ -1,8 +1,8 @@
 import { useStore } from '../state/useStore';
 import { useUI } from '../state/useUI';
-import { ROOM_STYLES, ROOM_TYPES } from '../themes/styles';
+import { getStyle, ROOM_STYLES, ROOM_TYPES } from '../themes/styles';
 import { Icon } from '../themes/Icon';
-import { roomIcon } from '../themes/icons';
+import { roomIcon, UI_ICONS } from '../themes/icons';
 import type { Room } from '../types';
 
 export default function RoomStylePanel({ room }: { room: Room }) {
@@ -24,7 +24,7 @@ export default function RoomStylePanel({ room }: { room: Room }) {
         <label>Room type</label>
         <div className="row" style={{ gap: 8 }}>
           <span style={{ lineHeight: 0, color: 'var(--text-dim)' }}>
-            <Icon icon={roomIcon(room.type)} size={20} />
+            <Icon icon={roomIcon(room.type)} size={20} className="room-type-icon" />
           </span>
           <select
             style={{ flex: 1 }}
@@ -43,11 +43,18 @@ export default function RoomStylePanel({ room }: { room: Room }) {
       <div className="field">
         <label>Floor plan</label>
         <button
-          className={floorEditing ? 'primary' : ''}
-          style={{ width: '100%' }}
+          className={`edit-floor-plan-btn${floorEditing ? ' primary' : ''}`}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}
           onClick={() => setFloorEditing(!floorEditing)}
         >
-          {floorEditing ? '✓ Done editing floor' : '🧩 Edit floor plan'}
+          {floorEditing ? (
+            '✓ Done editing floor'
+          ) : (
+            <>
+              <Icon icon={UI_ICONS.puzzle} size={18} className="side-head-icon" />
+              Edit floor plan
+            </>
+          )}
         </button>
         <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
           Add or remove tiles to shape the room. Objects can only sit on flooring.
@@ -88,7 +95,7 @@ export default function RoomStylePanel({ room }: { room: Room }) {
           {ROOM_STYLES.map((st) => (
             <div
               key={st.id}
-              className={`style-chip ${room.style === st.id ? 'active' : ''}`}
+              className={`style-chip ${getStyle(room.style).id === st.id ? 'active' : ''}`}
               onClick={() => updateRoom(room.id, { style: st.id })}
               title={st.mood}
             >

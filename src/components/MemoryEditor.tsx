@@ -1,7 +1,7 @@
 import { useStore } from '../state/useStore';
 import { useUI } from '../state/useUI';
-import { Icon } from '../themes/Icon';
-import { objectIcon, iconTint } from '../themes/icons';
+import { ObjectMenuIcon } from '../themes/ObjectMenuIcon';
+import { canPlaceObject, nextRotation, objectFootprint } from '../lib/objectPlacement';
 import type { PObject } from '../types';
 
 const STATUS_COLOR: Record<string, string> = {
@@ -25,13 +25,25 @@ export default function MemoryEditor({ obj }: { obj: PObject }) {
   const deleteObject = useStore((s) => s.deleteObject);
   const setSelected = useUI((s) => s.setSelected);
 
+  const rotateObject = () => {
+    if (obj.wallSide) return;
+    const { rooms, objects } = useStore.getState();
+    const room = rooms.find((r) => r.id === obj.roomId);
+    if (!room) return;
+    const roomObjects = objects.filter((o) => o.roomId === obj.roomId && !o.deleted);
+    const rot = nextRotation(obj.rotation);
+    if (canPlaceObject(room, roomObjects, obj.kind, obj.gridX, obj.gridY, rot, null, obj.id)) {
+      updateObject(obj.id, { rotation: rot });
+    }
+  };
+
   if (!memory) return null;
 
   return (
     <div className="fade-in">
       <div className="row" style={{ marginBottom: 12 }}>
         <span style={{ lineHeight: 0 }}>
-          <Icon icon={objectIcon(obj.kind)} size={26} color={iconTint(obj.color)} />
+          <ObjectMenuIcon kind={obj.kind} size={26} />
         </span>
         <div style={{ flex: 1 }}>
           <input
@@ -61,6 +73,21 @@ export default function MemoryEditor({ obj }: { obj: PObject }) {
           ))}
         </div>
       </div>
+
+      {!obj.wallSide && (
+        <div className="field">
+          <label>Orientation</label>
+          <div className="row" style={{ gap: 8 }}>
+            <button type="button" className="icon-btn" onClick={rotateObject} title="Rotate (R)">
+              ↻ Rotate
+            </button>
+            <span className="muted" style={{ fontSize: 13 }}>
+              Facing {obj.rotation}
+              {objectFootprint(obj.kind) > 1 ? ` · ${objectFootprint(obj.kind)} tiles` : ''}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="field">
         <label>Memory title</label>

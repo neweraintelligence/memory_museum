@@ -13,6 +13,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { IconType } from 'react-icons';
 import {
   GiDesk,
+  GiOfficeChair,
   GiLockedChest,
   GiBed,
   GiDeskLamp,
@@ -53,27 +54,32 @@ import {
   GiCardboardBoxClosed,
   GiBookshelf,
   GiStethoscope,
-  GiGavel,
   GiGreekTemple,
   GiByzantinTemple,
   GiPlantRoots,
   GiWatchtower,
   GiCellarBarrels,
-  GiSparkles,
   GiCastle,
+  GiSecretDoor,
+  GiBangingGavel,
 } from 'react-icons/gi';
 import {
   LuSearch,
   LuCloud,
   LuCloudOff,
   LuMap,
+  LuMapPin,
   LuLink2,
   LuPlus,
   LuHammer,
+  LuBox,
   LuFootprints,
   LuBrain,
+  LuPuzzle,
 } from 'react-icons/lu';
 import { shade } from '../lib/color';
+
+import { TwoPaintings } from './TwoPaintings';
 
 // ---- Mappings --------------------------------------------------------------
 
@@ -81,6 +87,11 @@ import { shade } from '../lib/color';
 export const OBJECT_ICONS: Record<string, IconType> = {
   // Furniture
   desk: GiDesk,
+  'coffee-table': GiDesk,
+  'dining-table': GiDesk,
+  'computer-desk': GiDesk,
+  chair: GiOfficeChair,
+  'dining-chair': GiOfficeChair,
   cabinet: GiLockedChest,
   bed: GiBed,
   lamp: GiDeskLamp,
@@ -131,7 +142,7 @@ export const ROOM_ICONS: Record<string, IconType> = {
   library: GiBookshelf,
   bedroom: GiBed,
   clinic: GiStethoscope,
-  courtroom: GiGavel,
+  courtroom: GiBangingGavel,
   museum: GiGreekTemple,
   temple: GiByzantinTemple,
   laboratory: GiMicroscope,
@@ -139,8 +150,8 @@ export const ROOM_ICONS: Record<string, IconType> = {
   office: GiDesk,
   tower: GiWatchtower,
   basement: GiCellarBarrels,
-  corridor: GiDoorway,
-  custom: GiSparkles,
+  corridor: TwoPaintings,
+  custom: GiSecretDoor,
 };
 
 export function objectIcon(kind: string): IconType {
@@ -148,7 +159,7 @@ export function objectIcon(kind: string): IconType {
 }
 
 export function roomIcon(type: string): IconType {
-  return ROOM_ICONS[type] ?? GiSparkles;
+  return ROOM_ICONS[type] ?? GiSecretDoor;
 }
 
 // UI chrome icons (exported for convenience).
@@ -157,12 +168,15 @@ export const UI_ICONS = {
   cloudOn: LuCloud,
   cloudOff: LuCloudOff,
   map: LuMap,
+  location: LuMapPin,
+  puzzle: LuPuzzle,
   connect: LuLink2,
   add: LuPlus,
   build: LuHammer,
   walk: LuFootprints,
   review: LuBrain,
   palace: GiGreekTemple,
+  box: LuBox,
   template: GiCardboardBoxClosed,
   castle: GiCastle,
 } as const;

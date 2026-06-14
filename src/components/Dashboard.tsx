@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../state/useStore';
 import { PALACE_THEMES } from '../themes/styles';
-import { Icon } from '../themes/Icon';
-import { UI_ICONS } from '../themes/icons';
 import { PALACE_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
 
 export default function Dashboard() {
@@ -38,35 +36,39 @@ export default function Dashboard() {
 
   return (
     <div className="page fade-in">
-      <div className="page-head">
-        <h1>Your Palaces</h1>
-        <span className="muted">Build a place for your knowledge to live.</span>
-      </div>
+      <div className="dashboard-top">
+        <div className="dashboard-top-row">
+          <div className="page-head">
+            <h1>Your Palaces</h1>
+            <span className="muted"> Build a place for your knowledge to live.</span>
+          </div>
 
-      <div className="card" style={{ marginBottom: 26 }}>
-        <div className="row wrap" style={{ gap: 12, alignItems: 'flex-end' }}>
-          <div className="field" style={{ flex: 2, minWidth: 220, margin: 0 }}>
-            <label>New palace name</label>
-            <input
-              value={name}
-              placeholder="e.g. Neuroscience Mansion"
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-            />
+          <div className="card create-palace-bar">
+            <div className="row wrap" style={{ gap: 12, alignItems: 'flex-end' }}>
+              <div className="field create-palace-field create-palace-field--name">
+                <label>New palace name</label>
+                <input
+                  value={name}
+                  placeholder="e.g. Neuroscience Mansion"
+                  onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+                />
+              </div>
+              <div className="field create-palace-field create-palace-field--theme">
+                <label>Theme</label>
+                <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+                  {PALACE_THEMES.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button className="primary" onClick={handleCreate}>
+                + Create Palace
+              </button>
+            </div>
           </div>
-          <div className="field" style={{ flex: 1, minWidth: 160, margin: 0 }}>
-            <label>Theme</label>
-            <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-              {PALACE_THEMES.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button className="primary" onClick={handleCreate}>
-            + Create Palace
-          </button>
         </div>
       </div>
 
@@ -83,14 +85,23 @@ export default function Dashboard() {
               onClick={() => navigate(`/palace/${p.id}`)}
             >
               <div className="card-emoji">
-                <Icon icon={UI_ICONS.palace} size={30} color="var(--gold)" />
+                <img
+                  src="/palace-room-icon-brutalist.png?v=3"
+                  alt=""
+                  className="palace-card-icon palace-card-icon--brutalist"
+                />
+                <img
+                  src="/palace-room-icon.png"
+                  alt=""
+                  className="palace-card-icon palace-card-icon--default"
+                />
               </div>
               <h3>{p.name}</h3>
               <div className="meta">
                 {roomCount(p.id)} room{roomCount(p.id) === 1 ? '' : 's'} ·{' '}
                 {PALACE_THEMES.find((t) => t.id === p.theme)?.label ?? p.theme}
               </div>
-              <div className="row" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
+              <div className="row palace-card-actions" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
                 <button
                   className="danger icon-btn"
                   onClick={(e) => {
@@ -113,7 +124,16 @@ export default function Dashboard() {
         {PALACE_TEMPLATES.map((t) => (
           <div key={t.id} className="card clickable" onClick={() => handleTemplate(t.id)}>
             <div className="card-emoji">
-              <Icon icon={UI_ICONS.template} size={30} color="var(--accent)" />
+              <img
+                src="/template-icon-brutalist.png?v=1"
+                alt=""
+                className="template-card-icon template-card-icon--brutalist"
+              />
+              <img
+                src="/template-icon.png"
+                alt=""
+                className="template-card-icon template-card-icon--default"
+              />
             </div>
             <h3>{t.name}</h3>
             <div className="meta">{t.description}</div>

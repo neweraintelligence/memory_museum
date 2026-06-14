@@ -1,0 +1,115 @@
+diff --git a/C:\Users\Cal\.codex\skills\isometric-wall-asset-angles\SKILL.md b/C:\Users\Cal\.codex\skills\isometric-wall-asset-angles\SKILL.md
+new file mode 100644
+--- /dev/null
++++ b/C:\Users\Cal\.codex\skills\isometric-wall-asset-angles\SKILL.md
+@@ -0,0 +1,110 @@
++---
++name: isometric-wall-asset-angles
++description: Preserve and reproduce isometric wall PNG perspective when creating or modifying room wall assets. Use when Codex needs to update isometric wall textures, Victorian/brick/panel/wallpaper room skins, left/right wall PNG pairs, transparent wall sprites, or editor room-style assets while matching an existing reference wall's exact canvas size, alpha silhouette, wall-plane angle, top cap, side edge, trim, bands, seams, and in-editor perspective.
++---
++
++# Isometric Wall Asset Angles
++
++## Core Rule
++
++Use the reference wall image as the geometry template, not just as a rough visual example. Preserve its canvas size, alpha mask, silhouette, top cap, side-depth edge, and wall-plane coordinate system exactly unless the user explicitly asks for a different shape.
++
++The common failure is drawing new wallpaper, chair rails, baseboards, brick courses, panels, or trim in screen-space horizontal rectangles. On an isometric wall, long horizontal features must follow the reference wall's slanted top/bottom edge, while vertical features usually remain aligned with the wall's vertical axis.
++
++## Workflow
++
++1. Inspect the existing asset contract.
++   - Find how the app loads wall PNGs and whether it uses left/right pairs, cache-busting versions, alpha clips, or runtime scaling.
++   - Record the reference images' dimensions, mode, alpha bbox, and row spans.
++   - Identify whether the renderer maps the whole PNG into a wall quad or tiles it.
++
++2. Treat each reference wall as a separate source of truth.
++   - Do not generate one wall and mirror it unless the existing style does that.
++   - Extract geometry from the left reference for the left output and from the right reference for the right output.
++   - Preserve the exact output filenames expected by the style wiring, or update the style wiring and asset version together.
++
++3. Derive a wall-plane coordinate system from alpha.
++   - Use alpha to find the visible top-left, top-right, bottom-left, and bottom-right edge points.
++   - Define `u` along the wall's slanted top edge.
++   - Define `v` down the wall, parallel to the reference side/depth direction.
++   - Draw trim, courses, rails, bands, and panels using `(u, v)` coordinates, then map them back to pixel coordinates.
++
++4. Draw surface design inside that coordinate system.
++   - Wallpaper stripes: narrow `u` bands from top to chair rail.
++   - Damask or repeated motifs: place by `(u, v)` grid, not pixel rows.
++   - Chair rail, crown trim, baseboard, brick courses: constant-`v` lines, which should appear slanted in pixels.
++   - Wainscoting/panels: quads bounded by constant `u` and constant `v`.
++   - Side-depth accents: use constant `u` bands near the outer edge from the reference wall.
++
++5. Preserve transparency exactly.
++   - Composite all translucent marks onto an opaque working layer first.
++   - Apply the reference alpha as the final alpha channel.
++   - Compare the new alpha channel to the reference alpha with an image difference; it should match exactly when geometry is meant to be unchanged.
++
++6. Verify in two places.
++   - Open the raw output PNGs and compare their perspective to the reference PNGs.
++   - If the asset is used by a local app/editor, run the app and visually inspect the in-editor result after cache-busting or reloading.
++
++## Python Pattern
++
++Use a project-local generator script when the transformation needs to be repeatable. This is the essential geometry pattern:
++
++```python
++from PIL import Image
++
++def wall_edges(alpha):
++    w, h = alpha.size
++
++    def first_y(x):
++        for y in range(h):
++            if alpha.getpixel((x, y)) > 0:
++                return y
++        return 0
++
++    def last_y(x):
++        for y in range(h - 1, -1, -1):
++            if alpha.getpixel((x, y)) > 0:
++                return y
++        return h - 1
++
++    return (0, first_y(0)), (w - 1, first_y(w - 1)), (0, last_y(0)), (w - 1, last_y(w - 1))
++
++def wall_mapper(alpha):
++    tl, tr, bl, br = wall_edges(alpha)
++
++    def pt(u, v):
++        return (
++            tl[0] + (tr[0] - tl[0]) * u + (bl[0] - tl[0]) * v,
++            tl[1] + (tr[1] - tl[1]) * u + (bl[1] - tl[1]) * v,
++        )
++
++    return pt
++
++def wall_quad(pt, u0, u1, v0, v1):
++    return [pt(u0, v0), pt(u1, v0), pt(u1, v1), pt(u0, v1)]
++```
++
++Use `wall_quad(pt, 0, 1, v0, v1)` for horizontal wall bands. Use `wall_quad(pt, u0, u1, 0, 1)` for side strips or wallpaper stripes. Apply the reference alpha after all drawing.
++
++## Validation Commands
++
++Use metadata and alpha checks like these:
++
++```python
++from PIL import Image, ImageChops
++
++ref = Image.open("reference-wall.png").convert("RGBA").getchannel("A")
++new = Image.open("new-wall.png").convert("RGBA").getchannel("A")
++assert new.size == ref.size
++assert ImageChops.difference(ref, new).getbbox() is None
++```
++
++For frontend editors, run the local build or dev server and inspect the rendered room after selecting the target style. If the app uses version query strings for assets, bump the version after replacing PNGs.
++
++## Red Flags
++
++- Rails, crown trim, baseboards, brick courses, or wallpaper rows look flat and screen-horizontal.
++- The raw PNG has the right transparent outline but the surface art ignores the slanted top edge.
++- The in-editor wall looks like a rectangular wallpaper pasted behind the room rather than a wall plane.
++- Left and right walls have identical surface direction when the reference pair has mirrored perspective.
++- Browser cache shows the old image because asset versioning was not bumped.

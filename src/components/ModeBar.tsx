@@ -1,7 +1,6 @@
 import { GRADES } from '../lib/srs';
 import type { Grade } from '../lib/srs';
-import { Icon } from '../themes/Icon';
-import { objectIcon, iconTint, UI_ICONS } from '../themes/icons';
+import { ObjectMenuIcon } from '../themes/ObjectMenuIcon';
 import type { PObject, Memory } from '../types';
 
 interface Props {
@@ -44,8 +43,7 @@ export default function ModeBar({
   return (
     <div className="modebar fade-in">
       <div className="row" style={{ justifyContent: 'space-between' }}>
-        <span className="muted row" style={{ fontSize: 12, gap: 5 }}>
-          <Icon icon={mode === 'walk' ? UI_ICONS.walk : UI_ICONS.review} size={13} />
+        <span className="muted" style={{ fontSize: 12 }}>
           {mode === 'walk' ? 'Walk-through' : 'Review'} · {roomName}
         </span>
         <span className="muted" style={{ fontSize: 12 }}>
@@ -55,7 +53,7 @@ export default function ModeBar({
 
       <div className="row" style={{ gap: 10, marginTop: 8, alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, marginTop: 2 }}>
-          {obj && <Icon icon={objectIcon(obj.kind)} size={30} color={iconTint(obj.color)} />}
+          {obj && <ObjectMenuIcon kind={obj.kind} size={30} />}
         </span>
         <div style={{ flex: 1 }}>
           <div style={{ fontWeight: 700, fontSize: 16 }}>
