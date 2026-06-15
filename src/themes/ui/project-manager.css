@@ -108,8 +108,9 @@
 }
 
 [data-ui-theme='project-manager'] .brand {
-  font-size: 18px;
+  font-size: 20px;
   gap: 14px;
+  letter-spacing: 0.01em;
 }
 
 [data-ui-theme='project-manager'] .topbar-btn-label,
@@ -450,7 +451,7 @@
 [data-ui-theme='project-manager'] .page-head h1 {
   font-size: 32px;
   font-weight: 350;
-  letter-spacing: 0;
+  letter-spacing: 0.02em;
   line-height: 1.1;
   text-align: left;
   width: 100%;

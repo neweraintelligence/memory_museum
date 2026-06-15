@@ -100,8 +100,8 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
     return map;
   }, [liveObjects]);
 
-  // Walls + floor interleaved by depth (painter's order). No see-through pass —
-  // objects simply draw on top, which reads fine for a faded backdrop room.
+  // Walls + floor interleaved by depth (painter's order). Objects simply draw
+  // on top, which reads fine for a faded backdrop room.
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; idx: number }

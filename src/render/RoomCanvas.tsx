@@ -18,7 +18,6 @@ import {
 } from '../lib/iso';
 import { shade, withAlpha } from '../lib/color';
 import { getStyle } from '../themes/styles';
-import { objectArtHeight } from './objectArt';
 import {
   getRoomTiles,
   parseTileKey,
@@ -47,231 +46,9 @@ const HALF_H = TILE_H / 2;
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
 
-const WALL_HIT_PAD_X = TILE_W * 0.36;
-const WALL_HIT_PAD_Y = TILE_H * 0.5;
-
 /** Keep viewport pan from stealing clicks meant for room objects / tiles. */
 function blockViewportPan(e: KonvaEventObject<MouseEvent>) {
   e.cancelBubble = true;
-}
-
-function aabbOverlap(
-  aMinX: number,
-  aMaxX: number,
-  aMinY: number,
-  aMaxY: number,
-  bMinX: number,
-  bMaxX: number,
-  bMinY: number,
-  bMaxY: number,
-): boolean {
-  return aMinX <= bMaxX && aMaxX >= bMinX && aMinY <= bMaxY && aMaxY >= bMinY;
-}
-
-/**
- * Left-wall (NW face) version of the "behind" test. The right wall (NE face) is
- * the exact mirror of this under a gx<->gy swap, so `objectBehindWall` reuses it.
- */
-function behindLeftWall(wx: number, wy: number, ox: number, oy: number): boolean {
-  if (ox === wx && oy === wy) return false;
-  const wSum = wx + wy;
-  const oSum = ox + oy;
-  if (oSum > wSum) return false;
-  // Same gx, lower gy → in front of this wall even when oSum < wSum
-  if (oy < wy && ox >= wx) return false;
-  if (oSum === wSum) return ox < wx || oy > wy;
-  return wSum - oSum <= 2;
-}
-
-/** Left-wall version of the "in front" test (see `behindLeftWall`). */
-function inFrontOfLeftWall(wx: number, wy: number, ox: number, oy: number): boolean {
-  if (ox === wx && oy === wy) return false;
-  const wSum = wx + wy;
-  const oSum = ox + oy;
-  if (oSum > wSum) return true;
-  if (oy < wy && ox >= wx) return true;
-  if (oSum === wSum) return ox > wx && oy < wy;
-  return ox > wx && oy <= wy;
-}
-
-/** Northwest of the wall tile in grid space (behind the camera-facing face). */
-function objectBehindWall(seg: WallSeg, ox: number, oy: number): boolean {
-  // Right walls are the gx<->gy mirror of left walls.
-  if (seg.side === 'right') return behindLeftWall(seg.gy, seg.gx, oy, ox);
-  return behindLeftWall(seg.gx, seg.gy, ox, oy);
-}
-
-/** Southeast of the wall tile — closer to camera; must not trigger see-through alone. */
-function objectInFrontOfWall(seg: WallSeg, ox: number, oy: number): boolean {
-  if (seg.side === 'right') return inFrontOfLeftWall(seg.gy, seg.gx, oy, ox);
-  return inFrontOfLeftWall(seg.gx, seg.gy, ox, oy);
-}
-
-/** Along the wall face laterally (east of left wall / south of right wall), not behind. */
-function objectBesideWall(seg: WallSeg, ox: number, oy: number): boolean {
-  const { gx: wx, gy: wy, side } = seg;
-  const dx = ox - wx;
-  const dy = oy - wy;
-  if (side === 'left') return dy === 0 && dx > 0;
-  return dx === 0 && dy > 0;
-}
-
-/**
- * Object sits on the tile directly west of a left-wall tile (corner / beside the
- * arm). Not behind the face — the wall stays solid.
- */
-function objectBesideLeftWallFace(seg: WallSeg, ox: number, oy: number): boolean {
-  if (seg.side !== 'left') return false;
-  const { gx: wx, gy: wy } = seg;
-  return ox === wx - 1 && oy <= wy;
-}
-
-/**
- * Object sits on the tile directly north of a right-wall tile (corner / beside).
- */
-function objectBesideRightWallFace(seg: WallSeg, ox: number, oy: number): boolean {
-  if (seg.side !== 'right') return false;
-  const { gx: wx, gy: wy } = seg;
-  return oy === wy - 1 && ox <= wx;
-}
-
-/**
- * Tight grid cone for tall upper panels only. Clears as soon as the object
- * leaves the northwest (left wall) or west (right wall) neighborhood.
- */
-function objectInUpperWallShadow(seg: WallSeg, ox: number, oy: number): boolean {
-  const { gx: wx, gy: wy, side } = seg;
-  if (ox === wx && oy === wy) return false;
-  const wSum = wx + wy;
-  const oSum = ox + oy;
-  if (oSum > wSum) return false;
-  if (oy < wy && ox >= wx) return false;
-  const depthGap = wSum - oSum;
-  if (depthGap > 3) return false;
-
-  const dx = wx - ox;
-  const dy = oy - wy;
-
-  if (side === 'left') {
-    // dy ≥ −1: one row south still sits under the tall upper panels
-    return dx >= 0 && dx <= 2 && dy >= -1 && dy <= 2;
-  }
-  return dx >= 0 && dx <= 2 && dy <= 1 && dy >= -2;
-}
-
-/**
- * Does the object's sprite bounds overlap the wall face? Tall upper panels
- * hide objects on diagonal / offset tiles, so upperOnly uses a wider zone.
- */
-function objectOverlapsWallFace(
-  seg: WallSeg,
-  sx: number,
-  sy: number,
-  artHeight: number,
-  depthGap: number,
-  upperOnly: boolean,
-): boolean {
-  const xs = [seg.pts[0], seg.pts[2], seg.pts[4], seg.pts[6]];
-  const ys = [seg.pts[1], seg.pts[3], seg.pts[5], seg.pts[7]];
-  const wMinY = Math.min(...ys) - WALL_HIT_PAD_Y;
-  const wMaxY = Math.max(...ys) + 10;
-  const lateralExtra = TILE_W * (upperOnly ? 0.22 : 0.16) * Math.max(0, depthGap - 1);
-
-  const objHalfW = TILE_W * (upperOnly ? 0.4 : 0.36);
-  const oMinX = sx - objHalfW;
-  const oMaxX = sx + objHalfW;
-  const oMinY = sy - artHeight - 16;
-  const oMaxY = sy + TILE_H * 0.3;
-
-  if (!upperOnly) {
-    const wMinX = Math.min(...xs) - WALL_HIT_PAD_X - lateralExtra;
-    const wMaxX = Math.max(...xs) + WALL_HIT_PAD_X + lateralExtra;
-    return aabbOverlap(oMinX, oMaxX, oMinY, oMaxY, wMinX, wMaxX, wMinY, wMaxY);
-  }
-
-  const upperReach = WALL_HIT_PAD_X + lateralExtra + TILE_W * 0.34;
-  const upperMinX = Math.min(...xs) - upperReach;
-  const upperMaxX = Math.max(...xs) + upperReach;
-  const upperMaxY = wMinY + (wMaxY - wMinY) * 0.62;
-  return aabbOverlap(oMinX, oMaxX, oMinY, oMaxY, upperMinX, upperMaxX, wMinY, upperMaxY);
-}
-
-function shiftedScreenPos(
-  ox: number,
-  oy: number,
-  seg: WallSeg,
-  originX: number,
-  originY: number,
-  depthGap: number,
-): { x: number; y: number } {
-  const { x, y } = gridToScreen(ox, oy, originX, originY);
-  const wallTile = gridToScreen(seg.gx, seg.gy, originX, originY);
-  const shift = depthGap === 0 ? 0.4 : Math.min(0.32, depthGap * 0.14);
-  return {
-    x: x + (wallTile.x - x) * shift,
-    y: y + (wallTile.y - y) * shift,
-  };
-}
-
-/**
- * Two-tier occlusion:
- * 1) Full wall — strict behind + gap ≤ 2 (clears reliably when object moves).
- * 2) Upper panels — tight grid shadow + screen overlap (offset / diagonal tiles).
- */
-function wallOccludesObject(
-  seg: WallSeg,
-  ox: number,
-  oy: number,
-  kind: string,
-  originX: number,
-  originY: number,
-): boolean {
-  if (
-    objectInFrontOfWall(seg, ox, oy) ||
-    objectBesideWall(seg, ox, oy) ||
-    objectBesideLeftWallFace(seg, ox, oy) ||
-    objectBesideRightWallFace(seg, ox, oy)
-  ) {
-    return false;
-  }
-
-  const wSum = seg.gx + seg.gy;
-  const oSum = ox + oy;
-  const depthGap = wSum - oSum;
-  const effectiveGap = depthGap === 0 ? 1 : Math.max(1, depthGap);
-  const artHeight = objectArtHeight(kind);
-  const { x, y } = gridToScreen(ox, oy, originX, originY);
-
-  // Tier 1 — adjacent / near tiles, full wall face
-  if (objectBehindWall(seg, ox, oy) && depthGap <= 2) {
-    if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, false)) return true;
-    if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, true)) return true;
-    if (depthGap === 0) {
-      const shifted = shiftedScreenPos(ox, oy, seg, originX, originY, 0);
-      if (objectOverlapsWallFace(seg, shifted.x, shifted.y, artHeight, 1, true)) return true;
-    }
-  }
-
-  // Tier 2 — tall upper panels on offset / diagonal tiles (grid-bounded so it clears)
-  if (!objectInUpperWallShadow(seg, ox, oy)) return false;
-  if (objectOverlapsWallFace(seg, x, y, artHeight, effectiveGap, true)) return true;
-
-  const shifted = shiftedScreenPos(ox, oy, seg, originX, originY, depthGap);
-  return objectOverlapsWallFace(seg, shifted.x, shifted.y, artHeight, effectiveGap, true);
-}
-
-function wallOccludesAny(
-  seg: WallSeg,
-  objects: PObject[],
-  originX: number,
-  originY: number,
-): boolean {
-  return objects.some((o) => {
-    if (o.wallSide) return false;
-    return footprintTiles(o).some((t) =>
-      wallOccludesObject(seg, t.gx, t.gy, o.kind, originX, originY),
-    );
-  });
 }
 
 function WallSegment({
@@ -655,34 +432,40 @@ export default function RoomCanvas({
 
   const placingOnWall = !!(placingKind && isWallAttachable(placingKind));
 
-  // Walls that cover an object behind them render in a third pass (on top of
-  // objects, semi-transparent). All other walls stay in the depth-sorted pass.
-  const { backWallSegs, frontWallSegs } = useMemo(() => {
-    // X-ray: render every wall as a low outline in the depth-sorted pass and skip
-    // the see-through occlusion pass entirely, so nothing is hidden behind walls.
-    if (xrayWalls) return { backWallSegs: wallSegs, frontWallSegs: [] as WallSeg[] };
-    const back: WallSeg[] = [];
-    const front: WallSeg[] = [];
-    for (const seg of wallSegs) {
-      if (wallOccludesAny(seg, roomObjects, origin.x, origin.y)) front.push(seg);
-      else back.push(seg);
+  const wallMountsBySeg = useMemo(() => {
+    const map = new Map<string, PObject>();
+    for (const o of wallObjects) {
+      if (!o.wallSide) continue;
+      map.set(`${o.gridX},${o.gridY},${o.wallSide}`, o);
     }
-    return { backWallSegs: back, frontWallSegs: front };
-  }, [wallSegs, roomObjects, origin.x, origin.y, xrayWalls]);
+    return map;
+  }, [wallObjects]);
 
+  // Single depth-sorted pass for walls, their mounted features, floor tiles and
+  // floor objects. Painter's order (ascending gx+gy) means a wall whose tile is
+  // closer to the camera paints last and hides any object sitting behind it.
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; seg: WallSeg }
-      | { z: number; t: 'floor'; key: string; tile: (typeof tiles)[number] };
+      | { z: number; t: 'feature'; key: string; seg: WallSeg; feature: PObject }
+      | { z: number; t: 'floor'; key: string; tile: (typeof tiles)[number] }
+      | { z: number; t: 'object'; key: string; obj: PObject };
     const items: Item[] = [];
-    backWallSegs.forEach((seg, i) =>
-      items.push({ z: seg.depth - 0.5, t: 'wall', key: `w${i}`, seg }),
-    );
+    wallSegs.forEach((seg, i) => {
+      items.push({ z: seg.depth - 0.5, t: 'wall', key: `w${i}`, seg });
+      const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
+      if (feature) {
+        items.push({ z: seg.depth - 0.5, t: 'feature', key: `wf${i}`, seg, feature });
+      }
+    });
     for (const tile of tiles) {
       items.push({ z: tile.gx + tile.gy, t: 'floor', key: `f${tile.key}`, tile });
     }
+    for (const o of sortedFloorObjects) {
+      items.push({ z: footprintDepthKey(o), t: 'object', key: `o${o.id}`, obj: o });
+    }
     return items.sort((a, b) => a.z - b.z);
-  }, [backWallSegs, tiles]);
+  }, [wallSegs, tiles, sortedFloorObjects, wallMountsBySeg]);
 
   const handleTileClick = (gx: number, gy: number) => {
     if (wallEditing) return;
@@ -747,15 +530,6 @@ export default function RoomCanvas({
 
   const cursor = placingKind ? 'copy' : floorEditing || wallEditing ? 'pointer' : 'default';
 
-  const wallMountsBySeg = useMemo(() => {
-    const map = new Map<string, PObject>();
-    for (const o of wallObjects) {
-      if (!o.wallSide) continue;
-      map.set(`${o.gridX},${o.gridY},${o.wallSide}`, o);
-    }
-    return map;
-  }, [wallObjects]);
-
   const wallInteract = (o: PObject) => ({
     draggable: mode === 'build' && !floorEditing && !wallEditing,
     selected: selectedId === o.id,
@@ -815,8 +589,9 @@ export default function RoomCanvas({
             />
           )}
 
-          {/* Walls + floor tiles, interleaved by depth so they never overlap.
-              Walls are per-tile edge quads, so they wrap any floor shape. */}
+          {/* Walls, mounted features, floor tiles and floor objects interleaved by
+              depth, so a wall closer to the camera paints over (hides) any object
+              sitting behind it. Walls are per-tile edge quads that wrap any shape. */}
           {drawOrder.map((item) => {
             if (item.t === 'wall') {
               const seg = item.seg;
@@ -833,6 +608,45 @@ export default function RoomCanvas({
                   feature={feature}
                   wallTexLeft={wallTexLeft}
                   wallTexRight={wallTexRight}
+                />
+              );
+            }
+            if (item.t === 'feature') {
+              const seg = item.seg;
+              const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+              return (
+                <Group key={item.key} opacity={wallEditing ? 0.3 : 1} listening={false}>
+                  <WallFeatureSprite
+                    kind={item.feature.kind}
+                    color={item.feature.color}
+                    p0={seg.p0}
+                    p1={seg.p1}
+                    wallH={WALL_H}
+                    wallFill={fill}
+                    side={seg.side}
+                  />
+                </Group>
+              );
+            }
+            if (item.t === 'object') {
+              const o = item.obj;
+              const s = objectScreenPos(o, origin.x, origin.y);
+              const isHi = highlightId === o.id;
+              return (
+                <IsoObject
+                  key={o.id}
+                  obj={o}
+                  x={s.x}
+                  y={s.y}
+                  draggable={mode === 'build' && !floorEditing && !wallEditing}
+                  selected={selectedId === o.id}
+                  highlighted={isHi}
+                  isAnchor={anchorIds.has(o.id)}
+                  pulse={pulse}
+                  dim={(focusHighlight && !!highlightId && !isHi) || floorEditing || wallEditing}
+                  stackLift={stackLiftById.get(o.id) ?? 0}
+                  onSelect={onSelect}
+                  onDragEnd={handleFloorDragEnd}
                 />
               );
             }
@@ -866,26 +680,15 @@ export default function RoomCanvas({
           ))}
           </Group>
 
-          {/* Wall objects sit proud of the wall/floor join, so their bases overlap
-              the floor tiles instead of being tucked behind the tile pass. */}
+          {/* Wall-feature selection halo + drag hit area. The feature artwork is
+              drawn in the depth pass above; this interaction layer stays on top so
+              it remains clickable regardless of nearby objects. */}
           {wallSegs.map((seg, i) => {
             const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
             if (!feature) return null;
-            const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
             const interact = wallInteract(feature);
             return (
               <Group key={`wall-feature-${i}`} opacity={wallEditing ? 0.3 : 1}>
-                <Group listening={false}>
-                  <WallFeatureSprite
-                    kind={feature.kind}
-                    color={feature.color}
-                    p0={seg.p0}
-                    p1={seg.p1}
-                    wallH={WALL_H}
-                    wallFill={fill}
-                    side={seg.side}
-                  />
-                </Group>
                 <WallFeatureInteract
                   obj={feature}
                   p0={seg.p0}
@@ -901,29 +704,6 @@ export default function RoomCanvas({
                   onDragEnd={interact.onDragEnd}
                 />
               </Group>
-            );
-          })}
-
-          {/* Floor objects above tiles; wall-mounted sprites already overlap the floor edge. */}
-          {sortedFloorObjects.map((o) => {
-            const s = objectScreenPos(o, origin.x, origin.y);
-            const isHi = highlightId === o.id;
-            return (
-              <IsoObject
-                key={o.id}
-                obj={o}
-                x={s.x}
-                y={s.y}
-                draggable={mode === 'build' && !floorEditing && !wallEditing}
-                selected={selectedId === o.id}
-                highlighted={isHi}
-                isAnchor={anchorIds.has(o.id)}
-                pulse={pulse}
-                dim={(focusHighlight && !!highlightId && !isHi) || floorEditing || wallEditing}
-                stackLift={stackLiftById.get(o.id) ?? 0}
-                onSelect={onSelect}
-                onDragEnd={handleFloorDragEnd}
-              />
             );
           })}
 
@@ -962,24 +742,6 @@ export default function RoomCanvas({
                   />
                 ));
             })()}
-
-          {/* Front walls that occlude an object — drawn on top, see-through. */}
-          {[...frontWallSegs]
-            .sort((a, b) => a.depth - b.depth)
-            .map((seg, i) => {
-              const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
-              return (
-                <WallSegment
-                  key={`fw${i}`}
-                  seg={seg}
-                  style={style}
-                  opacity={wallEditing ? 0.3 : 0.28}
-                  feature={feature}
-                  wallTexLeft={wallTexLeft}
-                  wallTexRight={wallTexRight}
-                />
-              );
-            })}
 
           {/* Clickable wall targets while placing wall-mounted objects */}
           {placingOnWall &&
