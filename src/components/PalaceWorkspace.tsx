@@ -45,6 +45,8 @@ export default function PalaceWorkspace() {
   const gradeMemory = useStore((s) => s.gradeMemory);
   const addFloorTile = useStore((s) => s.addFloorTile);
   const removeFloorTile = useStore((s) => s.removeFloorTile);
+  const addWall = useStore((s) => s.addWall);
+  const removeWall = useStore((s) => s.removeWall);
 
   const mode = useUI((s) => s.mode);
   const setMode = useUI((s) => s.setMode);
@@ -56,6 +58,7 @@ export default function PalaceWorkspace() {
   const setSelected = useUI((s) => s.setSelected);
   const floorEditing = useUI((s) => s.floorEditing);
   const setFloorEditing = useUI((s) => s.setFloorEditing);
+  const wallEditing = useUI((s) => s.wallEditing);
   const leftPanelOpen = useUI((s) => s.leftPanelOpen);
   const rightPanelOpen = useUI((s) => s.rightPanelOpen);
   const toggleLeftPanel = useUI((s) => s.toggleLeftPanel);
@@ -194,6 +197,7 @@ export default function PalaceWorkspace() {
       if (e.key === 'Escape') {
         if (placingKind) setPlacingKind(null);
         else if (floorEditing) setFloorEditing(false);
+        else if (wallEditing) useUI.getState().setWallEditing(false);
         else if (selectedId) setSelected(null);
       }
       if (e.key === 'Delete') {
@@ -238,6 +242,7 @@ export default function PalaceWorkspace() {
   }, [
     placingKind,
     floorEditing,
+    wallEditing,
     selectedId,
     mode,
     currentRoom,
@@ -466,6 +471,7 @@ export default function PalaceWorkspace() {
             placingKind={placingKind}
             placingRotation={placingRotation}
             floorEditing={floorEditing}
+            wallEditing={wallEditing}
             selectedId={selectedId}
             highlightId={highlightId}
             focusHighlight={mode !== 'build'}
@@ -518,6 +524,8 @@ export default function PalaceWorkspace() {
             }}
             onAddTile={(gx, gy) => addFloorTile(currentRoom.id, gx, gy)}
             onRemoveTile={(gx, gy) => removeFloorTile(currentRoom.id, gx, gy)}
+            onAddWall={(gx, gy, side) => addWall(currentRoom.id, gx, gy, side)}
+            onRemoveWall={(gx, gy, side) => removeWall(currentRoom.id, gx, gy, side)}
           />
 
           {(mode === 'walk' || mode === 'review') && (

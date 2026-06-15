@@ -11,6 +11,11 @@ export const UI_THEMES: UiTheme[] = [
     label: 'Project Manager',
     description: 'Sage site-office glass UI — minimal chrome, palace-first.',
   },
+  {
+    id: 'dusty-library',
+    label: 'Dusty Library',
+    description: 'Dark chocolate & cream, old-world serif elegance, burgundy accents.',
+  },
 ];
 
 export const DEFAULT_UI_THEME: UiThemeId = 'brutalist';

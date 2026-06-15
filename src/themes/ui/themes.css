@@ -53,14 +53,15 @@
   --swatch-inset: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(15, 15, 13, 0.22);
 }
 
-/* Brutalist — filled collapsed panel icon button */
+/* Brutalist — filled collapsed panel icon button (square, slight shadow) */
 [data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
 [data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
   background-color: var(--panel);
   background-image: var(--form);
   border-color: var(--border);
+  border-radius: var(--radius);
   color: var(--text);
-  box-shadow: none;
+  box-shadow: var(--bevel), var(--shadow);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   filter: none;
@@ -72,7 +73,16 @@
   border-color: var(--border);
   color: var(--text);
   filter: none;
-  box-shadow: none;
+  box-shadow: var(--bevel), var(--shadow);
+}
+
+/* Brutalist — collapsed panel icons inset from screen edges */
+[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed.left {
+  left: calc(var(--editor-panel-side-inset) + 20px);
+}
+
+[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed.right {
+  right: calc(var(--editor-panel-side-inset) + 20px);
 }
 
 /* Brutalist — accent-colored palace cube & build hammer */
@@ -91,11 +101,11 @@
 }
 
 [data-ui-theme='brutalist'] .card-emoji .palace-card-icon--brutalist {
-  height: 51.84px;
+  height: 31.1px;
 }
 
 [data-ui-theme='brutalist'] .card-emoji .template-card-icon--brutalist {
-  height: 51.84px;
+  height: 31.1px;
 }
 
 [data-ui-theme='brutalist'] .card-emoji .palace-card-icon--default,
@@ -111,6 +121,10 @@
 .room-list-item .room-list-icon--typed,
 .canvas-overlay .pill .room-list-icon--typed {
   display: none;
+}
+
+[data-ui-theme='brutalist'] .room-list-item {
+  font-size: 13px;
 }
 
 [data-ui-theme='brutalist'] .room-list-item .room-list-icon--default,
@@ -167,6 +181,10 @@
   top: 4px;
 }
 
+[data-ui-theme='brutalist'] .page-head h1 .page-title-lead::after {
+  content: ' ';
+}
+
 [data-ui-theme='brutalist'] .create-palace-bar {
   width: 50%;
   max-width: 50%;
@@ -215,9 +233,13 @@
   grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
 }
 
+[data-ui-theme='brutalist'] .brand {
+  gap: 14px;
+}
+
 [data-ui-theme='brutalist'] .brand .brand-icon {
-  height: 43.4px;
-  width: 43.4px;
+  height: 31px;
+  width: 31px;
   background-image: url('/brand-icon-brutalist.png');
 }
 

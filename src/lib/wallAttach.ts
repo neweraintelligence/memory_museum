@@ -17,6 +17,17 @@ export function wallSegKey(gx: number, gy: number, side: WallSide): string {
   return `${gx},${gy},${side}`;
 }
 
+/** Compute wall keys ("gx,gy,side") for all exposed edges of a floor shape. */
+export function autoWallKeys(presentKeys: string[], present: Set<string>): string[] {
+  const keys: string[] = [];
+  for (const k of presentKeys) {
+    const [gx, gy] = k.split(',').map(Number);
+    if (!present.has(tileKey(gx - 1, gy))) keys.push(`${gx},${gy},left`);
+    if (!present.has(tileKey(gx, gy - 1))) keys.push(`${gx},${gy},right`);
+  }
+  return keys;
+}
+
 /** Build exposed wall segments for the current floor shape. */
 export function buildWallSegs(
   presentKeys: string[],
@@ -48,6 +59,54 @@ export function buildWallSegs(
     }
 
     if (!present.has(tileKey(gx, gy - 1))) {
+      const p0 = { x: cx, y: cy - halfH };
+      const p1 = { x: cx + halfW, y: cy };
+      segs.push({
+        side: 'right',
+        pts: [p0.x, p0.y, p1.x, p1.y, p1.x, p1.y - wallH, p0.x, p0.y - wallH],
+        p0,
+        p1,
+        depth: gx + gy,
+        gx,
+        gy,
+      });
+    }
+  }
+
+  return segs.sort((a, b) => a.depth - b.depth);
+}
+
+/** Build wall segments from an explicit list of wall keys ("gx,gy,side"). */
+export function buildExplicitWallSegs(
+  wallKeys: string[],
+  originX: number,
+  originY: number,
+  halfW: number,
+  halfH: number,
+  wallH: number,
+): WallSeg[] {
+  const segs: WallSeg[] = [];
+
+  for (const key of wallKeys) {
+    const parts = key.split(',');
+    const gx = Number(parts[0]);
+    const gy = Number(parts[1]);
+    const side = parts[2] as WallSide;
+    const { x: cx, y: cy } = gridToScreen(gx, gy, originX, originY);
+
+    if (side === 'left') {
+      const p0 = { x: cx - halfW, y: cy };
+      const p1 = { x: cx, y: cy - halfH };
+      segs.push({
+        side: 'left',
+        pts: [p0.x, p0.y, p1.x, p1.y, p1.x, p1.y - wallH, p0.x, p0.y - wallH],
+        p0,
+        p1,
+        depth: gx + gy,
+        gx,
+        gy,
+      });
+    } else {
       const p0 = { x: cx, y: cy - halfH };
       const p1 = { x: cx + halfW, y: cy };
       segs.push({

@@ -1,0 +1,927 @@
+/* Dusty Library — dark chocolate & cream, old-world serif elegance, burgundy accents */
+
+[data-ui-theme='dusty-library'] {
+  color-scheme: dark;
+
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-classic: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-brand: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --font-palaces: 'Castoro Titling', Georgia, 'Times New Roman', serif;
+  --font-script: 'Ms Madi', 'Brush Script MT', cursive;
+  --font-mono: 'Fira Code', ui-monospace, monospace;
+
+  /* Deep chocolate palette */
+  --bg: #2a2018;
+  --bg-2: #362b20;
+  --panel: #3e3228;
+  --panel-2: #4a3c30;
+  --border: rgba(200, 180, 140, 0.18);
+  --text: #e8dfd0;
+  --text-dim: rgba(232, 223, 208, 0.68);
+  --accent: #4b0d18;
+  --accent-2: #380a14;
+  --gold: #d0ac68;
+  --selection: #bf9f60;
+  --good: #7cba66;
+  --warn: #d4a048;
+  --bad: #d4503a;
+
+  --text-on-accent: #f0e8da;
+  --input-bg: rgba(0, 0, 0, 0.22);
+  --danger-border: #5a1818;
+  --dot-off: #6a5a48;
+  --ghost-hover-bg: rgba(200, 180, 140, 0.08);
+  --mode-hover-bg: rgba(200, 180, 140, 0.1);
+
+  --radius: 6px;
+  --shadow: 0 16px 44px -12px rgba(0, 0, 0, 0.6), 0 4px 14px -4px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 4px 14px -4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --bevel: inset 0 1px 0 rgba(200, 180, 140, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  --form: linear-gradient(180deg, rgba(200, 180, 140, 0.04), rgba(0, 0, 0, 0.06) 62%, rgba(0, 0, 0, 0.1));
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='0.05'/%3E%3C/svg%3E");
+
+  --heading-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --inset-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+  --recessed-well: inset 0 2px 5px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(0, 0, 0, 0.34);
+  --button-active-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+  --focus-ring: 0 0 0 3px rgba(191, 159, 96, 0.45);
+  --active-ring: 0 0 0 2px rgba(191, 159, 96, 0.65);
+  --chrome-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.55);
+  --side-shadow: -8px 0 24px -16px rgba(0, 0, 0, 0.6);
+  --side-shadow-left: 8px 0 24px -16px rgba(0, 0, 0, 0.6);
+  --card-hover-shadow: var(--bevel), 0 26px 50px -14px rgba(0, 0, 0, 0.6), 0 6px 16px -6px rgba(0, 0, 0, 0.4);
+  --modal-backdrop: rgba(10, 8, 5, 0.6);
+  --modal-shadow: var(--bevel), 0 40px 80px -24px rgba(0, 0, 0, 0.7), 0 12px 28px -10px rgba(0, 0, 0, 0.5);
+  --kbd-shadow: var(--bevel), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --swatch-inset: inset 0 1px 0 rgba(200, 180, 140, 0.1), inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  --bg-texture: url('/dusty-library-bg.jpg');
+}
+
+/* ---- Global surfaces ---- */
+
+[data-ui-theme='dusty-library'] body {
+  background-color: transparent;
+  background-image: none;
+}
+
+[data-ui-theme='dusty-library']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(42, 32, 24, 0.62), rgba(42, 32, 24, 0.62)),
+    var(--bg-texture);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ---- Typography ---- */
+
+[data-ui-theme='dusty-library'] h1,
+[data-ui-theme='dusty-library'] h2 {
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-style: italic;
+}
+
+[data-ui-theme='dusty-library'] h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+[data-ui-theme='dusty-library'] .section-title {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+}
+
+[data-ui-theme='dusty-library'] .brand {
+  font-family: var(--font-brand);
+  font-weight: 550;
+  font-style: normal;
+  font-size: 26.5px;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: none;
+  gap: 14px;
+  margin-left: 8px;
+}
+
+[data-ui-theme='dusty-library'] .page-head h1 {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+/* ---- Top bar ---- */
+
+[data-ui-theme='dusty-library'] .topbar {
+  background-color: #221a12;
+  border-bottom-color: rgba(200, 180, 140, 0.12);
+}
+
+[data-ui-theme='dusty-library'] .brand .brand-icon {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  height: 40px;
+  width: 40px;
+}
+
+/* Engraved stroke — three offset layers follow the line-art outline via mask */
+[data-ui-theme='dusty-library'] .brand .brand-icon-carve,
+[data-ui-theme='dusty-library'] .brand .brand-icon::before,
+[data-ui-theme='dusty-library'] .brand .brand-icon::after {
+  -webkit-mask-image: url('/brand-icon-dusty-library.png');
+  mask-image: url('/brand-icon-dusty-library.png');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  pointer-events: none;
+}
+
+/* Upper-left highlight rim */
+[data-ui-theme='dusty-library'] .brand .brand-icon-carve {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(236, 212, 170, 0.55);
+  transform: translate(-0.5px, -0.5px);
+}
+
+[data-ui-theme='dusty-library'] .brand .brand-icon::before,
+[data-ui-theme='dusty-library'] .brand .brand-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* Dark stroke — shadow wall offset down-right */
+[data-ui-theme='dusty-library'] .brand .brand-icon::before {
+  background-color: #140a04;
+  transform: translate(1px, 1px);
+  z-index: 1;
+}
+
+/* Gold stroke on top */
+[data-ui-theme='dusty-library'] .brand .brand-icon::after {
+  background-color: #c4a060;
+  z-index: 2;
+}
+
+[data-ui-theme='dusty-library'] .brand-text {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+[data-ui-theme='dusty-library'] .brand-text:hover {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(196, 160, 96, 0.3);
+}
+
+/* Mode switch — warm inset pill */
+[data-ui-theme='dusty-library'] .mode-switch {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(200, 180, 140, 0.12);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+[data-ui-theme='dusty-library'] .mode-switch button {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+[data-ui-theme='dusty-library'] .mode-switch button:hover {
+  color: var(--text);
+  background: rgba(200, 180, 140, 0.08);
+}
+
+[data-ui-theme='dusty-library'] .mode-switch button.active {
+  background-color: var(--accent);
+  background-image: none;
+  border-color: transparent;
+  color: var(--text-on-accent);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(75, 13, 24, 0.5);
+  text-shadow: none;
+}
+
+/* Recessed field — matches Object Library category select (inset well) */
+[data-ui-theme='dusty-library'] .topbar button.ghost,
+[data-ui-theme='dusty-library'] .theme-switcher-select,
+[data-ui-theme='dusty-library'] .cloud-pill {
+  background-color: var(--input-bg);
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.15);
+  box-shadow: var(--inset-shadow);
+  filter: none;
+  transform: none;
+}
+
+[data-ui-theme='dusty-library'] .topbar button.ghost:hover {
+  background-color: rgba(0, 0, 0, 0.28);
+  box-shadow: var(--inset-shadow);
+  filter: none;
+  transform: none;
+}
+
+[data-ui-theme='dusty-library'] .topbar button.ghost:active {
+  box-shadow: var(--inset-shadow);
+  filter: none;
+  transform: none;
+}
+
+[data-ui-theme='dusty-library'] .theme-switcher-select {
+  color: var(--text);
+}
+
+[data-ui-theme='dusty-library'] .theme-switcher-select:focus {
+  border-color: var(--selection);
+  box-shadow: var(--inset-shadow), var(--focus-ring);
+}
+
+[data-ui-theme='dusty-library'] input:focus,
+[data-ui-theme='dusty-library'] textarea:focus,
+[data-ui-theme='dusty-library'] select:focus {
+  border-color: var(--selection);
+}
+
+/* Select dropdown arrow — cream colored, native chevron hidden */
+[data-ui-theme='dusty-library'] select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23e8dfd0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+[data-ui-theme='dusty-library'] select option,
+[data-ui-theme='dusty-library'] select optgroup {
+  background-color: #2a2018;
+  color: var(--text);
+}
+
+/* ---- Buttons ---- */
+
+[data-ui-theme='dusty-library'] button {
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-color: var(--accent-2);
+  background-color: var(--accent);
+  background-image: none;
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='dusty-library'] button:hover {
+  filter: brightness(1.12);
+}
+
+[data-ui-theme='dusty-library'] .mode-switch button:not(.active) {
+  background: transparent;
+  background-image: none;
+  border-color: transparent;
+  color: var(--text-dim);
+  box-shadow: none;
+}
+
+[data-ui-theme='dusty-library'] .mode-switch button:not(.active):hover {
+  color: var(--text);
+  background: rgba(200, 180, 140, 0.08);
+  filter: none;
+}
+
+[data-ui-theme='dusty-library'] button.primary {
+  background-color: var(--accent);
+  border-color: var(--accent-2);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+[data-ui-theme='dusty-library'] button.primary:hover {
+  filter: brightness(1.18);
+}
+
+[data-ui-theme='dusty-library'] button.danger {
+  background-color: var(--accent);
+  border-color: var(--accent-2);
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='dusty-library'] button.danger:hover {
+  background-color: var(--accent);
+  filter: brightness(1.18);
+}
+
+[data-ui-theme='dusty-library'] button.ghost {
+  background-color: transparent;
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.12);
+  color: var(--text);
+  box-shadow: none;
+}
+
+[data-ui-theme='dusty-library'] button.ghost:hover {
+  background-color: rgba(200, 180, 140, 0.08);
+  filter: none;
+}
+
+/* ---- Inputs ---- */
+
+[data-ui-theme='dusty-library'] input,
+[data-ui-theme='dusty-library'] textarea,
+[data-ui-theme='dusty-library'] select {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(200, 180, 140, 0.15);
+  color: var(--text);
+  font-weight: 400;
+}
+
+/* ---- Side panels ---- */
+
+[data-ui-theme='dusty-library'] .side {
+  background-color: #2e2418;
+  border-color: rgba(200, 180, 140, 0.1);
+}
+
+[data-ui-theme='dusty-library'] .side-head {
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom-color: rgba(200, 180, 140, 0.1);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+}
+
+/* ---- Palette items & style chips ---- */
+
+[data-ui-theme='dusty-library'] .palette-item,
+[data-ui-theme='dusty-library'] .style-chip {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-color: rgba(200, 180, 140, 0.1);
+}
+
+[data-ui-theme='dusty-library'] .palette-item:hover,
+[data-ui-theme='dusty-library'] .style-chip:hover {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+[data-ui-theme='dusty-library'] .palette-item.active,
+[data-ui-theme='dusty-library'] .style-chip.active {
+  border-color: var(--selection);
+  box-shadow: var(--active-ring);
+}
+
+[data-ui-theme='dusty-library'] .palette-item .name {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* ---- Cards ---- */
+
+[data-ui-theme='dusty-library'] .card {
+  background-color: rgba(62, 50, 40, 0.8);
+  border-color: rgba(200, 180, 140, 0.12);
+}
+
+[data-ui-theme='dusty-library'] .card.clickable:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+[data-ui-theme='dusty-library'] .page .card h3 {
+  font-family: var(--font-heading);
+  font-weight: 550;
+  font-style: italic;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+[data-ui-theme='dusty-library'] .page .card .meta {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+[data-ui-theme='dusty-library'] .card.clickable button.danger {
+  background-color: var(--accent);
+  border-color: var(--accent-2);
+  color: var(--text-on-accent);
+}
+
+/* ---- Room list ---- */
+
+[data-ui-theme='dusty-library'] .room-list-item {
+  font-size: 13px;
+}
+
+[data-ui-theme='dusty-library'] .room-list-item:hover {
+  background: rgba(200, 180, 140, 0.06);
+}
+
+[data-ui-theme='dusty-library'] .room-list-item.active {
+  background-color: var(--input-bg);
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.15);
+  box-shadow: var(--inset-shadow);
+}
+
+/* Show typed room icons (like brutalist) */
+[data-ui-theme='dusty-library'] .room-list-item .room-list-icon--default,
+[data-ui-theme='dusty-library'] .canvas-overlay .pill .room-list-icon--default {
+  display: none;
+}
+
+[data-ui-theme='dusty-library'] .room-list-item .room-list-icon--typed,
+[data-ui-theme='dusty-library'] .canvas-overlay .pill .room-list-icon--typed {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  color: var(--gold);
+}
+
+[data-ui-theme='dusty-library'] .canvas-overlay .pill:not(.muted) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- Canvas overlay ---- */
+
+[data-ui-theme='dusty-library'] .canvas-overlay .pill {
+  background-color: rgba(34, 26, 18, 0.85);
+  border-color: rgba(200, 180, 140, 0.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+}
+
+/* ---- Modebar ---- */
+
+[data-ui-theme='dusty-library'] .modebar {
+  background-color: rgba(34, 26, 18, 0.9);
+  border-color: rgba(200, 180, 140, 0.12);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  backdrop-filter: blur(16px) saturate(1.1);
+}
+
+/* ---- Zoom controls ---- */
+
+[data-ui-theme='dusty-library'] .zoom-controls {
+  background-color: rgba(34, 26, 18, 0.85);
+  border-color: rgba(200, 180, 140, 0.12);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ---- Modal ---- */
+
+[data-ui-theme='dusty-library'] .modal-backdrop {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+[data-ui-theme='dusty-library'] .modal {
+  background-color: #2e2418;
+  border-color: rgba(200, 180, 140, 0.15);
+}
+
+[data-ui-theme='dusty-library'] .modal-head {
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom-color: rgba(200, 180, 140, 0.1);
+  font-family: var(--font-heading);
+}
+
+/* ---- Floating editor panels ---- */
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating {
+  background-color: rgba(42, 32, 24, 0.88);
+  border-color: rgba(200, 180, 140, 0.12);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  backdrop-filter: blur(20px) saturate(1.1);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .side-head {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating button:not(.primary) {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-color: rgba(200, 180, 140, 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: none;
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating button:not(.primary):hover {
+  background-color: rgba(200, 180, 140, 0.08);
+  transform: none;
+  filter: none;
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item:hover {
+  background: rgba(200, 180, 140, 0.06);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item.active {
+  background-color: var(--input-bg);
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.15);
+  box-shadow: var(--inset-shadow);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .palette-item,
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .style-chip {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Collapsed panel icons inset from screen edges */
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed.left {
+  left: calc(var(--editor-panel-side-inset) + 20px);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed.right {
+  right: calc(var(--editor-panel-side-inset) + 20px);
+}
+
+/* Collapsed panel buttons */
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
+  background-color: #2a2018;
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.25);
+  color: var(--gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  filter: none;
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
+  background-color: #362b20;
+  border-color: rgba(200, 180, 140, 0.35);
+  color: var(--gold);
+  filter: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Gold icons in side panels — stay visible on burgundy buttons */
+[data-ui-theme='dusty-library'] .side-head-icon--palace,
+[data-ui-theme='dusty-library'] .side-head-icon--build,
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
+[data-ui-theme='dusty-library'] .overview-map-btn:not(.primary) .side-head-icon,
+[data-ui-theme='dusty-library'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
+  color: var(--gold);
+}
+
+/* ---- Dashboard layout ---- */
+
+[data-ui-theme='dusty-library'] .page {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+[data-ui-theme='dusty-library'] .dashboard-top,
+[data-ui-theme='dusty-library'] .dashboard-top-row {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+[data-ui-theme='dusty-library'] .dashboard-top-row {
+  display: block;
+  padding-top: 0;
+}
+
+[data-ui-theme='dusty-library'] .dashboard-top {
+  margin-bottom: 0;
+}
+
+[data-ui-theme='dusty-library'] .dashboard-top-row .page-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 36px;
+  max-width: 100%;
+}
+
+/* ---- Editorial display header ---- */
+[data-ui-theme='dusty-library'] .page-head h1 {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 68px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.025em;
+  line-height: 0.9;
+  color: var(--text);
+  text-transform: none;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  text-wrap: balance;
+}
+
+/* "Your" — Ms Madi script lead word above "Palaces" */
+[data-ui-theme='dusty-library'] .page-head h1 .page-title-lead {
+  display: block;
+  font-family: var(--font-script);
+  font-size: 0.52em;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  margin-bottom: 0.22em;
+  color: var(--text-dim);
+  text-shadow: none;
+}
+
+/* "Palaces" — Castoro Titling classical display */
+[data-ui-theme='dusty-library'] .page-head h1 .page-title-main {
+  display: block;
+  font-family: var(--font-palaces);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 0.52em;
+  letter-spacing: 0.04em;
+  padding-left: 1ch;
+}
+
+/* Subtitle — small gold tracked caps, Winslow tagline register */
+[data-ui-theme='dusty-library'] .page-head .muted {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  position: static;
+  top: auto;
+}
+
+/* Thin rule prefix before subtitle text */
+[data-ui-theme='dusty-library'] .page-head .muted::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.55;
+  vertical-align: middle;
+  margin-right: 10px;
+  position: relative;
+  top: -1px;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-bar {
+  width: 50%;
+  max-width: 50%;
+  margin-left: 0;
+  margin-bottom: 26px;
+  padding-block: 10px;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-bar > .row {
+  width: 100%;
+  min-width: 0;
+  align-items: flex-end;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-bar > .row > button.primary {
+  margin-bottom: 12px;
+  height: 36px;
+  padding-block: 0;
+  line-height: 1;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-field--name,
+[data-ui-theme='dusty-library'] .create-palace-field--theme {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-field input,
+[data-ui-theme='dusty-library'] .create-palace-field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  height: 36px;
+}
+
+[data-ui-theme='dusty-library'] .create-palace-bar .field label {
+  line-height: 14px;
+}
+
+[data-ui-theme='dusty-library'] .page .grid {
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+}
+
+/* ---- Palace & template card icons ---- */
+
+[data-ui-theme='dusty-library'] .card-icon-engraved {
+  display: block;
+  position: relative;
+  height: 51.84px;
+  width: 51.84px;
+  flex-shrink: 0;
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved--palace {
+  --engraved-mask: url('/palace-room-icon-dusty-library.png');
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved--template {
+  --engraved-mask: url('/template-icon-dusty-library.png');
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved .card-icon-carve,
+[data-ui-theme='dusty-library'] .card-icon-engraved::before,
+[data-ui-theme='dusty-library'] .card-icon-engraved::after {
+  -webkit-mask-image: var(--engraved-mask);
+  mask-image: var(--engraved-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  pointer-events: none;
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved .card-icon-carve {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(236, 212, 170, 0.55);
+  transform: translate(-0.5px, -0.5px);
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved::before,
+[data-ui-theme='dusty-library'] .card-icon-engraved::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved::before {
+  background-color: #140a04;
+  transform: translate(1px, 1px);
+  z-index: 1;
+}
+
+[data-ui-theme='dusty-library'] .card-icon-engraved::after {
+  background-color: #c4a060;
+  z-index: 2;
+}
+
+[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--default,
+[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--brutalist,
+[data-ui-theme='dusty-library'] .card-emoji .template-card-icon--default,
+[data-ui-theme='dusty-library'] .card-emoji .template-card-icon--brutalist {
+  display: none;
+}
+
+/* Palace card actions */
+[data-ui-theme='dusty-library'] .card.clickable:has(.palace-card-actions) {
+  position: relative;
+}
+
+[data-ui-theme='dusty-library'] .palace-card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin: 0;
+}
+
+[data-ui-theme='dusty-library'] .card.clickable:has(.palace-card-actions) h3 {
+  padding-right: 72px;
+}
+
+/* ---- Tags & badges ---- */
+
+[data-ui-theme='dusty-library'] .tag,
+[data-ui-theme='dusty-library'] .status-badge {
+  background-color: var(--input-bg);
+  background-image: none;
+  border-color: rgba(200, 180, 140, 0.12);
+  box-shadow: var(--recessed-well);
+}
+
+/* ---- kbd ---- */
+
+[data-ui-theme='dusty-library'] .kbd {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(200, 180, 140, 0.15);
+}
+
+/* ---- Search results ---- */
+
+[data-ui-theme='dusty-library'] .search-result:hover {
+  background: rgba(200, 180, 140, 0.06);
+  border-color: rgba(200, 180, 140, 0.1);
+}
+
+/* ---- Floor hint ---- */
+
+[data-ui-theme='dusty-library'] .floor-hint {
+  background-color: var(--gold);
+  border-color: rgba(0, 0, 0, 0.3);
+  color: #1a1410;
+  background-image: none;
+  text-shadow: none;
+}
+
+/* ---- Map room cards ---- */
+
+[data-ui-theme='dusty-library'] .map-room-card {
+  background: linear-gradient(135deg, rgba(208, 172, 104, 0.12), transparent 60%), rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(208, 172, 104, 0.2);
+  border-top-color: rgba(208, 172, 104, 0.35);
+}
+
+[data-ui-theme='dusty-library'] .map-room-card.unconnected {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(200, 180, 140, 0.1);
+  border-top-color: rgba(200, 180, 140, 0.15);
+}
+
+[data-ui-theme='dusty-library'] .map-room-icon {
+  line-height: 0;
+  margin-bottom: 6px;
+  color: var(--gold);
+}
+
+[data-ui-theme='dusty-library'] .map-room-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* ---- Map connection lines ---- */
+
+[data-ui-theme='dusty-library'] .map-connection-line {
+  stroke: rgba(196, 160, 96, 0.5);
+}
+
+/* ---- Scrollbars ---- */
+
+[data-ui-theme='dusty-library'] ::-webkit-scrollbar-track {
+  background: #221a12;
+}
+
+[data-ui-theme='dusty-library'] ::-webkit-scrollbar-thumb {
+  background: #4a3c30;
+  border-color: #221a12;
+}
+
+[data-ui-theme='dusty-library'] ::-webkit-scrollbar-thumb:hover {
+  background: #5a4a3a;
+}
+
+[data-ui-theme='dusty-library'] ::-webkit-scrollbar-corner {
+  background: #221a12;
+}

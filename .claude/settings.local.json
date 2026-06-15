@@ -6,7 +6,10 @@
       "Bash(git config --local --list)",
       "Bash(cmdkey:*)",
       "Bash(git config:*)",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(node:*)"
     ]
   }
 }

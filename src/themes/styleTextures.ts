@@ -5,7 +5,7 @@ export interface StyleTextureSet {
 }
 
 /** Bump when replacing generated architectural style PNGs. */
-export const ARCHITECTURAL_STYLE_ASSET_VERSION = 12;
+export const ARCHITECTURAL_STYLE_ASSET_VERSION = 26;
 
 const v = ARCHITECTURAL_STYLE_ASSET_VERSION;
 const floor = (slug: string, variant: 'a' | 'b') => `floors/${slug}-floor-${variant}.png?v=${v}`;

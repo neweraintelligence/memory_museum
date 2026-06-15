@@ -9,6 +9,7 @@ interface UIState {
   selectedObjectId: string | null;
   searchOpen: boolean;
   floorEditing: boolean;
+  wallEditing: boolean;
   leftPanelOpen: boolean;
   rightPanelOpen: boolean;
   setMode: (m: AppMode) => void;
@@ -18,6 +19,7 @@ interface UIState {
   setSelected: (id: string | null) => void;
   setSearchOpen: (v: boolean) => void;
   setFloorEditing: (v: boolean) => void;
+  setWallEditing: (v: boolean) => void;
   toggleLeftPanel: () => void;
   toggleRightPanel: () => void;
 }
@@ -29,15 +31,17 @@ export const useUI = create<UIState>((set) => ({
   selectedObjectId: null,
   searchOpen: false,
   floorEditing: false,
+  wallEditing: false,
   leftPanelOpen: true,
   rightPanelOpen: true,
-  setMode: (mode) => set({ mode, placingKind: null, floorEditing: false }),
+  setMode: (mode) => set({ mode, placingKind: null, floorEditing: false, wallEditing: false }),
   // entering placement and floor editing are mutually exclusive
   setPlacingKind: (placingKind) =>
     set({
       placingKind,
       placingRotation: placingKind ? defaultObjectRotation(placingKind) : 0,
       floorEditing: false,
+      wallEditing: false,
     }),
   setPlacingRotation: (placingRotation) => set({ placingRotation }),
   cyclePlacingRotation: () =>
@@ -45,7 +49,9 @@ export const useUI = create<UIState>((set) => ({
   setSelected: (selectedObjectId) => set({ selectedObjectId }),
   setSearchOpen: (searchOpen) => set({ searchOpen }),
   setFloorEditing: (floorEditing) =>
-    set(floorEditing ? { floorEditing, placingKind: null, selectedObjectId: null } : { floorEditing }),
+    set(floorEditing ? { floorEditing, wallEditing: false, placingKind: null, selectedObjectId: null } : { floorEditing }),
+  setWallEditing: (wallEditing) =>
+    set(wallEditing ? { wallEditing, floorEditing: false, placingKind: null, selectedObjectId: null } : { wallEditing }),
   toggleLeftPanel: () => set((s) => ({ leftPanelOpen: !s.leftPanelOpen })),
   toggleRightPanel: () => set((s) => ({ rightPanelOpen: !s.rightPanelOpen })),
 }));

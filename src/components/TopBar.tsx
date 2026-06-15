@@ -33,7 +33,9 @@ export default function TopBar() {
     <div className="topbar">
       <div className="brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
         <span className="logo">
-          <span className="brand-icon" aria-hidden="true" />
+          <span className="brand-icon" aria-hidden="true">
+            <span className="brand-icon-carve" aria-hidden="true" />
+          </span>
         </span>
         <span className="brand-text">Memory Palace{'\u00A0\u00A0\u00A0\u00A0\u00A0'}</span>
       </div>

@@ -109,7 +109,7 @@
 
 [data-ui-theme='project-manager'] .brand {
   font-size: 18px;
-  gap: 7px;
+  gap: 14px;
 }
 
 [data-ui-theme='project-manager'] .topbar-btn-label,
@@ -457,6 +457,10 @@
   margin: 0;
 }
 
+[data-ui-theme='project-manager'] .page-head h1 .page-title-lead::after {
+  content: ' ';
+}
+
 [data-ui-theme='project-manager'] .page .field label {
   font-size: 13px;
   font-weight: 500;
@@ -707,61 +711,52 @@
 
 [data-ui-theme='project-manager'] .content.editor-layout {
   overflow: visible;
+  --pm-collapsed-circle-size: 44px;
 }
 
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed {
-  background: transparent;
-  background-color: transparent;
-  background-image: none;
-  border: none;
-  box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  overflow: visible;
-  width: auto;
-  min-width: 0;
-  padding: 5px;
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed,
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed.right {
+  width: var(--pm-collapsed-circle-size);
+  min-width: var(--pm-collapsed-circle-size);
 }
 
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed.left {
-  align-items: flex-start;
-  width: auto;
-  min-width: 0;
+  left: calc(var(--editor-panel-side-inset) + 40px);
 }
 
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed.right {
-  align-items: flex-end;
-  width: auto;
-  min-width: 0;
+  right: calc(var(--editor-panel-side-inset) + 40px);
 }
 
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed.left .side-foot {
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed.right .side-foot {
-  justify-content: flex-end;
-  align-items: flex-end;
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-foot {
+  overflow: visible;
 }
 
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button:not(.primary),
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn {
-  width: 34px;
-  height: 34px;
+  width: var(--pm-collapsed-circle-size);
+  height: var(--pm-collapsed-circle-size);
+  overflow: visible;
   background: transparent;
   background-color: transparent;
-  border: 1.5px solid #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
   border-radius: 50%;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   color: #ffffff;
+  box-shadow: none;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.38));
 }
 
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn svg {
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn svg,
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button.side-expand-btn svg {
   width: calc(18px * var(--pm-icon-scale));
   height: calc(18px * var(--pm-icon-scale));
+}
+
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn .ui-icon,
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button.side-expand-btn .ui-icon {
+  transform: none;
 }
 
 /* ---- Icon sizing (+20%) ---- */
@@ -817,31 +812,10 @@
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
   background: transparent;
   background-color: transparent;
-  border-color: #c8ccc4;
-  color: #c8ccc4;
-  transform: none;
-}
-
-/* Filled collapsed panel icon button (solid sage bg) */
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
-  background-color: var(--bg);
-  background-image: none;
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
-  box-shadow: none;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  filter: none;
-}
-
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
-  background-color: var(--bg-2);
   border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
   transform: none;
-  filter: none;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.38));
   box-shadow: none;
 }
 

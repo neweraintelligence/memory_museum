@@ -8,7 +8,8 @@ import { applyGrade } from '../lib/srs';
 import type { Grade } from '../lib/srs';
 import { getTheme } from '../themes/styles';
 import { getObjectDef, isSurface, isWallAttachable } from '../themes/objects';
-import { getRoomTiles, tileKey } from '../lib/floor';
+import { getRoomTiles, roomTileSet, tileKey } from '../lib/floor';
+import { autoWallKeys } from '../lib/wallAttach';
 import {
   canPlaceObject,
   footprintTileKeys,
@@ -52,6 +53,10 @@ interface State {
   // floor plan
   addFloorTile: (roomId: string, gx: number, gy: number) => void;
   removeFloorTile: (roomId: string, gx: number, gy: number) => boolean;
+
+  // walls
+  addWall: (roomId: string, gx: number, gy: number, side: WallSide) => void;
+  removeWall: (roomId: string, gx: number, gy: number, side: WallSide) => void;
 
   // objects
   addObject: (
@@ -106,8 +111,8 @@ export const useStore = create<State>((set, get) => ({
       db.objects.toArray(),
       db.memories.toArray(),
     ]);
-    // Normalise legacy rooms that predate the tiles field.
-    const rooms = rawRooms.map((r) => ({ ...r, tiles: r.tiles ?? [] }));
+    // Normalise legacy rooms that predate the tiles/walls fields.
+    const rooms = rawRooms.map((r) => ({ ...r, tiles: r.tiles ?? [], walls: r.walls ?? [] }));
     set({ palaces, rooms, connections, objects, memories, loaded: true });
 
     if (isCloudEnabled()) {
@@ -123,7 +128,7 @@ export const useStore = create<State>((set, get) => ({
             db.objects.toArray(),
             db.memories.toArray(),
           ]);
-          set({ palaces: p, rooms: rawR.map((r) => ({ ...r, tiles: r.tiles ?? [] })), connections: c, objects: o, memories: m });
+          set({ palaces: p, rooms: rawR.map((r) => ({ ...r, tiles: r.tiles ?? [], walls: r.walls ?? [] })), connections: c, objects: o, memories: m });
         }
         set({ cloud: ok ? 'on' : 'error' });
       } else {
@@ -211,6 +216,13 @@ export const useStore = create<State>((set, get) => ({
       gridW: partial?.gridW ?? 6,
       gridH: partial?.gridH ?? 6,
       tiles: partial?.tiles ?? [],
+      walls: partial?.walls ?? (() => {
+        // Auto-populate walls from floor edges for new rooms
+        const tmpRoom = { gridW: partial?.gridW ?? 6, gridH: partial?.gridH ?? 6, tiles: partial?.tiles ?? [] } as Room;
+        const tk = getRoomTiles(tmpRoom);
+        const ps = new Set(tk);
+        return autoWallKeys(tk, ps);
+      })(),
       mapX: partial?.mapX ?? 120 + (idx % 4) * 200,
       mapY: partial?.mapY ?? 120 + Math.floor(idx / 4) * 180,
       orderIndex: partial?.orderIndex ?? idx,
@@ -271,6 +283,7 @@ export const useStore = create<State>((set, get) => ({
       gridW: room.gridW,
       gridH: room.gridH,
       tiles: [...(room.tiles ?? [])],
+      walls: [...(room.walls ?? [])],
     });
     const objects = s.objects.filter((o) => o.roomId === id);
     objects.forEach((o) => {
@@ -342,6 +355,24 @@ export const useStore = create<State>((set, get) => ({
     if (!tiles.includes(key)) return false;
     get().updateRoom(roomId, { tiles: tiles.filter((t) => t !== key) });
     return true;
+  },
+
+  addWall: (roomId, gx, gy, side) => {
+    const room = get().rooms.find((r) => r.id === roomId);
+    if (!room) return;
+    const walls = room.walls ?? [];
+    const key = `${gx},${gy},${side}`;
+    if (walls.includes(key)) return;
+    get().updateRoom(roomId, { walls: [...walls, key] });
+  },
+
+  removeWall: (roomId, gx, gy, side) => {
+    const room = get().rooms.find((r) => r.id === roomId);
+    if (!room) return;
+    const walls = room.walls ?? [];
+    const key = `${gx},${gy},${side}`;
+    if (!walls.includes(key)) return;
+    get().updateRoom(roomId, { walls: walls.filter((w) => w !== key) });
   },
 
   addObject: (roomId, kind, gridX, gridY, wallSide = null, rotation?) => {

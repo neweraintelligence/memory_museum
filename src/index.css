@@ -210,6 +210,10 @@ a {
   background-size: contain;
 }
 
+.brand .brand-icon-carve {
+  display: none;
+}
+
 .spacer {
   flex: 1;
 }
@@ -411,6 +415,10 @@ a {
 .card-emoji .template-card-icon {
   height: 30px;
   width: auto;
+}
+
+.card-icon-engraved {
+  display: none;
 }
 
 .row {
@@ -1101,5 +1109,33 @@ a {
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--panel) var(--bg);
+}
+
+/* ---- Reduced Motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  button:hover,
+  .card.clickable:hover,
+  .palette-item:hover,
+  .style-chip:hover {
+    transform: none;
+  }
+
+  .content.editor-layout .side-floating {
+    transition: none;
+  }
 }
 

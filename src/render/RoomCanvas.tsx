@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Stage, Layer, Line, Group, Text } from 'react-konva';
+import { Stage, Layer, Line, Circle, Group, Text } from 'react-konva';
 import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import IsoObject from './IsoObject';
@@ -34,7 +34,7 @@ import {
   objectScreenPos,
 } from '../lib/objectPlacement';
 import { defaultObjectRotation, isWallAttachable, mustStack, surfaceStackLift } from '../themes/objects';
-import { buildWallSegs, nearestWallSeg, type WallSeg } from '../lib/wallAttach';
+import { buildWallSegs, buildExplicitWallSegs, nearestWallSeg, type WallSeg } from '../lib/wallAttach';
 import type { Room, PObject, Memory, AppMode, WallSide } from '../types';
 
 const WALL_H = 110;
@@ -316,6 +316,7 @@ interface Props {
   placingKind: string | null;
   placingRotation: number;
   floorEditing: boolean;
+  wallEditing: boolean;
   selectedId: string | null;
   highlightId: string | null;
   focusHighlight: boolean;
@@ -328,6 +329,8 @@ interface Props {
   onMove: (id: string, gx: number, gy: number, wallSide?: WallSide | null) => void;
   onAddTile: (gx: number, gy: number) => void;
   onRemoveTile: (gx: number, gy: number) => void;
+  onAddWall: (gx: number, gy: number, side: WallSide) => void;
+  onRemoveWall: (gx: number, gy: number, side: WallSide) => void;
 }
 
 const NEIGHBOR_GAP = 6;
@@ -357,6 +360,7 @@ export default function RoomCanvas({
   placingKind,
   placingRotation,
   floorEditing,
+  wallEditing,
   selectedId,
   highlightId,
   focusHighlight,
@@ -368,6 +372,8 @@ export default function RoomCanvas({
   onMove,
   onAddTile,
   onRemoveTile,
+  onAddWall,
+  onRemoveWall,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<Konva.Group>(null);
@@ -523,6 +529,30 @@ export default function RoomCanvas({
     });
   }, [floorEditing, present, origin.x, origin.y]);
 
+  // Dot positions on the floor for wall editing — midpoint of each tile edge.
+  const wallEditTargets = useMemo(() => {
+    if (!wallEditing) return [];
+    const existingWalls = new Set(room.walls ?? []);
+    const targets: { gx: number; gy: number; side: WallSide; x: number; y: number; exists: boolean }[] = [];
+    for (const k of presentKeys) {
+      const [gx, gy] = k.split(',').map(Number);
+      const { x: cx, y: cy } = gridToScreen(gx, gy, origin.x, origin.y);
+      // Left (NW) edge midpoint
+      targets.push({
+        gx, gy, side: 'left',
+        x: cx - HALF_W / 2, y: cy - HALF_H / 2,
+        exists: existingWalls.has(`${gx},${gy},left`),
+      });
+      // Right (NE) edge midpoint
+      targets.push({
+        gx, gy, side: 'right',
+        x: cx + HALF_W / 2, y: cy - HALF_H / 2,
+        exists: existingWalls.has(`${gx},${gy},right`),
+      });
+    }
+    return targets;
+  }, [wallEditing, presentKeys, origin.x, origin.y, room.walls]);
+
   const roomObjects = useMemo(() => objects.filter((o) => !o.deleted), [objects]);
 
   const floorObjects = useMemo(
@@ -558,8 +588,11 @@ export default function RoomCanvas({
   }, [floorObjects, room.id]);
 
   const wallSegs = useMemo(
-    () => buildWallSegs(presentKeys, present, origin.x, origin.y, HALF_W, HALF_H, WALL_H),
-    [presentKeys, present, origin.x, origin.y],
+    () =>
+      room.walls && room.walls.length > 0
+        ? buildExplicitWallSegs(room.walls, origin.x, origin.y, HALF_W, HALF_H, WALL_H)
+        : buildWallSegs(presentKeys, present, origin.x, origin.y, HALF_W, HALF_H, WALL_H),
+    [presentKeys, present, origin.x, origin.y, room.walls],
   );
 
   // Inner corners: a tile exposing both a left (NW) and right (NE) wall folds
@@ -608,6 +641,7 @@ export default function RoomCanvas({
   }, [backWallSegs, tiles]);
 
   const handleTileClick = (gx: number, gy: number) => {
+    if (wallEditing) return;
     if (floorEditing) {
       onRemoveTile(gx, gy);
     } else if (placingKind && !placingOnWall) {
@@ -667,7 +701,7 @@ export default function RoomCanvas({
   const zoomButton = (factor: number) => applyZoom(zoom * factor);
   const resetView = () => setZoom(1);
 
-  const cursor = placingKind ? 'copy' : floorEditing ? 'pointer' : 'default';
+  const cursor = placingKind ? 'copy' : floorEditing || wallEditing ? 'pointer' : 'default';
 
   const wallMountsBySeg = useMemo(() => {
     const map = new Map<string, PObject>();
@@ -679,12 +713,12 @@ export default function RoomCanvas({
   }, [wallObjects]);
 
   const wallInteract = (o: PObject) => ({
-    draggable: mode === 'build' && !floorEditing,
+    draggable: mode === 'build' && !floorEditing && !wallEditing,
     selected: selectedId === o.id,
     highlighted: highlightId === o.id,
     isAnchor: anchorIds.has(o.id),
     pulse,
-    dim: (focusHighlight && !!highlightId && highlightId !== o.id) || floorEditing,
+    dim: (focusHighlight && !!highlightId && highlightId !== o.id) || floorEditing || wallEditing,
     onSelect,
     onDragEnd: handleWallDragEnd,
   });
@@ -748,7 +782,7 @@ export default function RoomCanvas({
                   key={item.key}
                   seg={seg}
                   style={style}
-                  opacity={1}
+                  opacity={wallEditing ? 0.3 : 1}
                   feature={feature}
                   wallTexLeft={wallTexLeft}
                   wallTexRight={wallTexRight}
@@ -773,6 +807,7 @@ export default function RoomCanvas({
           })}
 
           {/* Subtle crease where the left and right walls meet at a top corner. */}
+          <Group opacity={wallEditing ? 0.3 : 1}>
           {cornerSeams.map((c) => (
             <RoomCornerSeam
               key={`corner-${c.key}`}
@@ -782,6 +817,7 @@ export default function RoomCanvas({
               style={style}
             />
           ))}
+          </Group>
 
           {/* Wall objects sit proud of the wall/floor join, so their bases overlap
               the floor tiles instead of being tucked behind the tile pass. */}
@@ -791,7 +827,7 @@ export default function RoomCanvas({
             const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
             const interact = wallInteract(feature);
             return (
-              <Group key={`wall-feature-${i}`}>
+              <Group key={`wall-feature-${i}`} opacity={wallEditing ? 0.3 : 1}>
                 <Group listening={false}>
                   <WallFeatureSprite
                     kind={feature.kind}
@@ -831,12 +867,12 @@ export default function RoomCanvas({
                 obj={o}
                 x={s.x}
                 y={s.y}
-                draggable={mode === 'build' && !floorEditing}
+                draggable={mode === 'build' && !floorEditing && !wallEditing}
                 selected={selectedId === o.id}
                 highlighted={isHi}
                 isAnchor={anchorIds.has(o.id)}
                 pulse={pulse}
-                dim={(focusHighlight && !!highlightId && !isHi) || floorEditing}
+                dim={(focusHighlight && !!highlightId && !isHi) || floorEditing || wallEditing}
                 stackLift={stackLiftById.get(o.id) ?? 0}
                 onSelect={onSelect}
                 onDragEnd={handleFloorDragEnd}
@@ -848,6 +884,7 @@ export default function RoomCanvas({
           {placingKind &&
             !placingOnWall &&
             !floorEditing &&
+            !wallEditing &&
             (() => {
               const rot = placingRotation ?? defaultObjectRotation(placingKind);
               const highlighted = new Set<string>();
@@ -889,7 +926,7 @@ export default function RoomCanvas({
                   key={`fw${i}`}
                   seg={seg}
                   style={style}
-                  opacity={0.28}
+                  opacity={wallEditing ? 0.3 : 0.28}
                   feature={feature}
                   wallTexLeft={wallTexLeft}
                   wallTexRight={wallTexRight}
@@ -949,7 +986,37 @@ export default function RoomCanvas({
             />
           ))}
 
-          {roomObjects.length === 0 && !floorEditing && (
+          {/* Wall editing dots on floor edges */}
+          {wallEditTargets.map((wt) => (
+            <Circle
+              key={`wt-${wt.gx},${wt.gy},${wt.side}`}
+              x={wt.x}
+              y={wt.y}
+              radius={3.5}
+              fill={wt.exists ? '#fff' : 'transparent'}
+              stroke={wt.exists ? '#fff' : 'rgba(255,255,255,0.45)'}
+              strokeWidth={1.5}
+              onMouseDown={blockViewportPan}
+              onClick={() => {
+                if (wt.exists) onRemoveWall(wt.gx, wt.gy, wt.side);
+                else onAddWall(wt.gx, wt.gy, wt.side);
+              }}
+              onTap={() => {
+                if (wt.exists) onRemoveWall(wt.gx, wt.gy, wt.side);
+                else onAddWall(wt.gx, wt.gy, wt.side);
+              }}
+              onMouseEnter={(e) => {
+                const stage = e.target.getStage();
+                if (stage) stage.container().style.cursor = 'pointer';
+              }}
+              onMouseLeave={(e) => {
+                const stage = e.target.getStage();
+                if (stage) stage.container().style.cursor = cursor;
+              }}
+            />
+          ))}
+
+          {roomObjects.length === 0 && !floorEditing && !wallEditing && (
             <Group x={origin.x} y={origin.y + 48} listening={false}>
               <Text
                 text={
@@ -989,6 +1056,11 @@ export default function RoomCanvas({
       {floorEditing && (
         <div className="floor-hint">
           Floor editing — click a dashed cell to add flooring, a solid tile to remove it.
+        </div>
+      )}
+      {wallEditing && (
+        <div className="floor-hint">
+          Wall editing — click to add or remove walls on tile edges.
         </div>
       )}
     </div>

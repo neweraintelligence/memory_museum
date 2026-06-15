@@ -3,12 +3,16 @@ import { useUI } from '../state/useUI';
 import { getStyle, ROOM_STYLES, ROOM_TYPES } from '../themes/styles';
 import { Icon } from '../themes/Icon';
 import { roomIcon, UI_ICONS } from '../themes/icons';
+import { getRoomTiles, roomTileSet } from '../lib/floor';
+import { autoWallKeys } from '../lib/wallAttach';
 import type { Room } from '../types';
 
 export default function RoomStylePanel({ room }: { room: Room }) {
   const updateRoom = useStore((s) => s.updateRoom);
   const floorEditing = useUI((s) => s.floorEditing);
   const setFloorEditing = useUI((s) => s.setFloorEditing);
+  const wallEditing = useUI((s) => s.wallEditing);
+  const setWallEditing = useUI((s) => s.setWallEditing);
 
   return (
     <div>
@@ -58,6 +62,36 @@ export default function RoomStylePanel({ room }: { room: Room }) {
         </button>
         <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
           Add or remove tiles to shape the room. Objects can only sit on flooring.
+        </div>
+      </div>
+
+      <div className="field">
+        <label>Walls</label>
+        <button
+          className={`edit-floor-plan-btn${wallEditing ? ' primary' : ''}`}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}
+          onClick={() => {
+            // When entering wall editing for the first time, pre-populate from auto-detected edges
+            if (!wallEditing && (!room.walls || room.walls.length === 0)) {
+              const tileKeys = getRoomTiles(room);
+              const present = roomTileSet(room);
+              const walls = autoWallKeys(tileKeys, present);
+              updateRoom(room.id, { walls });
+            }
+            setWallEditing(!wallEditing);
+          }}
+        >
+          {wallEditing ? (
+            '✓ Done editing walls'
+          ) : (
+            <>
+              <Icon icon={UI_ICONS.puzzle} size={18} className="side-head-icon" />
+              Edit walls
+            </>
+          )}
+        </button>
+        <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
+          Add or remove walls on any tile edge. Each tile has a left (NW) and right (NE) wall face.
         </div>
       </div>
 

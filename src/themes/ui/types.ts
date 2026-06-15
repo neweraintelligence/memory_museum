@@ -1,4 +1,4 @@
-export type UiThemeId = 'brutalist' | 'project-manager';
+export type UiThemeId = 'brutalist' | 'project-manager' | 'dusty-library';
 
 export interface UiTheme {
   id: UiThemeId;

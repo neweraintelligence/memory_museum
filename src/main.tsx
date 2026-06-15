@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './bootstrapTheme';
 import './themes/ui/themes.css';
 import './themes/ui/project-manager.css';
+import './themes/ui/dusty-library.css';
 import './index.css';
 import App from './App.tsx';
 

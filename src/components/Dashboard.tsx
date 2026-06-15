@@ -39,8 +39,11 @@ export default function Dashboard() {
       <div className="dashboard-top">
         <div className="dashboard-top-row">
           <div className="page-head">
-            <h1>Your Palaces</h1>
-            <span className="muted"> Build a place for your knowledge to live.</span>
+            <h1>
+              <span className="page-title-lead">Your</span>
+              <span className="page-title-main">Palaces</span>
+            </h1>
+            <span className="muted">Build a place for your knowledge to live.</span>
           </div>
 
           <div className="card create-palace-bar">
@@ -85,8 +88,14 @@ export default function Dashboard() {
               onClick={() => navigate(`/palace/${p.id}`)}
             >
               <div className="card-emoji">
+                <span
+                  className="card-icon-engraved card-icon-engraved--palace"
+                  aria-hidden="true"
+                >
+                  <span className="card-icon-carve" aria-hidden="true" />
+                </span>
                 <img
-                  src="/palace-room-icon-brutalist.png?v=3"
+                  src="/palace-room-icon-brutalist.png?v=5"
                   alt=""
                   className="palace-card-icon palace-card-icon--brutalist"
                 />
@@ -124,8 +133,14 @@ export default function Dashboard() {
         {PALACE_TEMPLATES.map((t) => (
           <div key={t.id} className="card clickable" onClick={() => handleTemplate(t.id)}>
             <div className="card-emoji">
+              <span
+                className="card-icon-engraved card-icon-engraved--template"
+                aria-hidden="true"
+              >
+                <span className="card-icon-carve" aria-hidden="true" />
+              </span>
               <img
-                src="/template-icon-brutalist.png?v=1"
+                src="/template-icon-brutalist.png?v=2"
                 alt=""
                 className="template-card-icon template-card-icon--brutalist"
               />

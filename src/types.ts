@@ -29,6 +29,7 @@ export interface Room {
   gridW: number;
   gridH: number;
   tiles: string[]; // explicit floor tiles "gx,gy"; empty = full gridW x gridH
+  walls: string[]; // explicit wall keys "gx,gy,left" or "gx,gy,right"; empty = auto from edges
   mapX: number;
   mapY: number;
   orderIndex: number;
