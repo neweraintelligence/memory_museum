@@ -860,11 +860,23 @@ a {
 .canvas-overlay {
   position: absolute;
   left: 16px;
+  right: 16px;
   top: var(--canvas-overlay-top, 14px);
   display: flex;
   gap: 8px;
   align-items: center;
   z-index: 5;
+  /* Let clicks fall through the empty stretch between the left pills and the
+     right-justified button; re-enabled on the interactive children below. */
+  pointer-events: none;
+}
+
+.canvas-overlay > * {
+  pointer-events: auto;
+}
+
+.canvas-overlay .xray-toggle {
+  margin-left: auto;
 }
 
 .canvas-overlay .pill {
@@ -1051,6 +1063,26 @@ a {
 .zoom-controls button {
   min-width: 40px;
   font-weight: 700;
+}
+
+.canvas-overlay .pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.canvas-overlay .xray-toggle.active {
+  background-color: var(--accent);
+  background-image: var(--form);
+  border-color: var(--accent-2);
+  color: var(--text-on-accent);
+  text-shadow: var(--text-shadow);
+}
+
+.canvas-overlay .xray-toggle-label {
+  font-size: 13px;
 }
 
 .floor-hint {

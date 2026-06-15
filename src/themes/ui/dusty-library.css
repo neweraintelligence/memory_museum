@@ -583,7 +583,7 @@
   background-image: none;
   border-color: rgba(200, 180, 140, 0.25);
   color: var(--gold);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   filter: none;
@@ -595,7 +595,7 @@
   border-color: rgba(200, 180, 140, 0.35);
   color: var(--gold);
   filter: none;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: none;
 }
 
 /* Gold icons in side panels — stay visible on burgundy buttons */

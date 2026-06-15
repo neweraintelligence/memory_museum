@@ -38,6 +38,8 @@ import { buildWallSegs, buildExplicitWallSegs, nearestWallSeg, type WallSeg } fr
 import type { Room, PObject, Memory, AppMode, WallSide } from '../types';
 
 const WALL_H = 110;
+/** Height of the leftover wall stub shown in x-ray mode (~5% of full height). */
+const OUTLINE_WALL_H = WALL_H * 0.05;
 /** Vertical nudge for locked room view (− = lower on screen), as a fraction of wall height. */
 const ROOM_VIEW_Y_BIAS = WALL_H * -0.50 + 20;
 const HALF_W = TILE_W / 2;
@@ -303,6 +305,43 @@ function WallSegment({
   );
 }
 
+/**
+ * X-ray rendering of a wall: only the bottom ~5% stub plus a crisp top line, so
+ * you can see the outline of where the wall is while everything behind stays
+ * visible and clickable. The face never listens for pointer events.
+ */
+function WallOutline({
+  seg,
+  style,
+}: {
+  seg: WallSeg;
+  style: ReturnType<typeof getStyle>;
+}) {
+  const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+  const h = OUTLINE_WALL_H;
+  const stubPts = [
+    seg.p0.x,
+    seg.p0.y,
+    seg.p1.x,
+    seg.p1.y,
+    seg.p1.x,
+    seg.p1.y - h,
+    seg.p0.x,
+    seg.p0.y - h,
+  ];
+  return (
+    <Group listening={false}>
+      <Line points={stubPts} closed fill={fill} stroke={shade(fill, -0.22)} strokeWidth={1} />
+      <Line
+        points={[seg.p0.x, seg.p0.y - h, seg.p1.x, seg.p1.y - h]}
+        stroke={shade(fill, 0.28)}
+        strokeWidth={1.5}
+        lineCap="round"
+      />
+    </Group>
+  );
+}
+
 interface NeighborRoom {
   room: Room;
   objects: PObject[];
@@ -317,6 +356,7 @@ interface Props {
   placingRotation: number;
   floorEditing: boolean;
   wallEditing: boolean;
+  xrayWalls: boolean;
   selectedId: string | null;
   highlightId: string | null;
   focusHighlight: boolean;
@@ -361,6 +401,7 @@ export default function RoomCanvas({
   placingRotation,
   floorEditing,
   wallEditing,
+  xrayWalls,
   selectedId,
   highlightId,
   focusHighlight,
@@ -617,6 +658,9 @@ export default function RoomCanvas({
   // Walls that cover an object behind them render in a third pass (on top of
   // objects, semi-transparent). All other walls stay in the depth-sorted pass.
   const { backWallSegs, frontWallSegs } = useMemo(() => {
+    // X-ray: render every wall as a low outline in the depth-sorted pass and skip
+    // the see-through occlusion pass entirely, so nothing is hidden behind walls.
+    if (xrayWalls) return { backWallSegs: wallSegs, frontWallSegs: [] as WallSeg[] };
     const back: WallSeg[] = [];
     const front: WallSeg[] = [];
     for (const seg of wallSegs) {
@@ -624,7 +668,7 @@ export default function RoomCanvas({
       else back.push(seg);
     }
     return { backWallSegs: back, frontWallSegs: front };
-  }, [wallSegs, roomObjects, origin.x, origin.y]);
+  }, [wallSegs, roomObjects, origin.x, origin.y, xrayWalls]);
 
   const drawOrder = useMemo(() => {
     type Item =
@@ -776,6 +820,9 @@ export default function RoomCanvas({
           {drawOrder.map((item) => {
             if (item.t === 'wall') {
               const seg = item.seg;
+              if (xrayWalls) {
+                return <WallOutline key={item.key} seg={seg} style={style} />;
+              }
               const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
               return (
                 <WallSegment
@@ -808,7 +855,7 @@ export default function RoomCanvas({
 
           {/* Subtle crease where the left and right walls meet at a top corner. */}
           <Group opacity={wallEditing ? 0.3 : 1}>
-          {cornerSeams.map((c) => (
+          {!xrayWalls && cornerSeams.map((c) => (
             <RoomCornerSeam
               key={`corner-${c.key}`}
               x={c.x}

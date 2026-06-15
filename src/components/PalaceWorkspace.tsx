@@ -59,6 +59,8 @@ export default function PalaceWorkspace() {
   const floorEditing = useUI((s) => s.floorEditing);
   const setFloorEditing = useUI((s) => s.setFloorEditing);
   const wallEditing = useUI((s) => s.wallEditing);
+  const xrayWalls = useUI((s) => s.xrayWalls);
+  const toggleXrayWalls = useUI((s) => s.toggleXrayWalls);
   const leftPanelOpen = useUI((s) => s.leftPanelOpen);
   const rightPanelOpen = useUI((s) => s.rightPanelOpen);
   const toggleLeftPanel = useUI((s) => s.toggleLeftPanel);
@@ -460,6 +462,15 @@ export default function PalaceWorkspace() {
             {mode === 'build' && (
               <span className="pill muted">{roomObjects.length} objects</span>
             )}
+            <button
+              className={`pill pill-btn xray-toggle${xrayWalls ? ' active' : ''}`}
+              title={xrayWalls ? 'Show walls' : 'See behind walls (X-ray)'}
+              aria-pressed={xrayWalls}
+              onClick={toggleXrayWalls}
+            >
+              <Icon icon={xrayWalls ? UI_ICONS.eyeOff : UI_ICONS.eye} size={15} />
+              <span className="xray-toggle-label">{xrayWalls ? 'Walls hidden' : 'X-ray walls'}</span>
+            </button>
           </div>
 
           <RoomCanvas
@@ -472,6 +483,7 @@ export default function PalaceWorkspace() {
             placingRotation={placingRotation}
             floorEditing={floorEditing}
             wallEditing={wallEditing}
+            xrayWalls={xrayWalls}
             selectedId={selectedId}
             highlightId={highlightId}
             focusHighlight={mode !== 'build'}

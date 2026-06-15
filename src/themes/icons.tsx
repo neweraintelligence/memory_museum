@@ -76,6 +76,8 @@ import {
   LuFootprints,
   LuBrain,
   LuPuzzle,
+  LuEye,
+  LuEyeOff,
 } from 'react-icons/lu';
 import { shade } from '../lib/color';
 
@@ -179,6 +181,8 @@ export const UI_ICONS = {
   box: LuBox,
   template: GiCardboardBoxClosed,
   castle: GiCastle,
+  eye: LuEye,
+  eyeOff: LuEyeOff,
 } as const;
 
 // NOTE: the DOM `<Icon>` component lives in ./Icon so that this module exports
