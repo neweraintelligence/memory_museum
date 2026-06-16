@@ -27,7 +27,7 @@ import { INDUSTRIAL_LOFT_FLOOR } from './floorTilesets/industrialLoftFloor';
 import { INDUSTRIAL_LOFT_WALL } from './wallTilesets/industrialLoftWall';
 import { VICTORIAN_PARLOR_FLOOR } from './floorTilesets/victorianParlorFloor';
 import { VICTORIAN_PARLOR_WALL } from './wallTilesets/victorianParlorWall';
-import { STYLE_TEXTURES } from './styleTextures';
+import { STYLE_TEXTURES, type StyleWallTextures } from './styleTextures';
 
 export interface RoomStyle {
   id: string;
@@ -41,16 +41,14 @@ export interface RoomStyle {
   mood: string;
   floorPattern: FloorPattern;
   wallPattern: WallPattern;
-  /** PNG paths [checker A, checker B] relative to /public — replaces gradient + pattern. */
-  floorTextures?: [string, string];
+  /** PNG paths for floor tiles [A, B] or [A, B, C, D] relative to /public. */
+  floorTextures?: readonly [string, string] | readonly [string, string, string, string];
   /** Degrees to rotate floor textures (Konva: negative = left/CCW). */
   floorTextureRotation?: number;
   /** 'iso' = native 2:1 diamond PNG; 'square' = square canvas (default). */
   floorTextureAspect?: 'square' | 'iso';
   /** PNG paths for left/right wall faces — replaces gradient + wallPattern decor. */
-  wallTextures?: { left: string; right: string };
-  /** When set, wall faces paint over floor tiles on the same grid cell. */
-  wallsOverFloor?: boolean;
+  wallTextures?: StyleWallTextures;
 }
 
 export const ROOM_STYLES: RoomStyle[] = [
@@ -108,7 +106,6 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cold metal, neon seams, deep space.',
     floorPattern: 'metal',
     wallPattern: 'tech',
-    wallsOverFloor: true,
     ...STYLE_TEXTURES.spaceship,
   },
   {

@@ -4,6 +4,7 @@ import { TILE_W, TILE_H } from '../lib/iso';
 import { shade, withAlpha } from '../lib/color';
 import { floorTileDecor } from './roomArt';
 import type { RoomStyle } from '../themes/styles';
+import { floorVariantIndex } from '../themes/styleTextures';
 
 const HALF_W = TILE_W / 2;
 const HALF_H = TILE_H / 2;
@@ -23,8 +24,7 @@ interface Props {
   tile: TileGeom;
   style: RoomStyle;
   floorEditing: boolean;
-  textureA: HTMLImageElement | null;
-  textureB: HTMLImageElement | null;
+  textures: (HTMLImageElement | null)[];
   cursor: string;
   placingKind: string | null;
   blockViewportPan: (e: KonvaEventObject<MouseEvent>) => void;
@@ -50,16 +50,17 @@ export default function FloorTileSurface({
   tile: t,
   style,
   floorEditing,
-  textureA,
-  textureB,
+  textures,
   cursor,
   placingKind,
   blockViewportPan,
   onTileClick,
 }: Props) {
-  const floorBase = t.alt ? style.floorB : style.floorA;
-  const texture = t.alt ? textureB : textureA;
-  const useTexture = !!(textureA && textureB && texture);
+  const variantCount = (style.floorTextures?.length === 4 ? 4 : 2) as 2 | 4;
+  const variantIndex = floorVariantIndex(t.gx, t.gy, variantCount);
+  const floorBase = variantIndex % 2 === 0 ? style.floorA : style.floorB;
+  const texture = textures[variantIndex] ?? null;
+  const useTexture = textures.length >= 2 && textures.every((img) => img != null);
 
   const hitHandlers = {
     onMouseDown: blockViewportPan,
@@ -129,7 +130,7 @@ export default function FloorTileSurface({
         {...hitHandlers}
       />
       <Group listening={false}>
-        {floorTileDecor(style.floorPattern, t.cx, t.cy, style, t.alt)}
+        {floorTileDecor(style.floorPattern, t.cx, t.cy, style, variantIndex % 2 === 0)}
       </Group>
     </Group>
   );

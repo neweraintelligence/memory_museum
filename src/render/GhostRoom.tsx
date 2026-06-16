@@ -8,6 +8,7 @@ import { usePublicImage } from './usePublicImage';
 import { WallFeatureSprite } from './wallFeature';
 import { TILE_W, TILE_H, tileDiamond, gridToScreen, floorDrawZ, wallDrawZ } from '../lib/iso';
 import { getStyle } from '../themes/styles';
+import { pickWallSegmentTexture } from '../themes/styleTextures';
 import { getRoomTiles, parseTileKey } from '../lib/floor';
 import { buildWallSegs } from '../lib/wallAttach';
 import { findSurfaceUnder, footprintDepthKey, footprintTiles, objectScreenPos } from '../lib/objectPlacement';
@@ -36,10 +37,25 @@ const noop = () => {};
  */
 export default function GhostRoom({ room, objects, originX, originY, opacity, onPick }: Props) {
   const style = getStyle(room.style);
-  const floorTexA = usePublicImage(style.floorTextures?.[0]);
-  const floorTexB = usePublicImage(style.floorTextures?.[1]);
+  const floorTexPaths = style.floorTextures ?? [];
+  const floorTex0 = usePublicImage(floorTexPaths[0]);
+  const floorTex1 = usePublicImage(floorTexPaths[1]);
+  const floorTex2 = usePublicImage(floorTexPaths[2]);
+  const floorTex3 = usePublicImage(floorTexPaths[3]);
+  const floorTexturesLoaded = useMemo(
+    () => [floorTex0, floorTex1, floorTex2, floorTex3].slice(0, floorTexPaths.length),
+    [floorTexPaths.length, floorTex0, floorTex1, floorTex2, floorTex3],
+  );
   const wallTexLeft = usePublicImage(style.wallTextures?.left);
+  const wallTexLeftAlt = usePublicImage(style.wallTextures?.leftAlt);
   const wallTexRight = usePublicImage(style.wallTextures?.right);
+  const wallTexRightAlt = usePublicImage(style.wallTextures?.rightAlt);
+  const wallTexLoaded = {
+    left: wallTexLeft,
+    leftAlt: wallTexLeftAlt,
+    right: wallTexRight,
+    rightAlt: wallTexRightAlt,
+  };
 
   const presentKeys = useMemo(() => getRoomTiles(room), [room]);
   const present = useMemo(() => new Set(presentKeys), [presentKeys]);
@@ -102,7 +118,6 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
 
   // Walls + floor interleaved by depth (painter's order). Objects simply draw
   // on top, which reads fine for a faded backdrop room.
-  const wallsOverFloor = !!style.wallsOverFloor;
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; idx: number }
@@ -110,22 +125,20 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
       | { z: number; t: 'floor'; key: string; idx: number };
     const items: Item[] = [];
     wallSegs.forEach((seg, i) => {
-      const z = wallDrawZ(seg.depth, wallsOverFloor);
+      const z = wallDrawZ(seg.depth);
       items.push({ z, t: 'wall', key: `w${i}`, idx: i });
-      if (wallsOverFloor) {
-        items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, idx: i });
-      }
+      items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, idx: i });
     });
     tiles.forEach((tile, i) =>
       items.push({
-        z: floorDrawZ(tile.gx, tile.gy, wallsOverFloor),
+        z: floorDrawZ(tile.gx, tile.gy),
         t: 'floor',
         key: `f${tile.key}`,
         idx: i,
       }),
     );
     return items.sort((a, b) => a.z - b.z);
-  }, [wallSegs, tiles, wallsOverFloor]);
+  }, [wallSegs, tiles]);
 
   const setPointer = (e: KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
@@ -148,16 +161,15 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
         if (item.t === 'wall') {
           const seg = wallSegs[item.idx];
           const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`) ?? null;
-          const useWallTexture = !!(
-            style.wallTextures && (seg.side === 'left' ? wallTexLeft : wallTexRight)
-          );
+          const texture = pickWallSegmentTexture(seg, style.wallTextures, wallTexLoaded);
+          const useWallTexture = !!(style.wallTextures && texture);
           return (
             <Group key={item.key} listening={false}>
               <WallSegmentFace
                 seg={seg}
                 style={style}
                 wallH={WALL_H}
-                texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
+                texture={texture}
                 feature={!!feature}
               />
               <WallSegmentTopEdge
@@ -177,7 +189,7 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
               seg={seg}
               style={style}
               wallH={WALL_H}
-              texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
+              texture={pickWallSegmentTexture(seg, style.wallTextures, wallTexLoaded)}
             />
           );
         }
@@ -188,8 +200,7 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
             tile={t}
             style={style}
             floorEditing={false}
-            textureA={floorTexA}
-            textureB={floorTexB}
+            textures={floorTexturesLoaded}
             cursor="pointer"
             placingKind={null}
             blockViewportPan={noop}

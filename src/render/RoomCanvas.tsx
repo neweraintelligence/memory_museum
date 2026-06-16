@@ -21,6 +21,7 @@ import {
 } from '../lib/iso';
 import { shade, withAlpha } from '../lib/color';
 import { getStyle } from '../themes/styles';
+import { pickWallSegmentTexture } from '../themes/styleTextures';
 import {
   getRoomTiles,
   parseTileKey,
@@ -60,16 +61,25 @@ function WallSegment({
   opacity,
   feature,
   wallTexLeft,
+  wallTexLeftAlt,
   wallTexRight,
+  wallTexRightAlt,
 }: {
   seg: WallSeg;
   style: ReturnType<typeof getStyle>;
   opacity: number;
   feature?: PObject | null;
   wallTexLeft: HTMLImageElement | null;
+  wallTexLeftAlt: HTMLImageElement | null;
   wallTexRight: HTMLImageElement | null;
+  wallTexRightAlt: HTMLImageElement | null;
 }) {
-  const texture = seg.side === 'left' ? wallTexLeft : wallTexRight;
+  const texture = pickWallSegmentTexture(seg, style.wallTextures, {
+    left: wallTexLeft,
+    leftAlt: wallTexLeftAlt,
+    right: wallTexRight,
+    rightAlt: wallTexRightAlt,
+  });
   const useWallTexture = !!(style.wallTextures && texture);
   return (
     <Group opacity={opacity}>
@@ -240,10 +250,25 @@ export default function RoomCanvas({
   }, []);
 
   const style = getStyle(room.style);
-  const floorTexA = usePublicImage(style.floorTextures?.[0]);
-  const floorTexB = usePublicImage(style.floorTextures?.[1]);
+  const floorTexPaths = style.floorTextures ?? [];
+  const floorTex0 = usePublicImage(floorTexPaths[0]);
+  const floorTex1 = usePublicImage(floorTexPaths[1]);
+  const floorTex2 = usePublicImage(floorTexPaths[2]);
+  const floorTex3 = usePublicImage(floorTexPaths[3]);
+  const floorTexturesLoaded = useMemo(
+    () => [floorTex0, floorTex1, floorTex2, floorTex3].slice(0, floorTexPaths.length),
+    [floorTexPaths.length, floorTex0, floorTex1, floorTex2, floorTex3],
+  );
   const wallTexLeft = usePublicImage(style.wallTextures?.left);
+  const wallTexLeftAlt = usePublicImage(style.wallTextures?.leftAlt);
   const wallTexRight = usePublicImage(style.wallTextures?.right);
+  const wallTexRightAlt = usePublicImage(style.wallTextures?.rightAlt);
+  const wallTexLoaded = {
+    left: wallTexLeft,
+    leftAlt: wallTexLeftAlt,
+    right: wallTexRight,
+    rightAlt: wallTexRightAlt,
+  };
 
   const presentKeys = useMemo(() => getRoomTiles(room), [room]);
   const present = useMemo(() => new Set(presentKeys), [presentKeys]);
@@ -437,7 +462,6 @@ export default function RoomCanvas({
   // Single depth-sorted pass for walls, their mounted features, floor tiles and
   // floor objects. Painter's order (ascending gx+gy) means a wall whose tile is
   // closer to the camera paints last and hides any object sitting behind it.
-  const wallsOverFloor = !!style.wallsOverFloor;
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; seg: WallSeg }
@@ -447,11 +471,9 @@ export default function RoomCanvas({
       | { z: number; t: 'object'; key: string; obj: PObject };
     const items: Item[] = [];
     wallSegs.forEach((seg, i) => {
-      const z = wallDrawZ(seg.depth, wallsOverFloor);
+      const z = wallDrawZ(seg.depth);
       items.push({ z, t: 'wall', key: `w${i}`, seg });
-      if (wallsOverFloor) {
-        items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, seg });
-      }
+      items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, seg });
       const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
       if (feature) {
         items.push({ z, t: 'feature', key: `wf${i}`, seg, feature });
@@ -459,7 +481,7 @@ export default function RoomCanvas({
     });
     for (const tile of tiles) {
       items.push({
-        z: floorDrawZ(tile.gx, tile.gy, wallsOverFloor),
+        z: floorDrawZ(tile.gx, tile.gy),
         t: 'floor',
         key: `f${tile.key}`,
         tile,
@@ -467,14 +489,14 @@ export default function RoomCanvas({
     }
     for (const o of sortedFloorObjects) {
       items.push({
-        z: objectDrawZ(footprintDepthKey(o), wallsOverFloor),
+        z: objectDrawZ(footprintDepthKey(o)),
         t: 'object',
         key: `o${o.id}`,
         obj: o,
       });
     }
     return items.sort((a, b) => a.z - b.z);
-  }, [wallSegs, tiles, sortedFloorObjects, wallMountsBySeg, wallsOverFloor]);
+  }, [wallSegs, tiles, sortedFloorObjects, wallMountsBySeg]);
 
   const handleTileClick = (gx: number, gy: number) => {
     if (wallEditing) return;
@@ -615,7 +637,9 @@ export default function RoomCanvas({
                   opacity={wallEditing ? 0.3 : 1}
                   feature={feature}
                   wallTexLeft={wallTexLeft}
+                  wallTexLeftAlt={wallTexLeftAlt}
                   wallTexRight={wallTexRight}
+                  wallTexRightAlt={wallTexRightAlt}
                 />
               );
             }
@@ -628,7 +652,7 @@ export default function RoomCanvas({
                     seg={seg}
                     style={style}
                     wallH={WALL_H}
-                    texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
+                    texture={pickWallSegmentTexture(seg, style.wallTextures, wallTexLoaded)}
                   />
                 </Group>
               );
@@ -678,8 +702,7 @@ export default function RoomCanvas({
                 tile={t}
                 style={style}
                 floorEditing={floorEditing}
-                textureA={floorTexA}
-                textureB={floorTexB}
+                textures={floorTexturesLoaded}
                 cursor={cursor}
                 placingKind={placingKind}
                 blockViewportPan={blockViewportPan}

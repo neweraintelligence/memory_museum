@@ -50,20 +50,20 @@ export function depthKey(gx: number, gy: number): number {
   return gx + gy;
 }
 
-/** Painter's z for a wall segment — optionally in front of floor tiles at its tile and neighbors. */
-export function wallDrawZ(depth: number, wallsOverFloor?: boolean): number {
+/** Painter's z for a wall segment — in front of floor tiles at its tile and neighbors. */
+export function wallDrawZ(depth: number): number {
   // +0.75 beats adjacent forward floor tiles (depth+0.5) that overlap the wall foot.
-  return wallsOverFloor ? depth + 0.75 : depth - 0.5;
+  return depth + 0.75;
 }
 
 /** Painter's z for a floor tile — paired with {@link wallDrawZ}. */
-export function floorDrawZ(gx: number, gy: number, wallsOverFloor?: boolean): number {
-  return wallsOverFloor ? gx + gy - 0.5 : gx + gy;
+export function floorDrawZ(gx: number, gy: number): number {
+  return gx + gy - 0.5;
 }
 
 /** Painter's z for a floor object — stays above walls when {@link wallDrawZ} is boosted. */
-export function objectDrawZ(depth: number, wallsOverFloor?: boolean): number {
-  return wallsOverFloor ? depth + 0.95 : depth;
+export function objectDrawZ(depth: number): number {
+  return depth + 0.95;
 }
 
 /** Compute the four corners of a diamond tile (top, right, bottom, left). */
