@@ -205,7 +205,6 @@ export async function flush(): Promise<void> {
     if (table === 'museums') {
       for (const r of rows) r.user_id = userId;
     }
-    if (table === 'museums') console.log('[sync] museum upsert payload:', JSON.stringify(rows));
     const { error } = await supabase.from(table).upsert(rows);
     if (error) {
       console.warn(`[sync] upsert ${table} failed:`, error.message);
