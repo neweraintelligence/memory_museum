@@ -149,3 +149,61 @@ export function WallSegmentTopEdge({
     />
   );
 }
+
+/** Bottom strip redrawn over floor tiles so grid seams don't bleed onto the wall foot. */
+export function WallBaseKickplate({
+  seg,
+  style,
+  wallH,
+  texture,
+}: {
+  seg: WallSeg;
+  style: RoomStyle;
+  wallH: number;
+  texture: HTMLImageElement | null;
+}) {
+  const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
+  const useTexture = !!(style.wallTextures && texture);
+  const kickH = wallH * 0.22;
+  const floorOverlap = 8;
+  const kickPts = [
+    seg.p0.x,
+    seg.p0.y + floorOverlap,
+    seg.p1.x,
+    seg.p1.y + floorOverlap,
+    seg.p1.x,
+    seg.p1.y - kickH,
+    seg.p0.x,
+    seg.p0.y - kickH,
+  ];
+
+  if (useTexture) {
+    const minX = Math.min(seg.p0.x, seg.p1.x);
+    const maxX = Math.max(seg.p0.x, seg.p1.x);
+    const minY = Math.min(seg.p0.y - wallH, seg.p1.y - wallH);
+    const maxY = Math.max(seg.p0.y, seg.p1.y);
+    return (
+      <Group listening={false} clipFunc={(ctx) => wallClip(ctx, kickPts)}>
+        <KonvaImage
+          image={texture}
+          x={minX - SEAM_BLEED}
+          y={minY - SEAM_BLEED}
+          width={maxX - minX + SEAM_BLEED * 2}
+          height={maxY - minY + SEAM_BLEED * 2}
+        />
+      </Group>
+    );
+  }
+
+  return (
+    <Line
+      points={kickPts}
+      closed
+      fillPriority="linear-gradient"
+      fillLinearGradientStartPoint={{ x: seg.p0.x, y: seg.p0.y - kickH }}
+      fillLinearGradientEndPoint={{ x: seg.p0.x, y: seg.p0.y + floorOverlap }}
+      fillLinearGradientColorStops={[0, shade(fill, 0.16), 0.5, fill, 1, shade(fill, -0.18)]}
+      listening={false}
+    />
+  );
+}

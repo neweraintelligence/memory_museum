@@ -1,6 +1,6 @@
 /* UI theme tokens — applied via data-ui-theme on <html> */
 
-[data-ui-theme='brutalist'] {
+[data-ui-theme='brutal-95'] {
   color-scheme: light;
 
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -26,6 +26,7 @@
   --input-bg: #c4c3bd;
   --danger-border: #7e1a13;
   --dot-off: #6a6a64;
+  --dot-on: var(--accent);
   --ghost-hover-bg: rgba(255, 255, 255, 0.12);
   --mode-hover-bg: rgba(255, 255, 255, 0.14);
 
@@ -51,11 +52,64 @@
   --modal-shadow: var(--bevel), 0 40px 80px -24px rgba(15, 15, 13, 0.65), 0 12px 28px -10px rgba(15, 15, 13, 0.4);
   --kbd-shadow: var(--bevel), 0 1px 2px rgba(15, 15, 13, 0.2);
   --swatch-inset: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(15, 15, 13, 0.22);
+  --bg-texture: url('/brutal-95-bg.jpg');
 }
 
-/* Brutalist — filled collapsed panel icon button (square, slight shadow) */
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
+/* ---- Global surfaces ---- */
+
+[data-ui-theme='brutal-95'] body {
+  background-color: transparent;
+  background-image: none;
+}
+
+[data-ui-theme='brutal-95']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(157, 156, 151, 0.32), rgba(157, 156, 151, 0.32)),
+    var(--bg-texture);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[data-ui-theme='brutal-95'][data-wallpaper='off']::before {
+  display: none;
+}
+
+[data-ui-theme='brutal-95'][data-wallpaper='off'] body {
+  background-color: var(--bg);
+  background-image: var(--grain), var(--mottle);
+}
+
+[data-ui-theme='brutal-95'] .wallpaper-toggle {
+  background-color: var(--panel);
+  background-image: var(--form);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--bevel), var(--shadow-sm);
+  color: var(--text);
+  text-shadow: var(--text-shadow);
+}
+
+[data-ui-theme='brutal-95'] .wallpaper-toggle:hover {
+  background-color: var(--panel-2);
+}
+
+[data-ui-theme='brutal-95'] .wallpaper-toggle.active {
+  background-color: var(--accent);
+  background-image: var(--form);
+  border-color: var(--accent-2);
+  color: var(--text-on-accent);
+}
+
+/* Brutal 95 — filled collapsed panel icon button (square, slight shadow) */
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
   background-color: var(--panel);
   background-image: var(--form);
   border-color: var(--border);
@@ -67,8 +121,8 @@
   filter: none;
 }
 
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
   background-color: var(--panel-2);
   border-color: var(--border);
   color: var(--text);
@@ -76,45 +130,45 @@
   box-shadow: var(--bevel), var(--shadow);
 }
 
-/* Brutalist — collapsed panel icons inset from screen edges */
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed.left {
+/* Brutal 95 — collapsed panel icons inset from screen edges */
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed.left {
   left: calc(var(--editor-panel-side-inset) + 20px);
 }
 
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed.right {
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed.right {
   right: calc(var(--editor-panel-side-inset) + 20px);
 }
 
-/* Brutalist — accent-colored palace cube & build hammer */
-[data-ui-theme='brutalist'] .side-head-icon--palace,
-[data-ui-theme='brutalist'] .side-head-icon--build,
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
-[data-ui-theme='brutalist'] .overview-map-btn:not(.primary) .side-head-icon,
-[data-ui-theme='brutalist'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
+/* Brutal 95 — accent-colored palace cube & build hammer */
+[data-ui-theme='brutal-95'] .side-head-icon--palace,
+[data-ui-theme='brutal-95'] .side-head-icon--build,
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
+[data-ui-theme='brutal-95'] .overview-map-btn:not(.primary) .side-head-icon,
+[data-ui-theme='brutal-95'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
   color: var(--accent);
 }
 
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent:hover,
-[data-ui-theme='brutalist'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent:hover {
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent:hover,
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent:hover {
   color: var(--accent);
 }
 
-[data-ui-theme='brutalist'] .card-emoji .palace-card-icon--brutalist {
+[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--brutal-95 {
   height: 31.1px;
 }
 
-[data-ui-theme='brutalist'] .card-emoji .template-card-icon--brutalist {
+[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--brutal-95 {
   height: 31.1px;
 }
 
-[data-ui-theme='brutalist'] .card-emoji .palace-card-icon--default,
-[data-ui-theme='brutalist'] .card-emoji .template-card-icon--default {
+[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--default,
+[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--default {
   display: none;
 }
 
-[data-ui-theme='brutalist'] .card-emoji .palace-card-icon--brutalist,
-[data-ui-theme='brutalist'] .card-emoji .template-card-icon--brutalist {
+[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--brutal-95,
+[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--brutal-95 {
   display: block;
 }
 
@@ -123,84 +177,102 @@
   display: none;
 }
 
-[data-ui-theme='brutalist'] .room-list-item {
+[data-ui-theme='brutal-95'] .room-list-item {
   font-size: 13px;
 }
 
-[data-ui-theme='brutalist'] .room-list-item .room-list-icon--default,
-[data-ui-theme='brutalist'] .canvas-overlay .pill .room-list-icon--default {
+/* Isometric editor — uniform room row height in Build mode (action slot always reserved). */
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item {
+  height: 36px;
+  min-height: 36px;
+  padding-block: 0;
+}
+
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+}
+
+[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+  background-color: var(--ghost-hover-bg);
+}
+
+[data-ui-theme='brutal-95'] .room-list-item .room-list-icon--default,
+[data-ui-theme='brutal-95'] .canvas-overlay .pill .room-list-icon--default {
   display: none;
 }
 
-[data-ui-theme='brutalist'] .room-list-item .room-list-icon--typed,
-[data-ui-theme='brutalist'] .canvas-overlay .pill .room-list-icon--typed {
+[data-ui-theme='brutal-95'] .room-list-item .room-list-icon--typed,
+[data-ui-theme='brutal-95'] .canvas-overlay .pill .room-list-icon--typed {
   display: flex;
   align-items: center;
   line-height: 0;
   color: var(--text);
 }
 
-[data-ui-theme='brutalist'] .canvas-overlay .pill:not(.muted) {
+[data-ui-theme='brutal-95'] .canvas-overlay .pill:not(.muted) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-/* Brutalist dashboard — original stacked layout, scaled to fit the window */
-[data-ui-theme='brutalist'] .page {
+/* Brutal 95 dashboard — original stacked layout, scaled to fit the window */
+[data-ui-theme='brutal-95'] .page {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: clip;
 }
 
-[data-ui-theme='brutalist'] .dashboard-top,
-[data-ui-theme='brutalist'] .dashboard-top-row {
+[data-ui-theme='brutal-95'] .dashboard-top,
+[data-ui-theme='brutal-95'] .dashboard-top-row {
   width: 100%;
   max-width: 100%;
   min-width: 0;
 }
 
-[data-ui-theme='brutalist'] .dashboard-top-row {
+[data-ui-theme='brutal-95'] .dashboard-top-row {
   display: block;
   padding-top: 0;
 }
 
-[data-ui-theme='brutalist'] .dashboard-top {
-  margin-bottom: 0;
+[data-ui-theme='brutal-95'] .dashboard-top {
+  /* Match .section-title spacing (26px + label + 12px) before the next grid */
+  margin-bottom: calc(26px + 13px + 12px);
 }
 
-[data-ui-theme='brutalist'] .dashboard-top-row .page-head {
+[data-ui-theme='brutal-95'] .dashboard-top-row .page-head {
   margin-bottom: 22px;
   max-width: 100%;
   flex-wrap: wrap;
 }
 
-[data-ui-theme='brutalist'] .page-head .muted {
+[data-ui-theme='brutal-95'] .page-head .muted {
   position: relative;
   top: 4px;
 }
 
-[data-ui-theme='brutalist'] .page-head h1 .page-title-lead::after {
+[data-ui-theme='brutal-95'] .page-head h1 .page-title-lead::after {
   content: ' ';
 }
 
-[data-ui-theme='brutalist'] .create-palace-bar {
+[data-ui-theme='brutal-95'] .create-palace-bar {
   width: 50%;
   max-width: 50%;
   margin-left: 0;
-  margin-bottom: 26px;
+  margin-bottom: 0;
   padding-block: 10px;
   box-sizing: border-box;
 }
 
-[data-ui-theme='brutalist'] .create-palace-bar > .row {
+[data-ui-theme='brutal-95'] .create-palace-bar > .row {
   width: 100%;
   min-width: 0;
   align-items: flex-end;
 }
 
-[data-ui-theme='brutalist'] .create-palace-bar > .row > button.primary {
+[data-ui-theme='brutal-95'] .create-palace-bar > .row > button.primary {
   margin-bottom: 12px;
   height: 36px;
   padding-block: 0;
@@ -209,65 +281,65 @@
   flex-shrink: 0;
 }
 
-[data-ui-theme='brutalist'] .create-palace-field--name,
-[data-ui-theme='brutalist'] .create-palace-field--theme {
+[data-ui-theme='brutal-95'] .create-palace-field--name,
+[data-ui-theme='brutal-95'] .create-palace-field--theme {
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
 }
 
-[data-ui-theme='brutalist'] .create-palace-field input,
-[data-ui-theme='brutalist'] .create-palace-field select {
+[data-ui-theme='brutal-95'] .create-palace-field input,
+[data-ui-theme='brutal-95'] .create-palace-field select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   height: 36px;
 }
 
-[data-ui-theme='brutalist'] .create-palace-bar .field label {
+[data-ui-theme='brutal-95'] .create-palace-bar .field label {
   line-height: 14px;
 }
 
-[data-ui-theme='brutalist'] .page .grid {
+[data-ui-theme='brutal-95'] .page .grid {
   width: 100%;
   grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
 }
 
-[data-ui-theme='brutalist'] .brand {
+[data-ui-theme='brutal-95'] .brand {
   gap: 14px;
 }
 
-[data-ui-theme='brutalist'] .brand .brand-icon {
+[data-ui-theme='brutal-95'] .brand .brand-icon {
   height: 31px;
   width: 31px;
-  background-image: url('/brand-icon-brutalist.png');
+  background-image: url('/brand-icon-brutal-95.png');
 }
 
-[data-ui-theme='brutalist'] .brand-text {
+[data-ui-theme='brutal-95'] .brand-text {
   transition: color 0.18s ease, text-shadow 0.18s ease;
 }
 
-[data-ui-theme='brutalist'] .brand-text:hover {
+[data-ui-theme='brutal-95'] .brand-text:hover {
   color: #b83228;
-  text-shadow: 0 0 6px rgba(120, 26, 22, 0.45);
+  text-shadow: 0 0 4px rgba(120, 26, 22, 0.28);
 }
 
-[data-ui-theme='brutalist'] .card.clickable:has(.palace-card-actions) {
+[data-ui-theme='brutal-95'] .card.clickable:has(.palace-card-actions) {
   position: relative;
 }
 
-[data-ui-theme='brutalist'] .palace-card-actions {
+[data-ui-theme='brutal-95'] .palace-card-actions {
   position: absolute;
   top: 10px;
   right: 10px;
   margin: 0;
 }
 
-[data-ui-theme='brutalist'] .card.clickable:has(.palace-card-actions) h3 {
+[data-ui-theme='brutal-95'] .card.clickable:has(.palace-card-actions) h3 {
   padding-right: 72px;
 }
 
-[data-ui-theme='brutalist'] .card.clickable button.danger {
+[data-ui-theme='brutal-95'] .card.clickable button.danger {
   background-color: var(--accent);
   background-image: var(--form);
   border-color: var(--accent-2);
@@ -275,27 +347,27 @@
   text-shadow: var(--text-shadow);
 }
 
-[data-ui-theme='brutalist'] .card.clickable button.danger:hover {
+[data-ui-theme='brutal-95'] .card.clickable button.danger:hover {
   background-color: var(--accent);
 }
 
-/* Brutalist Map Room Cards */
-[data-ui-theme='brutalist'] .map-room-card {
+/* Brutal 95 Map Room Cards */
+[data-ui-theme='brutal-95'] .map-room-card {
   border-left: 6px solid var(--accent);
   padding-left: 14px; /* Adjust padding to compensate for thick border */
 }
 
-[data-ui-theme='brutalist'] .map-room-card.unconnected {
+[data-ui-theme='brutal-95'] .map-room-card.unconnected {
   border-left-color: var(--text-dim);
 }
 
-[data-ui-theme='brutalist'] .map-room-icon {
+[data-ui-theme='brutal-95'] .map-room-icon {
   line-height: 0;
   margin-bottom: 6px;
   color: var(--text);
 }
 
-[data-ui-theme='brutalist'] .map-room-title {
+[data-ui-theme='brutal-95'] .map-room-title {
   font-weight: 600;
   font-size: 14px;
   color: var(--text);

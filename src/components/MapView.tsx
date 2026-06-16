@@ -7,6 +7,41 @@ import { roomIcon, UI_ICONS } from '../themes/icons';
 const NODE_W = 150;
 const NODE_H = 78;
 
+function rectEdgePoint(
+  cx: number,
+  cy: number,
+  w: number,
+  h: number,
+  tx: number,
+  ty: number,
+) {
+  const dx = tx - cx;
+  const dy = ty - cy;
+  if (dx === 0 && dy === 0) return { x: cx, y: cy };
+  const halfW = w / 2;
+  const halfH = h / 2;
+  const t = Math.min(
+    dx !== 0 ? halfW / Math.abs(dx) : Infinity,
+    dy !== 0 ? halfH / Math.abs(dy) : Infinity,
+  );
+  return { x: cx + dx * t, y: cy + dy * t };
+}
+
+function connectionLine(
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+) {
+  const acx = ax + NODE_W / 2;
+  const acy = ay + NODE_H / 2;
+  const bcx = bx + NODE_W / 2;
+  const bcy = by + NODE_H / 2;
+  const start = rectEdgePoint(acx, acy, NODE_W, NODE_H, bcx, bcy);
+  const end = rectEdgePoint(bcx, bcy, NODE_W, NODE_H, acx, acy);
+  return { start, end };
+}
+
 export default function MapView({
   palaceId,
   onEnterRoom,
@@ -105,19 +140,30 @@ export default function MapView({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        <svg
+          className="map-connections"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
           {connections.map((c) => {
             const a = roomById(c.fromRoomId);
             const b = roomById(c.toRoomId);
             if (!a || !b) return null;
+            const { start, end } = connectionLine(a.mapX, a.mapY, b.mapX, b.mapY);
             return (
               <line
                 key={c.id}
                 className="map-connection-line"
-                x1={a.mapX + NODE_W / 2}
-                y1={a.mapY + NODE_H / 2}
-                x2={b.mapX + NODE_W / 2}
-                y2={b.mapY + NODE_H / 2}
+                x1={start.x}
+                y1={start.y}
+                x2={end.x}
+                y2={end.y}
                 stroke="var(--map-connection-stroke, #3a4470)"
                 strokeWidth={3}
                 strokeDasharray="2 6"
@@ -145,6 +191,7 @@ export default function MapView({
                 padding: 12,
                 cursor: 'grab',
                 userSelect: 'none',
+                zIndex: 1,
                 borderColor: connectFrom === r.id ? 'var(--gold)' : undefined,
                 '--room-color-1': style.wallRight,
                 '--room-color-2': style.bg,

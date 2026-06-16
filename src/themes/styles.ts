@@ -49,6 +49,8 @@ export interface RoomStyle {
   floorTextureAspect?: 'square' | 'iso';
   /** PNG paths for left/right wall faces — replaces gradient + wallPattern decor. */
   wallTextures?: { left: string; right: string };
+  /** When set, wall faces paint over floor tiles on the same grid cell. */
+  wallsOverFloor?: boolean;
 }
 
 export const ROOM_STYLES: RoomStyle[] = [
@@ -106,6 +108,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cold metal, neon seams, deep space.',
     floorPattern: 'metal',
     wallPattern: 'tech',
+    wallsOverFloor: true,
     ...STYLE_TEXTURES.spaceship,
   },
   {

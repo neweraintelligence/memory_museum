@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../state/useStore';
+import { useTheme } from '../state/useTheme';
+import { Icon } from '../themes/Icon';
+import { UI_ICONS } from '../themes/icons';
 import { PALACE_THEMES } from '../themes/styles';
 import { PALACE_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
 
@@ -11,6 +14,8 @@ export default function Dashboard() {
   const createPalace = useStore((s) => s.createPalace);
   const deletePalace = useStore((s) => s.deletePalace);
   const importBundle = useStore((s) => s.importBundle);
+  const wallpaperEnabled = useTheme((s) => s.wallpaperEnabled);
+  const toggleWallpaper = useTheme((s) => s.toggleWallpaper);
 
   const [name, setName] = useState('');
   const [theme, setTheme] = useState(PALACE_THEMES[0].id);
@@ -95,9 +100,9 @@ export default function Dashboard() {
                   <span className="card-icon-carve" aria-hidden="true" />
                 </span>
                 <img
-                  src="/palace-room-icon-brutalist.png?v=5"
+                  src="/palace-room-icon-brutal-95.png?v=5"
                   alt=""
-                  className="palace-card-icon palace-card-icon--brutalist"
+                  className="palace-card-icon palace-card-icon--brutal-95"
                 />
                 <img
                   src="/palace-room-icon.png"
@@ -140,9 +145,9 @@ export default function Dashboard() {
                 <span className="card-icon-carve" aria-hidden="true" />
               </span>
               <img
-                src="/template-icon-brutalist.png?v=2"
+                src="/template-icon-brutal-95.png?v=2"
                 alt=""
-                className="template-card-icon template-card-icon--brutalist"
+                className="template-card-icon template-card-icon--brutal-95"
               />
               <img
                 src="/template-icon.png"
@@ -159,6 +164,17 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <button
+        type="button"
+        className={`wallpaper-toggle${wallpaperEnabled ? ' active' : ''}`}
+        onClick={toggleWallpaper}
+        aria-pressed={wallpaperEnabled}
+        aria-label={wallpaperEnabled ? 'Hide wallpaper' : 'Show wallpaper'}
+        title={wallpaperEnabled ? 'Hide wallpaper' : 'Show wallpaper'}
+      >
+        <Icon icon={UI_ICONS.wallpaper} size={18} />
+      </button>
     </div>
   );
 }

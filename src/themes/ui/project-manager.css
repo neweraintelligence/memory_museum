@@ -26,7 +26,8 @@
   --text-on-accent: #2f332c;
   --input-bg: rgba(0, 0, 0, 0.14);
   --danger-border: rgba(184, 90, 69, 0.55);
-  --dot-off: #8a9189;
+  --dot-off: #b0b0b0;
+  --dot-on: #ffffff;
   --ghost-hover-bg: rgba(255, 255, 255, 0.1);
   --mode-hover-bg: rgba(255, 255, 255, 0.12);
 
@@ -58,13 +59,58 @@
   --pm-glass-border: rgba(255, 255, 255, 0.12);
   --pm-blur: blur(24px) saturate(1.15);
   --pm-icon-scale: 1.44;
+  --bg-texture: url('/project-manager-bg.jpg');
 }
 
 /* ---- Global surfaces ---- */
 
 [data-ui-theme='project-manager'] body {
+  background-color: transparent;
+  background-image: none;
+}
+
+[data-ui-theme='project-manager']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(118, 128, 118, 0.38), rgba(118, 128, 118, 0.38)),
+    var(--bg-texture);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[data-ui-theme='project-manager'][data-wallpaper='off']::before {
+  display: none;
+}
+
+[data-ui-theme='project-manager'][data-wallpaper='off'] body {
   background-color: var(--bg);
   background-image: none;
+}
+
+[data-ui-theme='project-manager'] .wallpaper-toggle {
+  background: var(--pm-glass);
+  -webkit-backdrop-filter: var(--pm-blur);
+  backdrop-filter: var(--pm-blur);
+  border: 1px solid var(--pm-glass-border);
+  border-radius: 999px;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-ui-theme='project-manager'] .wallpaper-toggle:hover {
+  background: var(--pm-glass-strong);
+}
+
+[data-ui-theme='project-manager'] .wallpaper-toggle.active {
+  background: var(--pm-glass-strong);
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 [data-ui-theme='project-manager'] h1,
@@ -692,11 +738,28 @@
 
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating .room-list-item {
   background: rgba(0, 0, 0, 0.06);
+  height: 48px;
+  min-height: 48px;
+  padding-block: 0;
 }
 
-[data-ui-theme='project-manager'] .content.editor-layout .side-floating .room-list-item:not(.active) {
-  padding-top: 12px;
-  padding-bottom: 12px;
+[data-ui-theme='project-manager'] .app-shell.palace-focus .content.editor-layout .side-floating .room-list-item {
+  padding-block: 0;
+}
+
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  border: 1px solid var(--pm-glass-border);
+  border-radius: 999px;
+  background-color: rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+[data-ui-theme='project-manager'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.14);
 }
 
 [data-ui-theme='project-manager'] .content.editor-layout .side-floating .room-list-item:hover,

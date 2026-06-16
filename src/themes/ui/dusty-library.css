@@ -13,6 +13,7 @@
   --font-mono: 'Fira Code', ui-monospace, monospace;
 
   /* Deep chocolate palette */
+  --bg-base: #80725d;
   --bg: #2a2018;
   --bg-2: #362b20;
   --panel: #3e3228;
@@ -32,6 +33,7 @@
   --input-bg: rgba(0, 0, 0, 0.22);
   --danger-border: #5a1818;
   --dot-off: #6a5a48;
+  --dot-on: var(--gold);
   --ghost-hover-bg: rgba(200, 180, 140, 0.08);
   --mode-hover-bg: rgba(200, 180, 140, 0.1);
 
@@ -40,8 +42,8 @@
   --shadow-sm: 0 4px 14px -4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.25);
   --bevel: inset 0 1px 0 rgba(200, 180, 140, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   --form: linear-gradient(180deg, rgba(200, 180, 140, 0.04), rgba(0, 0, 0, 0.06) 62%, rgba(0, 0, 0, 0.1));
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='0.05'/%3E%3C/svg%3E");
+  --grain: none;
+  --mottle: none;
 
   --heading-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
   --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
@@ -74,13 +76,42 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-color: var(--bg);
+  background-color: var(--bg-base);
   background-image:
     linear-gradient(rgba(42, 32, 24, 0.62), rgba(42, 32, 24, 0.62)),
     var(--bg-texture);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+[data-ui-theme='dusty-library'][data-wallpaper='off']::before {
+  display: none;
+}
+
+[data-ui-theme='dusty-library'][data-wallpaper='off'] body {
+  background-color: var(--bg-base);
+  background-image: none;
+}
+
+[data-ui-theme='dusty-library'] .wallpaper-toggle {
+  background-color: var(--input-bg);
+  background-image: none;
+  border: 1px solid rgba(200, 180, 140, 0.15);
+  border-radius: var(--radius);
+  box-shadow: var(--inset-shadow);
+  color: var(--text);
+}
+
+[data-ui-theme='dusty-library'] .wallpaper-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.28);
+}
+
+[data-ui-theme='dusty-library'] .wallpaper-toggle.active {
+  background-color: var(--accent);
+  border-color: transparent;
+  color: var(--text-on-accent);
+  box-shadow: 0 2px 8px rgba(75, 13, 24, 0.5);
 }
 
 /* ---- Typography ---- */
@@ -453,7 +484,26 @@
   box-shadow: var(--inset-shadow);
 }
 
-/* Show typed room icons (like brutalist) */
+/* Isometric editor — uniform room row height in Build mode (action slot always reserved). */
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item {
+  height: 36px;
+  min-height: 36px;
+  padding-block: 0;
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  color: var(--text-dim);
+}
+
+[data-ui-theme='dusty-library'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+  background-color: rgba(200, 180, 140, 0.08);
+  color: var(--text);
+}
+
+/* Show typed room icons (like Brutal 95) */
 [data-ui-theme='dusty-library'] .room-list-item .room-list-icon--default,
 [data-ui-theme='dusty-library'] .canvas-overlay .pill .room-list-icon--default {
   display: none;
@@ -817,9 +867,9 @@
 }
 
 [data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--default,
-[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--brutalist,
+[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--brutal-95,
 [data-ui-theme='dusty-library'] .card-emoji .template-card-icon--default,
-[data-ui-theme='dusty-library'] .card-emoji .template-card-icon--brutalist {
+[data-ui-theme='dusty-library'] .card-emoji .template-card-icon--brutal-95 {
   display: none;
 }
 
@@ -876,13 +926,15 @@
 /* ---- Map room cards ---- */
 
 [data-ui-theme='dusty-library'] .map-room-card {
-  background: linear-gradient(135deg, rgba(208, 172, 104, 0.12), transparent 60%), rgba(0, 0, 0, 0.15);
+  background-color: rgba(42, 32, 24, 0.94);
+  background-image: linear-gradient(135deg, rgba(208, 172, 104, 0.14), transparent 60%);
   border: 1px solid rgba(208, 172, 104, 0.2);
   border-top-color: rgba(208, 172, 104, 0.35);
 }
 
 [data-ui-theme='dusty-library'] .map-room-card.unconnected {
-  background: rgba(0, 0, 0, 0.1);
+  background-color: rgba(42, 32, 24, 0.88);
+  background-image: none;
   border-color: rgba(200, 180, 140, 0.1);
   border-top-color: rgba(200, 180, 140, 0.15);
 }

@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 import { Group, Line } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import FloorTileSurface from './FloorTileSurface';
-import WallSegmentFace, { WallSegmentTopEdge } from './WallSegmentFace';
+import WallSegmentFace, { WallSegmentTopEdge, WallBaseKickplate } from './WallSegmentFace';
 import IsoObject from './IsoObject';
 import { usePublicImage } from './usePublicImage';
 import { WallFeatureSprite } from './wallFeature';
-import { TILE_W, TILE_H, tileDiamond, gridToScreen } from '../lib/iso';
+import { TILE_W, TILE_H, tileDiamond, gridToScreen, floorDrawZ, wallDrawZ } from '../lib/iso';
 import { getStyle } from '../themes/styles';
 import { getRoomTiles, parseTileKey } from '../lib/floor';
 import { buildWallSegs } from '../lib/wallAttach';
@@ -102,19 +102,30 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
 
   // Walls + floor interleaved by depth (painter's order). Objects simply draw
   // on top, which reads fine for a faded backdrop room.
+  const wallsOverFloor = !!style.wallsOverFloor;
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; idx: number }
+      | { z: number; t: 'kick'; key: string; idx: number }
       | { z: number; t: 'floor'; key: string; idx: number };
     const items: Item[] = [];
-    wallSegs.forEach((seg, i) =>
-      items.push({ z: seg.depth - 0.5, t: 'wall', key: `w${i}`, idx: i }),
-    );
+    wallSegs.forEach((seg, i) => {
+      const z = wallDrawZ(seg.depth, wallsOverFloor);
+      items.push({ z, t: 'wall', key: `w${i}`, idx: i });
+      if (wallsOverFloor) {
+        items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, idx: i });
+      }
+    });
     tiles.forEach((tile, i) =>
-      items.push({ z: tile.gx + tile.gy, t: 'floor', key: `f${tile.key}`, idx: i }),
+      items.push({
+        z: floorDrawZ(tile.gx, tile.gy, wallsOverFloor),
+        t: 'floor',
+        key: `f${tile.key}`,
+        idx: i,
+      }),
     );
     return items.sort((a, b) => a.z - b.z);
-  }, [wallSegs, tiles]);
+  }, [wallSegs, tiles, wallsOverFloor]);
 
   const setPointer = (e: KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
@@ -156,6 +167,18 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
                 useTexture={useWallTexture}
               />
             </Group>
+          );
+        }
+        if (item.t === 'kick') {
+          const seg = wallSegs[item.idx];
+          return (
+            <WallBaseKickplate
+              key={item.key}
+              seg={seg}
+              style={style}
+              wallH={WALL_H}
+              texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
+            />
           );
         }
         const t = tiles[item.idx];
@@ -204,7 +227,6 @@ export default function GhostRoom({ room, objects, originX, originY, opacity, on
             draggable={false}
             selected={false}
             highlighted={false}
-            isAnchor={false}
             pulse={0}
             dim={false}
             stackLift={stackLiftById.get(o.id) ?? 0}

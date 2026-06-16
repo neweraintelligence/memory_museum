@@ -16,7 +16,6 @@ interface Props {
   draggable: boolean;
   selected: boolean;
   highlighted: boolean;
-  isAnchor: boolean;
   pulse: number; // 0..1
   dim: boolean;
   /** Screen-px lift when the object is stacked on a surface (table / bed). */
@@ -35,7 +34,6 @@ export default function IsoObject({
   draggable,
   selected,
   highlighted,
-  isAnchor,
   pulse,
   dim,
   stackLift = 0,
@@ -98,16 +96,16 @@ export default function IsoObject({
         />
       )}
 
-      {/* anchor / selection ring on the floor */}
-      {(isAnchor || selected || highlighted) && (
+      {/* selection ring on the floor */}
+      {(selected || highlighted) && (
         <Ellipse
           x={0}
           y={0}
           radiusX={HW * (footprint > 1 ? 1.85 : 1.3 + (highlighted ? pulse * 0.25 : 0))}
           radiusY={HH * (footprint > 1 ? 1.85 : 1.3 + (highlighted ? pulse * 0.25 : 0))}
-          stroke={highlighted ? '#ffe27a' : selected ? '#7dd3fc' : withAlpha(obj.color, 0.9)}
+          stroke={highlighted ? '#ffe27a' : '#7dd3fc'}
           strokeWidth={highlighted ? 3 : 2}
-          opacity={isAnchor && !selected && !highlighted ? 0.4 + pulse * 0.4 : 0.95}
+          opacity={0.95}
           dash={selected ? [6, 4] : undefined}
         />
       )}

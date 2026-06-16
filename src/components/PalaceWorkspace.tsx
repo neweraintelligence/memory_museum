@@ -364,12 +364,14 @@ export default function PalaceWorkspace() {
           <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {r.name}
           </span>
-          {currentRoomId === r.id && mode === 'build' && (
-            <>
+          {mode === 'build' && (
+            <span className="room-list-actions" aria-hidden={currentRoomId !== r.id}>
               <button
-                className="icon-btn ghost"
+                className={`icon-btn ghost room-list-action-btn${currentRoomId !== r.id ? ' room-list-action-btn--placeholder' : ''}`}
                 title="Duplicate"
+                tabIndex={currentRoomId === r.id ? 0 : -1}
                 onClick={(e) => {
+                  if (currentRoomId !== r.id) return;
                   e.stopPropagation();
                   const nr = duplicateRoom(r.id);
                   if (nr) setCurrentRoomId(nr.id);
@@ -378,16 +380,18 @@ export default function PalaceWorkspace() {
                 ⧉
               </button>
               <button
-                className="icon-btn ghost"
+                className={`icon-btn ghost room-list-action-btn${currentRoomId !== r.id ? ' room-list-action-btn--placeholder' : ''}`}
                 title="Delete"
+                tabIndex={currentRoomId === r.id ? 0 : -1}
                 onClick={(e) => {
+                  if (currentRoomId !== r.id) return;
                   e.stopPropagation();
                   if (confirm(`Delete room "${r.name}"?`)) deleteRoom(r.id);
                 }}
               >
                 🗑
               </button>
-            </>
+            </span>
           )}
         </div>
       ))}
@@ -477,7 +481,6 @@ export default function PalaceWorkspace() {
             key={currentRoom.id}
             room={currentRoom}
             objects={roomObjects}
-            memories={roomMemories}
             mode={mode}
             placingKind={placingKind}
             placingRotation={placingRotation}

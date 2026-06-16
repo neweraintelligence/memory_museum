@@ -296,7 +296,7 @@ a {
   border-radius: 50%;
   background: var(--text-dim);
 }
-.dot.on { background: var(--good); box-shadow: 0 0 8px var(--good); }
+.dot.on { background: var(--dot-on, var(--good)); box-shadow: 0 0 8px var(--dot-on, var(--good)); }
 .dot.connecting { background: var(--warn); }
 .dot.error { background: var(--bad); }
 .dot.off { background: var(--dot-off); }
@@ -326,6 +326,22 @@ a {
   margin: 0;
   font-size: 26px;
   font-weight: 600;
+}
+
+.wallpaper-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 12;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  line-height: 0;
 }
 
 .muted {
@@ -406,8 +422,8 @@ a {
   display: block;
 }
 
-.card-emoji .palace-card-icon--brutalist,
-.card-emoji .template-card-icon--brutalist {
+.card-emoji .palace-card-icon--brutal-95,
+.card-emoji .template-card-icon--brutal-95 {
   display: none;
 }
 
@@ -1038,6 +1054,40 @@ a {
   background-image: var(--form);
   border-color: var(--accent);
   box-shadow: var(--bevel);
+}
+
+.room-list-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  flex: none;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  background-image: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+.room-list-action-btn--placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .icon-btn {

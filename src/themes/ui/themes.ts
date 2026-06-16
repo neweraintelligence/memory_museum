@@ -2,8 +2,8 @@ import type { UiTheme, UiThemeId } from './types';
 
 export const UI_THEMES: UiTheme[] = [
   {
-    id: 'brutalist',
-    label: 'Brutalist',
+    id: 'brutal-95',
+    label: 'Brutal 95',
     description: 'Raw cast concrete, warm rust accents, editorial serif titles.',
   },
   {
@@ -18,9 +18,10 @@ export const UI_THEMES: UiTheme[] = [
   },
 ];
 
-export const DEFAULT_UI_THEME: UiThemeId = 'brutalist';
+export const DEFAULT_UI_THEME: UiThemeId = 'brutal-95';
 
 export const UI_THEME_STORAGE_KEY = 'memory-palace-ui-theme';
+export const UI_WALLPAPER_STORAGE_KEY = 'memory-palace-ui-wallpaper';
 
 export function isUiThemeId(value: string | null | undefined): value is UiThemeId {
   return UI_THEMES.some((theme) => theme.id === value);

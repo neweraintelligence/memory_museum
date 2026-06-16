@@ -5,7 +5,7 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import IsoObject from './IsoObject';
 import GhostRoom from './GhostRoom';
 import FloorTileSurface from './FloorTileSurface';
-import WallSegmentFace, { WallSegmentTopEdge, RoomCornerSeam } from './WallSegmentFace';
+import WallSegmentFace, { WallSegmentTopEdge, RoomCornerSeam, WallBaseKickplate } from './WallSegmentFace';
 import { usePublicImage } from './usePublicImage';
 import { WallFeatureSprite, WallFeatureInteract } from './wallFeature';
 import {
@@ -15,6 +15,9 @@ import {
   gridToScreen,
   screenToGrid,
   clamp,
+  floorDrawZ,
+  objectDrawZ,
+  wallDrawZ,
 } from '../lib/iso';
 import { shade, withAlpha } from '../lib/color';
 import { getStyle } from '../themes/styles';
@@ -34,7 +37,7 @@ import {
 } from '../lib/objectPlacement';
 import { defaultObjectRotation, isWallAttachable, mustStack, surfaceStackLift } from '../themes/objects';
 import { buildWallSegs, buildExplicitWallSegs, nearestWallSeg, type WallSeg } from '../lib/wallAttach';
-import type { Room, PObject, Memory, AppMode, WallSide } from '../types';
+import type { Room, PObject, AppMode, WallSide } from '../types';
 
 const WALL_H = 110;
 /** Height of the leftover wall stub shown in x-ray mode (~5% of full height). */
@@ -127,7 +130,6 @@ interface NeighborRoom {
 interface Props {
   room: Room;
   objects: PObject[];
-  memories: Memory[];
   mode: AppMode;
   placingKind: string | null;
   placingRotation: number;
@@ -172,7 +174,6 @@ function gridBounds(keys: string[]) {
 export default function RoomCanvas({
   room,
   objects,
-  memories,
   mode,
   placingKind,
   placingRotation,
@@ -313,14 +314,6 @@ export default function RoomCanvas({
     [seNeighbor, presentKeys, origin.x, origin.y],
   );
 
-  const anchorIds = useMemo(() => {
-    const set = new Set<string>();
-    for (const m of memories) {
-      if (m.prompt || m.body || m.answer || m.tags.length > 0 || m.imageUrl) set.add(m.objectId);
-    }
-    return set;
-  }, [memories]);
-
   const tiles = useMemo(
     () =>
       presentKeys.map((k) => {
@@ -444,28 +437,44 @@ export default function RoomCanvas({
   // Single depth-sorted pass for walls, their mounted features, floor tiles and
   // floor objects. Painter's order (ascending gx+gy) means a wall whose tile is
   // closer to the camera paints last and hides any object sitting behind it.
+  const wallsOverFloor = !!style.wallsOverFloor;
   const drawOrder = useMemo(() => {
     type Item =
       | { z: number; t: 'wall'; key: string; seg: WallSeg }
+      | { z: number; t: 'kick'; key: string; seg: WallSeg }
       | { z: number; t: 'feature'; key: string; seg: WallSeg; feature: PObject }
       | { z: number; t: 'floor'; key: string; tile: (typeof tiles)[number] }
       | { z: number; t: 'object'; key: string; obj: PObject };
     const items: Item[] = [];
     wallSegs.forEach((seg, i) => {
-      items.push({ z: seg.depth - 0.5, t: 'wall', key: `w${i}`, seg });
+      const z = wallDrawZ(seg.depth, wallsOverFloor);
+      items.push({ z, t: 'wall', key: `w${i}`, seg });
+      if (wallsOverFloor) {
+        items.push({ z: z + 0.1, t: 'kick', key: `k${i}`, seg });
+      }
       const feature = wallMountsBySeg.get(`${seg.gx},${seg.gy},${seg.side}`);
       if (feature) {
-        items.push({ z: seg.depth - 0.5, t: 'feature', key: `wf${i}`, seg, feature });
+        items.push({ z, t: 'feature', key: `wf${i}`, seg, feature });
       }
     });
     for (const tile of tiles) {
-      items.push({ z: tile.gx + tile.gy, t: 'floor', key: `f${tile.key}`, tile });
+      items.push({
+        z: floorDrawZ(tile.gx, tile.gy, wallsOverFloor),
+        t: 'floor',
+        key: `f${tile.key}`,
+        tile,
+      });
     }
     for (const o of sortedFloorObjects) {
-      items.push({ z: footprintDepthKey(o), t: 'object', key: `o${o.id}`, obj: o });
+      items.push({
+        z: objectDrawZ(footprintDepthKey(o), wallsOverFloor),
+        t: 'object',
+        key: `o${o.id}`,
+        obj: o,
+      });
     }
     return items.sort((a, b) => a.z - b.z);
-  }, [wallSegs, tiles, sortedFloorObjects, wallMountsBySeg]);
+  }, [wallSegs, tiles, sortedFloorObjects, wallMountsBySeg, wallsOverFloor]);
 
   const handleTileClick = (gx: number, gy: number) => {
     if (wallEditing) return;
@@ -534,7 +543,6 @@ export default function RoomCanvas({
     draggable: mode === 'build' && !floorEditing && !wallEditing,
     selected: selectedId === o.id,
     highlighted: highlightId === o.id,
-    isAnchor: anchorIds.has(o.id),
     pulse,
     dim: (focusHighlight && !!highlightId && highlightId !== o.id) || floorEditing || wallEditing,
     onSelect,
@@ -611,6 +619,20 @@ export default function RoomCanvas({
                 />
               );
             }
+            if (item.t === 'kick') {
+              if (xrayWalls) return null;
+              const seg = item.seg;
+              return (
+                <Group key={item.key} opacity={wallEditing ? 0.3 : 1} listening={false}>
+                  <WallBaseKickplate
+                    seg={seg}
+                    style={style}
+                    wallH={WALL_H}
+                    texture={seg.side === 'left' ? wallTexLeft : wallTexRight}
+                  />
+                </Group>
+              );
+            }
             if (item.t === 'feature') {
               const seg = item.seg;
               const fill = seg.side === 'left' ? style.wallLeft : style.wallRight;
@@ -641,7 +663,6 @@ export default function RoomCanvas({
                   draggable={mode === 'build' && !floorEditing && !wallEditing}
                   selected={selectedId === o.id}
                   highlighted={isHi}
-                  isAnchor={anchorIds.has(o.id)}
                   pulse={pulse}
                   dim={(focusHighlight && !!highlightId && !isHi) || floorEditing || wallEditing}
                   stackLift={stackLiftById.get(o.id) ?? 0}
@@ -697,7 +718,6 @@ export default function RoomCanvas({
                   draggable={interact.draggable}
                   selected={interact.selected}
                   highlighted={interact.highlighted}
-                  isAnchor={interact.isAnchor}
                   pulse={interact.pulse}
                   dim={interact.dim}
                   onSelect={interact.onSelect}
@@ -802,8 +822,8 @@ export default function RoomCanvas({
               x={wt.x}
               y={wt.y}
               radius={3.5}
-              fill={wt.exists ? '#fff' : 'transparent'}
-              stroke={wt.exists ? '#fff' : 'rgba(255,255,255,0.45)'}
+              fill={wt.exists ? (wt.side === 'right' ? '#aaa' : '#fff') : 'transparent'}
+              stroke={wt.exists ? (wt.side === 'right' ? '#aaa' : '#fff') : (wt.side === 'right' ? 'rgba(170,170,170,0.45)' : 'rgba(255,255,255,0.45)')}
               strokeWidth={1.5}
               onMouseDown={blockViewportPan}
               onClick={() => {

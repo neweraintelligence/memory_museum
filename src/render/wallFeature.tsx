@@ -275,7 +275,6 @@ interface InteractProps {
   draggable: boolean;
   selected: boolean;
   highlighted: boolean;
-  isAnchor: boolean;
   pulse: number;
   dim: boolean;
   onSelect: (id: string) => void;
@@ -291,7 +290,6 @@ export function WallFeatureInteract({
   draggable,
   selected,
   highlighted,
-  isAnchor,
   pulse,
   dim,
   onSelect,
@@ -304,14 +302,14 @@ export function WallFeatureInteract({
 
   return (
     <Group opacity={dim ? 0.35 : 1}>
-      {(selected || highlighted || isAnchor) && (
+      {(selected || highlighted) && (
         <Line
           points={hitPts}
           closed
-          stroke={highlighted ? '#ffe27a' : selected ? '#7dd3fc' : withAlpha(obj.color, 0.85)}
+          stroke={highlighted ? '#ffe27a' : '#7dd3fc'}
           strokeWidth={highlighted ? 3 : 2}
           dash={selected ? [5, 4] : undefined}
-          opacity={isAnchor && !selected && !highlighted ? 0.4 + pulse * 0.35 : 0.95}
+          opacity={0.95}
           listening={false}
         />
       )}
