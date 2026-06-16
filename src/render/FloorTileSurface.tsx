@@ -59,7 +59,7 @@ export default function FloorTileSurface({
   const variantCount = (style.floorTextures?.length === 4 ? 4 : 2) as 2 | 4;
   const variantIndex = floorVariantIndex(t.gx, t.gy, variantCount);
   const floorBase = variantIndex % 2 === 0 ? style.floorA : style.floorB;
-  const texture = textures[variantIndex] ?? null;
+  const texture = textures[variantIndex] ?? undefined;
   const useTexture = textures.length >= 2 && textures.every((img) => img != null);
 
   const hitHandlers = {

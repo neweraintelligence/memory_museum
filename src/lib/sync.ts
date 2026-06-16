@@ -56,6 +56,7 @@ const fromRoomRow = (r: Record<string, unknown>): Room => ({
   gridW: Number(r.grid_w),
   gridH: Number(r.grid_h),
   tiles: (r.tiles as string[]) ?? [],
+  walls: (r.walls as string[]) ?? [],
   mapX: Number(r.map_x),
   mapY: Number(r.map_y),
   orderIndex: Number(r.order_index),

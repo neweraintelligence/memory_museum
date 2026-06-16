@@ -267,9 +267,6 @@ export default function MuseumWorkspace() {
     );
   }
 
-  const roomMemories = allMemories.filter((m) =>
-    roomObjects.some((o) => o.id === m.objectId),
-  );
   const selectedObject = roomObjects.find((o) => o.id === selectedId) ?? null;
 
   const step = sequence[stepIndex] ?? null;

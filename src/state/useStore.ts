@@ -8,7 +8,7 @@ import { applyGrade } from '../lib/srs';
 import type { Grade } from '../lib/srs';
 import { getTheme } from '../themes/styles';
 import { getObjectDef, isSurface, isWallAttachable } from '../themes/objects';
-import { getRoomTiles, roomTileSet, tileKey } from '../lib/floor';
+import { getRoomTiles, tileKey } from '../lib/floor';
 import { autoWallKeys } from '../lib/wallAttach';
 import {
   canPlaceObject,

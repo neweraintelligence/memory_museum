@@ -249,6 +249,7 @@ export function buildBundleFromTemplate(tpl: MuseumTemplate): MuseumBundle {
       gridW: 6,
       gridH: 6,
       tiles: [],
+      walls: [],
       mapX: 120 + (i % 3) * 220,
       mapY: 140 + Math.floor(i / 3) * 200,
       orderIndex: i,
