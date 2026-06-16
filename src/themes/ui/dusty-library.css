@@ -8,7 +8,7 @@
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-classic: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --font-brand: 'Cinzel', Georgia, 'Times New Roman', serif;
-  --font-palaces: 'Castoro Titling', Georgia, 'Times New Roman', serif;
+  --font-museums: 'Castoro Titling', Georgia, 'Times New Roman', serif;
   --font-script: 'Ms Madi', 'Brush Script MT', cursive;
   --font-mono: 'Fira Code', ui-monospace, monospace;
 
@@ -649,7 +649,7 @@
 }
 
 /* Gold icons in side panels — stay visible on burgundy buttons */
-[data-ui-theme='dusty-library'] .side-head-icon--palace,
+[data-ui-theme='dusty-library'] .side-head-icon--museum,
 [data-ui-theme='dusty-library'] .side-head-icon--build,
 [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
 [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
@@ -708,7 +708,7 @@
   text-wrap: balance;
 }
 
-/* "Your" — Ms Madi script lead word above "Palaces" */
+/* "Your" — Ms Madi script lead word above "Museums" */
 [data-ui-theme='dusty-library'] .page-head h1 .page-title-lead {
   display: block;
   font-family: var(--font-script);
@@ -722,10 +722,10 @@
   text-shadow: none;
 }
 
-/* "Palaces" — Castoro Titling classical display */
+/* "Museums" — Castoro Titling classical display */
 [data-ui-theme='dusty-library'] .page-head h1 .page-title-main {
   display: block;
-  font-family: var(--font-palaces);
+  font-family: var(--font-museums);
   font-weight: 400;
   font-style: normal;
   font-size: 0.52em;
@@ -760,7 +760,7 @@
   top: -1px;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-bar {
+[data-ui-theme='dusty-library'] .create-museum-bar {
   width: 50%;
   max-width: 50%;
   margin-left: 0;
@@ -769,13 +769,13 @@
   box-sizing: border-box;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-bar > .row {
+[data-ui-theme='dusty-library'] .create-museum-bar > .row {
   width: 100%;
   min-width: 0;
   align-items: flex-end;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-bar > .row > button.primary {
+[data-ui-theme='dusty-library'] .create-museum-bar > .row > button.primary {
   margin-bottom: 12px;
   height: 36px;
   padding-block: 0;
@@ -784,22 +784,22 @@
   flex-shrink: 0;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-field--name,
-[data-ui-theme='dusty-library'] .create-palace-field--theme {
+[data-ui-theme='dusty-library'] .create-museum-field--name,
+[data-ui-theme='dusty-library'] .create-museum-field--theme {
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-field input,
-[data-ui-theme='dusty-library'] .create-palace-field select {
+[data-ui-theme='dusty-library'] .create-museum-field input,
+[data-ui-theme='dusty-library'] .create-museum-field select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   height: 36px;
 }
 
-[data-ui-theme='dusty-library'] .create-palace-bar .field label {
+[data-ui-theme='dusty-library'] .create-museum-bar .field label {
   line-height: 14px;
 }
 
@@ -808,7 +808,7 @@
   grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
 }
 
-/* ---- Palace & template card icons ---- */
+/* ---- Museum & template card icons ---- */
 
 [data-ui-theme='dusty-library'] .card-icon-engraved {
   display: block;
@@ -818,8 +818,8 @@
   flex-shrink: 0;
 }
 
-[data-ui-theme='dusty-library'] .card-icon-engraved--palace {
-  --engraved-mask: url('/palace-room-icon-dusty-library.png');
+[data-ui-theme='dusty-library'] .card-icon-engraved--museum {
+  --engraved-mask: url('/museum-room-icon-dusty-library.png');
 }
 
 [data-ui-theme='dusty-library'] .card-icon-engraved--template {
@@ -866,26 +866,26 @@
   z-index: 2;
 }
 
-[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--default,
-[data-ui-theme='dusty-library'] .card-emoji .palace-card-icon--brutal-95,
+[data-ui-theme='dusty-library'] .card-emoji .museum-card-icon--default,
+[data-ui-theme='dusty-library'] .card-emoji .museum-card-icon--brutal-95,
 [data-ui-theme='dusty-library'] .card-emoji .template-card-icon--default,
 [data-ui-theme='dusty-library'] .card-emoji .template-card-icon--brutal-95 {
   display: none;
 }
 
-/* Palace card actions */
-[data-ui-theme='dusty-library'] .card.clickable:has(.palace-card-actions) {
+/* Museum card actions */
+[data-ui-theme='dusty-library'] .card.clickable:has(.museum-card-actions) {
   position: relative;
 }
 
-[data-ui-theme='dusty-library'] .palace-card-actions {
+[data-ui-theme='dusty-library'] .museum-card-actions {
   position: absolute;
   top: 10px;
   right: 10px;
   margin: 0;
 }
 
-[data-ui-theme='dusty-library'] .card.clickable:has(.palace-card-actions) h3 {
+[data-ui-theme='dusty-library'] .card.clickable:has(.museum-card-actions) h3 {
   padding-right: 72px;
 }
 

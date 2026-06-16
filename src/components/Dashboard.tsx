@@ -4,40 +4,40 @@ import { useStore } from '../state/useStore';
 import { useTheme } from '../state/useTheme';
 import { Icon } from '../themes/Icon';
 import { UI_ICONS } from '../themes/icons';
-import { PALACE_THEMES } from '../themes/styles';
-import { PALACE_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
+import { MUSEUM_THEMES } from '../themes/styles';
+import { MUSEUM_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const palaces = useStore((s) => s.palaces);
+  const museums = useStore((s) => s.museums);
   const rooms = useStore((s) => s.rooms);
-  const createPalace = useStore((s) => s.createPalace);
-  const deletePalace = useStore((s) => s.deletePalace);
+  const createMuseum = useStore((s) => s.createMuseum);
+  const deleteMuseum = useStore((s) => s.deleteMuseum);
   const importBundle = useStore((s) => s.importBundle);
   const wallpaperEnabled = useTheme((s) => s.wallpaperEnabled);
   const toggleWallpaper = useTheme((s) => s.toggleWallpaper);
 
   const [name, setName] = useState('');
-  const [theme, setTheme] = useState(PALACE_THEMES[0].id);
+  const [theme, setTheme] = useState(MUSEUM_THEMES[0].id);
 
-  const activePalaces = palaces.filter((p) => !p.deleted);
+  const activeMuseums = museums.filter((p) => !p.deleted);
 
   const handleCreate = () => {
-    const p = createPalace(name || 'My Palace', theme);
+    const p = createMuseum(name || 'My Museum', theme);
     setName('');
-    navigate(`/palace/${p.id}`);
+    navigate(`/museum/${p.id}`);
   };
 
   const handleTemplate = (tplId: string) => {
-    const tpl = PALACE_TEMPLATES.find((t) => t.id === tplId);
+    const tpl = MUSEUM_TEMPLATES.find((t) => t.id === tplId);
     if (!tpl) return;
     const bundle = buildBundleFromTemplate(tpl);
     importBundle(bundle);
-    navigate(`/palace/${bundle.palace.id}`);
+    navigate(`/museum/${bundle.museum.id}`);
   };
 
-  const roomCount = (palaceId: string) =>
-    rooms.filter((r) => r.palaceId === palaceId && !r.deleted).length;
+  const roomCount = (museumId: string) =>
+    rooms.filter((r) => r.museumId === museumId && !r.deleted).length;
 
   return (
     <div className="page fade-in">
@@ -46,15 +46,15 @@ export default function Dashboard() {
           <div className="page-head">
             <h1>
               <span className="page-title-lead">Your</span>
-              <span className="page-title-main">Palaces</span>
+              <span className="page-title-main">Museums</span>
             </h1>
             <span className="muted">Build a place for your knowledge to live.</span>
           </div>
 
-          <div className="card create-palace-bar">
+          <div className="card create-museum-bar">
             <div className="row wrap" style={{ gap: 12, alignItems: 'flex-end' }}>
-              <div className="field create-palace-field create-palace-field--name">
-                <label>New palace name</label>
+              <div className="field create-museum-field create-museum-field--name">
+                <label>New museum name</label>
                 <input
                   value={name}
                   placeholder="e.g. Neuroscience Mansion"
@@ -62,10 +62,10 @@ export default function Dashboard() {
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
                 />
               </div>
-              <div className="field create-palace-field create-palace-field--theme">
+              <div className="field create-museum-field create-museum-field--theme">
                 <label>Theme</label>
                 <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-                  {PALACE_THEMES.map((t) => (
+                  {MUSEUM_THEMES.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.label}
                     </option>
@@ -73,55 +73,55 @@ export default function Dashboard() {
                 </select>
               </div>
               <button className="primary" onClick={handleCreate}>
-                + Create Palace
+                + Create Museum
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {activePalaces.length === 0 ? (
+      {activeMuseums.length === 0 ? (
         <div className="empty">
-          No palaces yet. Create one above, or start from a template below.
+          No museums yet. Create one above, or start from a template below.
         </div>
       ) : (
         <div className="grid">
-          {activePalaces.map((p) => (
+          {activeMuseums.map((p) => (
             <div
               key={p.id}
               className="card clickable"
-              onClick={() => navigate(`/palace/${p.id}`)}
+              onClick={() => navigate(`/museum/${p.id}`)}
             >
               <div className="card-emoji">
                 <span
-                  className="card-icon-engraved card-icon-engraved--palace"
+                  className="card-icon-engraved card-icon-engraved--museum"
                   aria-hidden="true"
                 >
                   <span className="card-icon-carve" aria-hidden="true" />
                 </span>
                 <img
-                  src="/palace-room-icon-brutal-95.png?v=5"
+                  src="/museum-room-icon-brutal-95.png?v=5"
                   alt=""
-                  className="palace-card-icon palace-card-icon--brutal-95"
+                  className="museum-card-icon museum-card-icon--brutal-95"
                 />
                 <img
-                  src="/palace-room-icon.png"
+                  src="/museum-room-icon.png"
                   alt=""
-                  className="palace-card-icon palace-card-icon--default"
+                  className="museum-card-icon museum-card-icon--default"
                 />
               </div>
               <h3>{p.name}</h3>
               <div className="meta">
                 {roomCount(p.id)} room{roomCount(p.id) === 1 ? '' : 's'} ·{' '}
-                {PALACE_THEMES.find((t) => t.id === p.theme)?.label ?? p.theme}
+                {MUSEUM_THEMES.find((t) => t.id === p.theme)?.label ?? p.theme}
               </div>
-              <div className="row palace-card-actions" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
+              <div className="row museum-card-actions" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
                 <button
                   className="danger icon-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (confirm(`Delete "${p.name}" and everything inside?`)) {
-                      deletePalace(p.id);
+                      deleteMuseum(p.id);
                     }
                   }}
                 >
@@ -135,7 +135,7 @@ export default function Dashboard() {
 
       <div className="section-title">Start from a template</div>
       <div className="grid">
-        {PALACE_TEMPLATES.map((t) => (
+        {MUSEUM_TEMPLATES.map((t) => (
           <div key={t.id} className="card clickable" onClick={() => handleTemplate(t.id)}>
             <div className="card-emoji">
               <span

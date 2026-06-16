@@ -264,14 +264,14 @@ export function getStyle(id: string): RoomStyle {
   return ROOM_STYLES.find((s) => s.id === canonicalId) ?? ROOM_STYLES[0];
 }
 
-export interface PalaceTheme {
+export interface MuseumTheme {
   id: string;
   label: string;
   defaultStyle: string;
   bg: string;
 }
 
-export const PALACE_THEMES: PalaceTheme[] = [
+export const MUSEUM_THEMES: MuseumTheme[] = [
   { id: 'scholar', label: 'Scholar', defaultStyle: 'gothic-library', bg: '#1b1410' },
   { id: 'clinical', label: 'Clinical', defaultStyle: 'clinic', bg: '#eef6f7' },
   { id: 'cosmic', label: 'Cosmic', defaultStyle: 'spaceship', bg: '#0b1020' },
@@ -279,8 +279,8 @@ export const PALACE_THEMES: PalaceTheme[] = [
   { id: 'homely', label: 'Homely', defaultStyle: 'cozy-apartment', bg: '#efe2d2' },
 ];
 
-export function getTheme(id: string): PalaceTheme {
-  return PALACE_THEMES.find((t) => t.id === id) ?? PALACE_THEMES[0];
+export function getTheme(id: string): MuseumTheme {
+  return MUSEUM_THEMES.find((t) => t.id === id) ?? MUSEUM_THEMES[0];
 }
 
 export const ROOM_TYPES: { id: string; label: string; icon: string }[] = [

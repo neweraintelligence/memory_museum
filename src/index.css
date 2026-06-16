@@ -356,21 +356,21 @@ a {
   margin: 26px 0 12px;
 }
 
-.create-palace-field {
+.create-museum-field {
   margin: 0;
 }
 
-.create-palace-field--name {
+.create-museum-field--name {
   flex: 2;
   min-width: 220px;
 }
 
-.create-palace-field--theme {
+.create-museum-field--theme {
   flex: 1;
   min-width: 160px;
 }
 
-.create-palace-bar {
+.create-museum-bar {
   margin-bottom: 26px;
 }
 
@@ -422,12 +422,12 @@ a {
   display: block;
 }
 
-.card-emoji .palace-card-icon--brutal-95,
+.card-emoji .museum-card-icon--brutal-95,
 .card-emoji .template-card-icon--brutal-95 {
   display: none;
 }
 
-.card-emoji .palace-card-icon,
+.card-emoji .museum-card-icon,
 .card-emoji .template-card-icon {
   height: 30px;
   width: auto;

@@ -10,7 +10,7 @@ export type ReviewStatus =
 
 export type AppMode = 'build' | 'walk' | 'review';
 
-export interface Palace {
+export interface Museum {
   id: ID;
   userId: string | null;
   name: string;
@@ -22,7 +22,7 @@ export interface Palace {
 
 export interface Room {
   id: ID;
-  palaceId: ID;
+  museumId: ID;
   name: string;
   type: string;
   style: string;
@@ -39,7 +39,7 @@ export interface Room {
 
 export interface Connection {
   id: ID;
-  palaceId: ID;
+  museumId: ID;
   fromRoomId: ID;
   toRoomId: ID;
   updatedAt: number;
@@ -86,4 +86,4 @@ export interface Memory {
   deleted: number;
 }
 
-export type AnyRecord = Palace | Room | Connection | PObject | Memory;
+export type AnyRecord = Museum | Room | Connection | PObject | Memory;

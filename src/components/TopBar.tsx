@@ -23,7 +23,7 @@ const CLOUD_LABEL: Record<string, string> = {
 export default function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const showModes = location.pathname.startsWith('/palace/');
+  const showModes = location.pathname.startsWith('/museum/');
   const mode = useUI((s) => s.mode);
   const setMode = useUI((s) => s.setMode);
   const setSearchOpen = useUI((s) => s.setSearchOpen);
@@ -37,7 +37,7 @@ export default function TopBar() {
             <span className="brand-icon-carve" aria-hidden="true" />
           </span>
         </span>
-        <span className="brand-text">Memory Palace{'\u00A0\u00A0\u00A0\u00A0\u00A0'}</span>
+        <span className="brand-text">Memory Museum{'\u00A0\u00A0\u00A0\u00A0\u00A0'}</span>
       </div>
 
       {showModes && (

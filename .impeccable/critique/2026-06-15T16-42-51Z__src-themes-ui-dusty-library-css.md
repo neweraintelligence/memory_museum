@@ -11,4 +11,4 @@ P0: Danger button semantic inversion
 P1: Palette labels 10px text-dim below legible threshold
 P1: No Undo/Redo
 P2: Modal/panel header inconsistency
-P2: Create-palace-bar responsive breakpoint
+P2: Create-museum-bar responsive breakpoint

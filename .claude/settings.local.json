@@ -9,7 +9,8 @@
       "Bash(powershell.exe:*)",
       "Bash(npx tsc:*)",
       "Bash(npx vite:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(sed:*)"
     ]
   }
 }

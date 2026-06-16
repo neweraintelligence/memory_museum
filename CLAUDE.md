@@ -1,4 +1,4 @@
-# Memory Palace - Project Notes
+# Memory Museum - Project Notes
 
 ## GitHub / git usage (read before any push)
 
@@ -15,7 +15,7 @@
 
 ## This repo's remote
 
-- Repo: https://github.com/calwleung/memory_palace
+- Repo: https://github.com/calwleung/memory_museum
 - This repo pushes as **`calwleung`** (not the global `newera-cal` default),
   because `newera-cal` has no write access to it. The `calwleung` token is
   embedded in the remote URL, so git uses it directly and ignores the global

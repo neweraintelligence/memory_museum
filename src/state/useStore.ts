@@ -17,7 +17,7 @@ import {
   stackedItemsOn,
 } from '../lib/objectPlacement';
 import type {
-  Palace,
+  Museum,
   Room,
   Connection,
   PObject,
@@ -30,7 +30,7 @@ export type CloudStatus = 'off' | 'connecting' | 'on' | 'error';
 interface State {
   loaded: boolean;
   cloud: CloudStatus;
-  palaces: Palace[];
+  museums: Museum[];
   rooms: Room[];
   connections: Connection[];
   objects: PObject[];
@@ -38,17 +38,17 @@ interface State {
 
   init: () => Promise<void>;
 
-  // palaces
-  createPalace: (name: string, theme: string) => Palace;
-  updatePalace: (id: string, patch: Partial<Palace>) => void;
-  deletePalace: (id: string) => void;
+  // museums
+  createMuseum: (name: string, theme: string) => Museum;
+  updateMuseum: (id: string, patch: Partial<Museum>) => void;
+  deleteMuseum: (id: string) => void;
 
   // rooms
-  createRoom: (palaceId: string, partial?: Partial<Room>) => Room;
+  createRoom: (museumId: string, partial?: Partial<Room>) => Room;
   updateRoom: (id: string, patch: Partial<Room>) => void;
   deleteRoom: (id: string) => void;
   duplicateRoom: (id: string) => Room | null;
-  toggleConnection: (palaceId: string, a: string, b: string) => void;
+  toggleConnection: (museumId: string, a: string, b: string) => void;
 
   // floor plan
   addFloorTile: (roomId: string, gx: number, gy: number) => void;
@@ -77,7 +77,7 @@ interface State {
 
   // bulk import (templates)
   importBundle: (bundle: {
-    palace: Palace;
+    museum: Museum;
     rooms: Room[];
     connections: Connection[];
     objects: PObject[];
@@ -85,7 +85,7 @@ interface State {
   }) => void;
 }
 
-type TName = 'palaces' | 'rooms' | 'connections' | 'objects' | 'memories';
+type TName = 'museums' | 'rooms' | 'connections' | 'objects' | 'memories';
 
 function persist<T extends { id: string }>(tableName: TName, rec: T): void {
   void (db[tableName] as unknown as Table<T, string>).put(rec);
@@ -95,7 +95,7 @@ function persist<T extends { id: string }>(tableName: TName, rec: T): void {
 export const useStore = create<State>((set, get) => ({
   loaded: false,
   cloud: 'off',
-  palaces: [],
+  museums: [],
   rooms: [],
   connections: [],
   objects: [],
@@ -104,8 +104,8 @@ export const useStore = create<State>((set, get) => ({
   init: async () => {
     if (get().loaded) return;
     // Load local cache first for instant boot.
-    const [palaces, rawRooms, connections, objects, memories] = await Promise.all([
-      db.palaces.toArray(),
+    const [museums, rawRooms, connections, objects, memories] = await Promise.all([
+      db.museums.toArray(),
       db.rooms.toArray(),
       db.connections.toArray(),
       db.objects.toArray(),
@@ -113,7 +113,7 @@ export const useStore = create<State>((set, get) => ({
     ]);
     // Normalise legacy rooms that predate the tiles/walls fields.
     const rooms = rawRooms.map((r) => ({ ...r, tiles: r.tiles ?? [], walls: r.walls ?? [] }));
-    set({ palaces, rooms, connections, objects, memories, loaded: true });
+    set({ museums, rooms, connections, objects, memories, loaded: true });
 
     if (isCloudEnabled()) {
       set({ cloud: 'connecting' });
@@ -122,13 +122,13 @@ export const useStore = create<State>((set, get) => ({
         const ok = await pullAll();
         if (ok) {
           const [p, rawR, c, o, m] = await Promise.all([
-            db.palaces.toArray(),
+            db.museums.toArray(),
             db.rooms.toArray(),
             db.connections.toArray(),
             db.objects.toArray(),
             db.memories.toArray(),
           ]);
-          set({ palaces: p, rooms: rawR.map((r) => ({ ...r, tiles: r.tiles ?? [], walls: r.walls ?? [] })), connections: c, objects: o, memories: m });
+          set({ museums: p, rooms: rawR.map((r) => ({ ...r, tiles: r.tiles ?? [], walls: r.walls ?? [] })), connections: c, objects: o, memories: m });
         }
         set({ cloud: ok ? 'on' : 'error' });
       } else {
@@ -137,54 +137,54 @@ export const useStore = create<State>((set, get) => ({
     }
   },
 
-  createPalace: (name, theme) => {
+  createMuseum: (name, theme) => {
     const ts = now();
-    const palace: Palace = {
+    const museum: Museum = {
       id: newId(),
       userId: null,
-      name: name.trim() || 'Untitled Palace',
+      name: name.trim() || 'Untitled Museum',
       theme,
       createdAt: ts,
       updatedAt: ts,
       deleted: 0,
     };
-    persist('palaces', palace);
-    set((s) => ({ palaces: [...s.palaces, palace] }));
+    persist('museums', museum);
+    set((s) => ({ museums: [...s.museums, museum] }));
 
-    // Starter room so the palace is never empty.
+    // Starter room so the museum is never empty.
     const themeDef = getTheme(theme);
-    get().createRoom(palace.id, {
+    get().createRoom(museum.id, {
       name: 'Entrance Hall',
       type: 'corridor',
       style: themeDef.defaultStyle,
     });
-    return palace;
+    return museum;
   },
 
-  updatePalace: (id, patch) => {
+  updateMuseum: (id, patch) => {
     set((s) => {
-      const palaces = s.palaces.map((p) => {
+      const museums = s.museums.map((p) => {
         if (p.id !== id) return p;
         const next = { ...p, ...patch, updatedAt: now() };
-        persist('palaces', next);
+        persist('museums', next);
         return next;
       });
-      return { palaces };
+      return { museums };
     });
   },
 
-  deletePalace: (id) => {
+  deleteMuseum: (id) => {
     const ts = now();
     const s = get();
-    const rooms = s.rooms.filter((r) => r.palaceId === id);
+    const rooms = s.rooms.filter((r) => r.museumId === id);
     const roomIds = new Set(rooms.map((r) => r.id));
     const objects = s.objects.filter((o) => roomIds.has(o.roomId));
     const objIds = new Set(objects.map((o) => o.id));
     const memories = s.memories.filter((m) => objIds.has(m.objectId));
-    const connections = s.connections.filter((c) => c.palaceId === id);
+    const connections = s.connections.filter((c) => c.museumId === id);
 
-    const palace = s.palaces.find((p) => p.id === id);
-    if (palace) persist('palaces', { ...palace, deleted: 1, updatedAt: ts });
+    const museum = s.museums.find((p) => p.id === id);
+    if (museum) persist('museums', { ...museum, deleted: 1, updatedAt: ts });
     rooms.forEach((r) => persist('rooms', { ...r, deleted: 1, updatedAt: ts }));
     objects.forEach((o) => persist('objects', { ...o, deleted: 1, updatedAt: ts }));
     memories.forEach((m) => persist('memories', { ...m, deleted: 1, updatedAt: ts }));
@@ -193,23 +193,23 @@ export const useStore = create<State>((set, get) => ({
     );
 
     set((st) => ({
-      palaces: st.palaces.filter((p) => p.id !== id),
-      rooms: st.rooms.filter((r) => r.palaceId !== id),
+      museums: st.museums.filter((p) => p.id !== id),
+      rooms: st.rooms.filter((r) => r.museumId !== id),
       objects: st.objects.filter((o) => !roomIds.has(o.roomId)),
       memories: st.memories.filter((m) => !objIds.has(m.objectId)),
-      connections: st.connections.filter((c) => c.palaceId !== id),
+      connections: st.connections.filter((c) => c.museumId !== id),
     }));
   },
 
-  createRoom: (palaceId, partial) => {
+  createRoom: (museumId, partial) => {
     const s = get();
-    const existing = s.rooms.filter((r) => r.palaceId === palaceId);
+    const existing = s.rooms.filter((r) => r.museumId === museumId);
     const ts = now();
     const idx = existing.length;
     // Lay rooms out on a loose grid for the map view.
     const room: Room = {
       id: newId(),
-      palaceId,
+      museumId,
       name: partial?.name ?? `Room ${idx + 1}`,
       type: partial?.type ?? 'custom',
       style: partial?.style ?? 'cozy-apartment',
@@ -218,7 +218,7 @@ export const useStore = create<State>((set, get) => ({
       tiles: partial?.tiles ?? [],
       walls: partial?.walls ?? (() => {
         // Auto-populate walls from floor edges for new rooms
-        const tmpRoom = { gridW: partial?.gridW ?? 6, gridH: partial?.gridH ?? 6, tiles: partial?.tiles ?? [] } as Room;
+        const tmpRoom = { gridW: partial?.gridW ?? 6, gridH: partial?.gridH ?? 6, tiles: partial?.tiles ?? [], museumId: museumId } as Room;
         const tk = getRoomTiles(tmpRoom);
         const ps = new Set(tk);
         return autoWallKeys(tk, ps);
@@ -276,7 +276,7 @@ export const useStore = create<State>((set, get) => ({
     const s = get();
     const room = s.rooms.find((r) => r.id === id);
     if (!room) return null;
-    const newRoom = get().createRoom(room.palaceId, {
+    const newRoom = get().createRoom(room.museumId, {
       name: `${room.name} (copy)`,
       type: room.type,
       style: room.style,
@@ -302,7 +302,7 @@ export const useStore = create<State>((set, get) => ({
     return newRoom;
   },
 
-  toggleConnection: (palaceId, a, b) => {
+  toggleConnection: (museumId, a, b) => {
     if (a === b) return;
     const s = get();
     const existing = s.connections.find(
@@ -317,7 +317,7 @@ export const useStore = create<State>((set, get) => ({
     } else {
       const conn: Connection = {
         id: newId(),
-        palaceId,
+        museumId,
         fromRoomId: a,
         toRoomId: b,
         updatedAt: ts,
@@ -488,13 +488,13 @@ export const useStore = create<State>((set, get) => ({
   },
 
   importBundle: (bundle) => {
-    persist('palaces', bundle.palace);
+    persist('museums', bundle.museum);
     bundle.rooms.forEach((r) => persist('rooms', r));
     bundle.connections.forEach((c) => persist('connections', c));
     bundle.objects.forEach((o) => persist('objects', o));
     bundle.memories.forEach((m) => persist('memories', m));
     set((s) => ({
-      palaces: [...s.palaces, bundle.palace],
+      museums: [...s.museums, bundle.museum],
       rooms: [...s.rooms, ...bundle.rooms],
       connections: [...s.connections, ...bundle.connections],
       objects: [...s.objects, ...bundle.objects],
@@ -527,8 +527,8 @@ export function blankMemory(objectId: string): Memory {
 }
 
 // Selectors --------------------------------------------------------------
-export const selectRoomsOf = (palaceId: string) => (s: State) =>
-  s.rooms.filter((r) => r.palaceId === palaceId).sort((a, b) => a.orderIndex - b.orderIndex);
+export const selectRoomsOf = (museumId: string) => (s: State) =>
+  s.rooms.filter((r) => r.museumId === museumId).sort((a, b) => a.orderIndex - b.orderIndex);
 
 export const selectObjectsOf = (roomId: string) => (s: State) =>
   s.objects.filter((o) => o.roomId === roomId);

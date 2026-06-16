@@ -178,7 +178,7 @@ export const UI_ICONS = {
   build: LuHammer,
   walk: LuFootprints,
   review: LuBrain,
-  palace: GiGreekTemple,
+  museum: GiGreekTemple,
   box: LuBox,
   template: GiCardboardBoxClosed,
   castle: GiCastle,

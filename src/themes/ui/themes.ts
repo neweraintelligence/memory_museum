@@ -9,7 +9,7 @@ export const UI_THEMES: UiTheme[] = [
   {
     id: 'project-manager',
     label: 'Project Manager',
-    description: 'Sage site-office glass UI — minimal chrome, palace-first.',
+    description: 'Sage site-office glass UI — minimal chrome, museum-first.',
   },
   {
     id: 'dusty-library',
@@ -20,8 +20,8 @@ export const UI_THEMES: UiTheme[] = [
 
 export const DEFAULT_UI_THEME: UiThemeId = 'brutal-95';
 
-export const UI_THEME_STORAGE_KEY = 'memory-palace-ui-theme';
-export const UI_WALLPAPER_STORAGE_KEY = 'memory-palace-ui-wallpaper';
+export const UI_THEME_STORAGE_KEY = 'memory-museum-ui-theme';
+export const UI_WALLPAPER_STORAGE_KEY = 'memory-museum-ui-wallpaper';
 
 export function isUiThemeId(value: string | null | undefined): value is UiThemeId {
   return UI_THEMES.some((theme) => theme.id === value);

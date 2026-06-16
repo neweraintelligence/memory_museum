@@ -1,4 +1,4 @@
--- Memory Palace schema + RLS.
+-- Memory Museum schema + RLS.
 -- Timestamps are stored as epoch milliseconds (int8) to match the client.
 -- Every row is owned (directly or transitively) by a user; RLS scopes access
 -- to auth.uid(). The client signs in anonymously so each device/user only ever
@@ -6,11 +6,11 @@
 
 create extension if not exists pgcrypto;
 
--- palaces -------------------------------------------------------------------
-create table if not exists public.palaces (
+-- museums -------------------------------------------------------------------
+create table if not exists public.museums (
   id          text primary key,
   user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  name        text not null default 'Untitled Palace',
+  name        text not null default 'Untitled Museum',
   theme       text not null default 'scholar',
   created_at  bigint not null,
   updated_at  bigint not null,
@@ -20,7 +20,7 @@ create table if not exists public.palaces (
 -- rooms ---------------------------------------------------------------------
 create table if not exists public.rooms (
   id          text primary key,
-  palace_id   text not null references public.palaces (id) on delete cascade,
+  museum_id   text not null references public.museums (id) on delete cascade,
   name        text not null default 'Room',
   type        text not null default 'custom',
   style       text not null default 'cozy-apartment',
@@ -36,7 +36,7 @@ create table if not exists public.rooms (
 -- connections ---------------------------------------------------------------
 create table if not exists public.connections (
   id           text primary key,
-  palace_id    text not null references public.palaces (id) on delete cascade,
+  museum_id    text not null references public.museums (id) on delete cascade,
   from_room_id text not null,
   to_room_id   text not null,
   updated_at   bigint not null,
@@ -80,38 +80,38 @@ create table if not exists public.memories (
   deleted       int not null default 0
 );
 
-create index if not exists rooms_palace_idx on public.rooms (palace_id);
-create index if not exists connections_palace_idx on public.connections (palace_id);
+create index if not exists rooms_museum_idx on public.rooms (museum_id);
+create index if not exists connections_museum_idx on public.connections (museum_id);
 create index if not exists objects_room_idx on public.objects (room_id);
 create index if not exists memories_object_idx on public.memories (object_id);
 
 -- Row Level Security --------------------------------------------------------
-alter table public.palaces enable row level security;
+alter table public.museums enable row level security;
 alter table public.rooms enable row level security;
 alter table public.connections enable row level security;
 alter table public.objects enable row level security;
 alter table public.memories enable row level security;
 
--- palaces: owned directly by the user.
-drop policy if exists palaces_owner on public.palaces;
-create policy palaces_owner on public.palaces
+-- museums: owned directly by the user.
+drop policy if exists museums_owner on public.museums;
+create policy museums_owner on public.museums
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
--- rooms: owned through their palace.
+-- rooms: owned through their museum.
 drop policy if exists rooms_owner on public.rooms;
 create policy rooms_owner on public.rooms
   for all using (
-    exists (select 1 from public.palaces p where p.id = palace_id and p.user_id = auth.uid())
+    exists (select 1 from public.museums p where p.id = museum_id and p.user_id = auth.uid())
   ) with check (
-    exists (select 1 from public.palaces p where p.id = palace_id and p.user_id = auth.uid())
+    exists (select 1 from public.museums p where p.id = museum_id and p.user_id = auth.uid())
   );
 
 drop policy if exists connections_owner on public.connections;
 create policy connections_owner on public.connections
   for all using (
-    exists (select 1 from public.palaces p where p.id = palace_id and p.user_id = auth.uid())
+    exists (select 1 from public.museums p where p.id = museum_id and p.user_id = auth.uid())
   ) with check (
-    exists (select 1 from public.palaces p where p.id = palace_id and p.user_id = auth.uid())
+    exists (select 1 from public.museums p where p.id = museum_id and p.user_id = auth.uid())
   );
 
 drop policy if exists objects_owner on public.objects;
@@ -119,13 +119,13 @@ create policy objects_owner on public.objects
   for all using (
     exists (
       select 1 from public.rooms r
-      join public.palaces p on p.id = r.palace_id
+      join public.museums p on p.id = r.museum_id
       where r.id = room_id and p.user_id = auth.uid()
     )
   ) with check (
     exists (
       select 1 from public.rooms r
-      join public.palaces p on p.id = r.palace_id
+      join public.museums p on p.id = r.museum_id
       where r.id = room_id and p.user_id = auth.uid()
     )
   );
@@ -136,14 +136,14 @@ create policy memories_owner on public.memories
     exists (
       select 1 from public.objects o
       join public.rooms r on r.id = o.room_id
-      join public.palaces p on p.id = r.palace_id
+      join public.museums p on p.id = r.museum_id
       where o.id = object_id and p.user_id = auth.uid()
     )
   ) with check (
     exists (
       select 1 from public.objects o
       join public.rooms r on r.id = o.room_id
-      join public.palaces p on p.id = r.palace_id
+      join public.museums p on p.id = r.museum_id
       where o.id = object_id and p.user_id = auth.uid()
     )
   );

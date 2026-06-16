@@ -139,8 +139,8 @@
   right: calc(var(--editor-panel-side-inset) + 20px);
 }
 
-/* Brutal 95 — accent-colored palace cube & build hammer */
-[data-ui-theme='brutal-95'] .side-head-icon--palace,
+/* Brutal 95 — accent-colored museum cube & build hammer */
+[data-ui-theme='brutal-95'] .side-head-icon--museum,
 [data-ui-theme='brutal-95'] .side-head-icon--build,
 [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
 [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
@@ -154,7 +154,7 @@
   color: var(--accent);
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--brutal-95 {
+[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--brutal-95 {
   height: 31.1px;
 }
 
@@ -162,12 +162,12 @@
   height: 31.1px;
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--default,
+[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--default,
 [data-ui-theme='brutal-95'] .card-emoji .template-card-icon--default {
   display: none;
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .palace-card-icon--brutal-95,
+[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--brutal-95,
 [data-ui-theme='brutal-95'] .card-emoji .template-card-icon--brutal-95 {
   display: block;
 }
@@ -257,7 +257,7 @@
   content: ' ';
 }
 
-[data-ui-theme='brutal-95'] .create-palace-bar {
+[data-ui-theme='brutal-95'] .create-museum-bar {
   width: 50%;
   max-width: 50%;
   margin-left: 0;
@@ -266,13 +266,13 @@
   box-sizing: border-box;
 }
 
-[data-ui-theme='brutal-95'] .create-palace-bar > .row {
+[data-ui-theme='brutal-95'] .create-museum-bar > .row {
   width: 100%;
   min-width: 0;
   align-items: flex-end;
 }
 
-[data-ui-theme='brutal-95'] .create-palace-bar > .row > button.primary {
+[data-ui-theme='brutal-95'] .create-museum-bar > .row > button.primary {
   margin-bottom: 12px;
   height: 36px;
   padding-block: 0;
@@ -281,22 +281,22 @@
   flex-shrink: 0;
 }
 
-[data-ui-theme='brutal-95'] .create-palace-field--name,
-[data-ui-theme='brutal-95'] .create-palace-field--theme {
+[data-ui-theme='brutal-95'] .create-museum-field--name,
+[data-ui-theme='brutal-95'] .create-museum-field--theme {
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
 }
 
-[data-ui-theme='brutal-95'] .create-palace-field input,
-[data-ui-theme='brutal-95'] .create-palace-field select {
+[data-ui-theme='brutal-95'] .create-museum-field input,
+[data-ui-theme='brutal-95'] .create-museum-field select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   height: 36px;
 }
 
-[data-ui-theme='brutal-95'] .create-palace-bar .field label {
+[data-ui-theme='brutal-95'] .create-museum-bar .field label {
   line-height: 14px;
 }
 
@@ -324,18 +324,18 @@
   text-shadow: 0 0 4px rgba(120, 26, 22, 0.28);
 }
 
-[data-ui-theme='brutal-95'] .card.clickable:has(.palace-card-actions) {
+[data-ui-theme='brutal-95'] .card.clickable:has(.museum-card-actions) {
   position: relative;
 }
 
-[data-ui-theme='brutal-95'] .palace-card-actions {
+[data-ui-theme='brutal-95'] .museum-card-actions {
   position: absolute;
   top: 10px;
   right: 10px;
   margin: 0;
 }
 
-[data-ui-theme='brutal-95'] .card.clickable:has(.palace-card-actions) h3 {
+[data-ui-theme='brutal-95'] .card.clickable:has(.museum-card-actions) h3 {
   padding-right: 72px;
 }
 

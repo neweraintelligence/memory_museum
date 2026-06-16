@@ -1,8 +1,8 @@
-# Memory Palace
+# Memory Museum
 
-An interactive, isometric memory-palace builder. Create rooms, drag memory
+An interactive, isometric memory-museum builder. Create rooms, drag memory
 objects onto an editable diorama, attach memories to them, walk through the
-palace spatially, and review with the method of loci.
+museum spatially, and review with the method of loci.
 
 Built with **React + Vite + TypeScript**, **React Konva** (isometric canvas),
 **Zustand** (state), **Dexie** (offline-first IndexedDB), and **Supabase**
@@ -25,7 +25,7 @@ cp .env.example .env.local
 
 ## Core loop
 
-1. Create a palace (or start from a template) on the dashboard.
+1. Create a museum (or start from a template) on the dashboard.
 2. In **Build** mode, pick an object from the library and click a floor tile to
    place it. Drag objects to rearrange. Click an object to attach a memory
    (title, prompt, answer, notes, tags, image, links).
@@ -35,13 +35,13 @@ cp .env.example .env.local
 6. In **Review** mode, recall each anchor, reveal the answer (`Space`), and
    grade yourself; a lightweight SRS schedules the next review.
 
-Press `/` anywhere to search across all palaces, rooms, objects, and memories.
+Press `/` anywhere to search across all museums, rooms, objects, and memories.
 
 ## Architecture
 
 - `src/lib/` — isometric math, Dexie database, Supabase client, sync engine, SRS.
 - `src/state/` — Zustand stores (`useStore` for data, `useUI` for view state).
-- `src/themes/` — room style presets, object catalog, palace templates.
+- `src/themes/` — room style presets, object catalog, museum templates.
 - `src/render/` — Konva isometric room canvas and object renderer.
 - `src/components/` — dashboard, workspace, map, panels, editors, modes, search.
 - `supabase/migrations/` — Postgres schema with row-level security.

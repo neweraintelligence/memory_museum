@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Dashboard from './components/Dashboard';
-import PalaceWorkspace from './components/PalaceWorkspace';
+import MuseumWorkspace from './components/MuseumWorkspace';
 import SearchModal from './components/SearchModal';
 import { useStore } from './state/useStore';
 import { useUI } from './state/useUI';
@@ -14,8 +14,8 @@ export default function App() {
   const setSearchOpen = useUI((s) => s.setSearchOpen);
   const themeId = useTheme((s) => s.themeId);
   const location = useLocation();
-  const palaceFocus =
-    themeId === 'project-manager' && location.pathname.startsWith('/palace/');
+  const museumFocus =
+    themeId === 'project-manager' && location.pathname.startsWith('/museum/');
 
   useEffect(() => {
     void init();
@@ -35,14 +35,14 @@ export default function App() {
   }, [setSearchOpen]);
 
   return (
-    <div className={`app-shell${palaceFocus ? ' palace-focus' : ''}`}>
+    <div className={`app-shell${museumFocus ? ' museum-focus' : ''}`}>
       <TopBar />
       {!loaded ? (
-        <div className="empty">Loading your palaces…</div>
+        <div className="empty">Loading your museums…</div>
       ) : (
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/palace/:palaceId" element={<PalaceWorkspace />} />
+          <Route path="/museum/:museumId" element={<MuseumWorkspace />} />
         </Routes>
       )}
       <SearchModal />

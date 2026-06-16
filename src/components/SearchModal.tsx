@@ -7,8 +7,8 @@ import { Icon } from '../themes/Icon';
 import { objectIcon, roomIcon, UI_ICONS } from '../themes/icons';
 
 interface Hit {
-  palaceId: string;
-  palaceName: string;
+  museumId: string;
+  museumName: string;
   roomId: string;
   roomName: string;
   roomType: string;
@@ -25,7 +25,7 @@ export default function SearchModal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState('');
 
-  const palaces = useStore((s) => s.palaces);
+  const museums = useStore((s) => s.museums);
   const rooms = useStore((s) => s.rooms);
   const objects = useStore((s) => s.objects);
   const memories = useStore((s) => s.memories);
@@ -40,7 +40,7 @@ export default function SearchModal() {
   const hits = useMemo<Hit[]>(() => {
     const term = q.trim().toLowerCase();
     if (!term) return [];
-    const palaceMap = new Map(palaces.map((p) => [p.id, p]));
+    const museumMap = new Map(museums.map((p) => [p.id, p]));
     const roomMap = new Map(rooms.map((r) => [r.id, r]));
     const out: Hit[] = [];
 
@@ -48,8 +48,8 @@ export default function SearchModal() {
       if (o.deleted) continue;
       const room = roomMap.get(o.roomId);
       if (!room || room.deleted) continue;
-      const palace = palaceMap.get(room.palaceId);
-      if (!palace || palace.deleted) continue;
+      const museum = museumMap.get(room.museumId);
+      if (!museum || museum.deleted) continue;
       const mem = memories.find((m) => m.objectId === o.id);
       const haystack = [
         o.label,
@@ -65,8 +65,8 @@ export default function SearchModal() {
         .toLowerCase();
       if (haystack.includes(term)) {
         out.push({
-          palaceId: palace.id,
-          palaceName: palace.name,
+          museumId: museum.id,
+          museumName: museum.name,
           roomId: room.id,
           roomName: room.name,
           roomType: room.type,
@@ -78,15 +78,15 @@ export default function SearchModal() {
       }
     }
 
-    // also match rooms / palaces by name
+    // also match rooms / museums by name
     for (const r of rooms) {
       if (r.deleted) continue;
-      const palace = palaceMap.get(r.palaceId);
-      if (!palace || palace.deleted) continue;
-      if (r.name.toLowerCase().includes(term) || palace.name.toLowerCase().includes(term)) {
+      const museum = museumMap.get(r.museumId);
+      if (!museum || museum.deleted) continue;
+      if (r.name.toLowerCase().includes(term) || museum.name.toLowerCase().includes(term)) {
         out.push({
-          palaceId: palace.id,
-          palaceName: palace.name,
+          museumId: museum.id,
+          museumName: museum.name,
           roomId: r.id,
           roomName: r.name,
           roomType: r.type,
@@ -99,7 +99,7 @@ export default function SearchModal() {
     }
 
     return out.slice(0, 40);
-  }, [q, palaces, rooms, objects, memories]);
+  }, [q, museums, rooms, objects, memories]);
 
   if (!open) return null;
 
@@ -108,7 +108,7 @@ export default function SearchModal() {
     params.set('room', hit.roomId);
     if (hit.objectId) params.set('obj', hit.objectId);
     setSearchOpen(false);
-    navigate(`/palace/${hit.palaceId}?${params.toString()}`);
+    navigate(`/museum/${hit.museumId}?${params.toString()}`);
   };
 
   return (
@@ -125,7 +125,7 @@ export default function SearchModal() {
           <input
             ref={inputRef}
             value={q}
-            placeholder="Search palaces, rooms, objects, memories…"
+            placeholder="Search museums, rooms, objects, memories…"
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && hits[0]) go(hits[0]);
@@ -146,7 +146,7 @@ export default function SearchModal() {
                 </div>
               </div>
               <div className="breadcrumb" style={{ flexShrink: 0 }}>
-                {h.palaceName} <span>›</span> {h.roomName}
+                {h.museumName} <span>›</span> {h.roomName}
               </div>
             </div>
           ))}

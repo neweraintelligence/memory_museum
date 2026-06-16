@@ -1,9 +1,9 @@
 import { supabase, ensureAuth, isCloudEnabled } from './supabase';
 import { db } from './db';
-import type { Palace, Room, Connection, PObject, Memory } from '../types';
+import type { Museum, Room, Connection, PObject, Memory } from '../types';
 
 export type TableName =
-  | 'palaces'
+  | 'museums'
   | 'rooms'
   | 'connections'
   | 'objects'
@@ -11,7 +11,7 @@ export type TableName =
 
 // ---- camelCase (local) <-> snake_case (Supabase) mappers -------------------
 
-const toPalaceRow = (p: Palace) => ({
+const toMuseumRow = (p: Museum) => ({
   id: p.id,
   user_id: p.userId,
   name: p.name,
@@ -21,7 +21,7 @@ const toPalaceRow = (p: Palace) => ({
   deleted: p.deleted,
 });
 
-const fromPalaceRow = (r: Record<string, unknown>): Palace => ({
+const fromMuseumRow = (r: Record<string, unknown>): Museum => ({
   id: r.id as string,
   userId: (r.user_id as string) ?? null,
   name: r.name as string,
@@ -33,7 +33,7 @@ const fromPalaceRow = (r: Record<string, unknown>): Palace => ({
 
 const toRoomRow = (x: Room) => ({
   id: x.id,
-  palace_id: x.palaceId,
+  museum_id: x.museumId,
   name: x.name,
   type: x.type,
   style: x.style,
@@ -49,7 +49,7 @@ const toRoomRow = (x: Room) => ({
 
 const fromRoomRow = (r: Record<string, unknown>): Room => ({
   id: r.id as string,
-  palaceId: r.palace_id as string,
+  museumId: r.museum_id as string,
   name: r.name as string,
   type: r.type as string,
   style: r.style as string,
@@ -65,7 +65,7 @@ const fromRoomRow = (r: Record<string, unknown>): Room => ({
 
 const toConnectionRow = (x: Connection) => ({
   id: x.id,
-  palace_id: x.palaceId,
+  museum_id: x.museumId,
   from_room_id: x.fromRoomId,
   to_room_id: x.toRoomId,
   updated_at: x.updatedAt,
@@ -74,7 +74,7 @@ const toConnectionRow = (x: Connection) => ({
 
 const fromConnectionRow = (r: Record<string, unknown>): Connection => ({
   id: r.id as string,
-  palaceId: r.palace_id as string,
+  museumId: r.museum_id as string,
   fromRoomId: r.from_room_id as string,
   toRoomId: r.to_room_id as string,
   updatedAt: Number(r.updated_at),
@@ -154,7 +154,7 @@ const fromMemoryRow = (r: Record<string, unknown>): Memory => ({
 });
 
 const TO_ROW: Record<TableName, (x: never) => Record<string, unknown>> = {
-  palaces: toPalaceRow as (x: never) => Record<string, unknown>,
+  museums: toMuseumRow as (x: never) => Record<string, unknown>,
   rooms: toRoomRow as (x: never) => Record<string, unknown>,
   connections: toConnectionRow as (x: never) => Record<string, unknown>,
   objects: toObjectRow as (x: never) => Record<string, unknown>,
@@ -164,7 +164,7 @@ const TO_ROW: Record<TableName, (x: never) => Record<string, unknown>> = {
 // ---- push (debounced upsert queue) -----------------------------------------
 
 const pending: Record<TableName, Map<string, Record<string, unknown>>> = {
-  palaces: new Map(),
+  museums: new Map(),
   rooms: new Map(),
   connections: new Map(),
   objects: new Map(),
@@ -197,8 +197,8 @@ export async function flush(): Promise<void> {
     const map = pending[table];
     if (map.size === 0) continue;
     const rows = Array.from(map.values());
-    // Stamp user_id on palaces so RLS accepts them.
-    if (table === 'palaces') {
+    // Stamp user_id on museums so RLS accepts them.
+    if (table === 'museums') {
       for (const r of rows) r.user_id = userId;
     }
     const { error } = await supabase.from(table).upsert(rows);
@@ -219,15 +219,15 @@ export async function pullAll(): Promise<boolean> {
   if (!userId) return false;
 
   try {
-    const [palaces, rooms, connections, objects, memories] = await Promise.all([
-      supabase.from('palaces').select('*'),
+    const [museums, rooms, connections, objects, memories] = await Promise.all([
+      supabase.from('museums').select('*'),
       supabase.from('rooms').select('*'),
       supabase.from('connections').select('*'),
       supabase.from('objects').select('*'),
       supabase.from('memories').select('*'),
     ]);
 
-    await mergeIntoDexie(db.palaces, (palaces.data ?? []).map(fromPalaceRow));
+    await mergeIntoDexie(db.museums, (museums.data ?? []).map(fromMuseumRow));
     await mergeIntoDexie(db.rooms, (rooms.data ?? []).map(fromRoomRow));
     await mergeIntoDexie(
       db.connections,

@@ -290,46 +290,46 @@
   box-shadow: none;
 }
 
-/* ---- Palace-first workspace layout ---- */
+/* ---- Museum-first workspace layout ---- */
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .content {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .content {
   padding-top: 0;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .side {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .side {
   width: 196px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .side.left {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .side.left {
   width: 176px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .side:not(.left) {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .side:not(.left) {
   width: 248px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .side-head {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .side-head {
   padding: 10px 12px;
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .side-body {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .side-body {
   padding: 10px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .section-title {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .section-title {
   margin: 14px 0 8px;
   font-size: 10px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .room-list-item {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .room-list-item {
   padding: 6px 8px;
   font-size: 13px;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .canvas-wrap {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .canvas-wrap {
   background: transparent;
 }
 
@@ -430,7 +430,7 @@
   margin-bottom: 0;
 }
 
-[data-ui-theme='project-manager'] .create-palace-bar {
+[data-ui-theme='project-manager'] .create-museum-bar {
   width: 50%;
   flex-shrink: 0;
   margin-left: auto;
@@ -438,30 +438,30 @@
   box-sizing: border-box;
 }
 
-[data-ui-theme='project-manager'] .create-palace-field--name {
+[data-ui-theme='project-manager'] .create-museum-field--name {
   min-width: 110px;
 }
 
-[data-ui-theme='project-manager'] .create-palace-field--theme {
+[data-ui-theme='project-manager'] .create-museum-field--theme {
   min-width: 80px;
 }
 
-[data-ui-theme='project-manager'] .create-palace-bar > .row {
+[data-ui-theme='project-manager'] .create-museum-bar > .row {
   align-items: flex-end;
 }
 
-[data-ui-theme='project-manager'] .create-palace-bar .field label {
+[data-ui-theme='project-manager'] .create-museum-bar .field label {
   line-height: 14px;
 }
 
-[data-ui-theme='project-manager'] .create-palace-field input,
-[data-ui-theme='project-manager'] .create-palace-field select {
+[data-ui-theme='project-manager'] .create-museum-field input,
+[data-ui-theme='project-manager'] .create-museum-field select {
   height: 36px;
   box-sizing: border-box;
 }
 
 /* Lift the button to sit flush with the input/select row (offset the field label). */
-[data-ui-theme='project-manager'] .create-palace-bar > .row > button.primary {
+[data-ui-theme='project-manager'] .create-museum-bar > .row > button.primary {
   margin-bottom: 16px;
   height: 30px;
   padding: 0 10px;
@@ -478,7 +478,7 @@
   backdrop-filter: blur(12px);
 }
 
-[data-ui-theme='project-manager'] .create-palace-bar > .row > button.primary:hover {
+[data-ui-theme='project-manager'] .create-museum-bar > .row > button.primary:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.65);
   color: var(--text);
@@ -743,7 +743,7 @@
   padding-block: 0;
 }
 
-[data-ui-theme='project-manager'] .app-shell.palace-focus .content.editor-layout .side-floating .room-list-item {
+[data-ui-theme='project-manager'] .app-shell.museum-focus .content.editor-layout .side-floating .room-list-item {
   padding-block: 0;
 }
 
@@ -867,7 +867,7 @@
   background-image: url('/brand-icon-brain.png');
 }
 
-[data-ui-theme='project-manager'] .card-emoji .palace-card-icon,
+[data-ui-theme='project-manager'] .card-emoji .museum-card-icon,
 [data-ui-theme='project-manager'] .card-emoji .template-card-icon {
   height: calc(30px * var(--pm-icon-scale));
 }

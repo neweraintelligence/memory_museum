@@ -43,10 +43,10 @@ function connectionLine(
 }
 
 export default function MapView({
-  palaceId,
+  museumId,
   onEnterRoom,
 }: {
-  palaceId: string;
+  museumId: string;
   onEnterRoom: (roomId: string) => void;
 }) {
   const allRooms = useStore((s) => s.rooms);
@@ -54,12 +54,12 @@ export default function MapView({
   const objects = useStore((s) => s.objects);
 
   const rooms = useMemo(
-    () => allRooms.filter((r) => r.palaceId === palaceId && !r.deleted),
-    [allRooms, palaceId],
+    () => allRooms.filter((r) => r.museumId === museumId && !r.deleted),
+    [allRooms, museumId],
   );
   const connections = useMemo(
-    () => allConnections.filter((c) => c.palaceId === palaceId && !c.deleted),
-    [allConnections, palaceId],
+    () => allConnections.filter((c) => c.museumId === museumId && !c.deleted),
+    [allConnections, museumId],
   );
   const updateRoom = useStore((s) => s.updateRoom);
   const toggleConnection = useStore((s) => s.toggleConnection);
@@ -101,7 +101,7 @@ export default function MapView({
       if (connectFrom === '__pick__') {
         setConnectFrom(roomId);
       } else {
-        if (connectFrom !== roomId) toggleConnection(palaceId, connectFrom, roomId);
+        if (connectFrom !== roomId) toggleConnection(museumId, connectFrom, roomId);
         setConnectFrom(null);
       }
     } else {
@@ -127,7 +127,7 @@ export default function MapView({
             </>
           )}
         </button>
-        <button onClick={() => createRoom(palaceId)}>
+        <button onClick={() => createRoom(museumId)}>
           <Icon icon={UI_ICONS.add} size={15} /> Add room
         </button>
         <span className="pill muted">

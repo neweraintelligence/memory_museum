@@ -1,6 +1,6 @@
 import { newId, now } from '../lib/id';
 import { getObjectDef, defaultObjectRotation } from './objects';
-import type { Palace, Room, Connection, PObject, Memory } from '../types';
+import type { Museum, Room, Connection, PObject, Memory } from '../types';
 
 interface TObject {
   kind: string;
@@ -21,7 +21,7 @@ interface TRoom {
   objects: TObject[];
 }
 
-export interface PalaceTemplate {
+export interface MuseumTemplate {
   id: string;
   name: string;
   theme: string;
@@ -29,18 +29,18 @@ export interface PalaceTemplate {
   rooms: TRoom[];
 }
 
-export interface PalaceBundle {
-  palace: Palace;
+export interface MuseumBundle {
+  museum: Museum;
   rooms: Room[];
   connections: Connection[];
   objects: PObject[];
   memories: Memory[];
 }
 
-export const PALACE_TEMPLATES: PalaceTemplate[] = [
+export const MUSEUM_TEMPLATES: MuseumTemplate[] = [
   {
     id: 'exam-prep',
-    name: 'Exam Prep Palace',
+    name: 'Exam Prep Museum',
     theme: 'scholar',
     description: 'A focused study suite for cramming and spaced review.',
     rooms: [
@@ -222,9 +222,9 @@ export const PALACE_TEMPLATES: PalaceTemplate[] = [
   },
 ];
 
-export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
+export function buildBundleFromTemplate(tpl: MuseumTemplate): MuseumBundle {
   const ts = now();
-  const palace: Palace = {
+  const museum: Museum = {
     id: newId(),
     userId: null,
     name: tpl.name,
@@ -242,7 +242,7 @@ export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
   tpl.rooms.forEach((tr, i) => {
     const room: Room = {
       id: newId(),
-      palaceId: palace.id,
+      museumId: museum.id,
       name: tr.name,
       type: tr.type,
       style: tr.style,
@@ -260,7 +260,7 @@ export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
     if (i > 0) {
       connections.push({
         id: newId(),
-        palaceId: palace.id,
+        museumId: museum.id,
         fromRoomId: rooms[i - 1].id,
         toRoomId: room.id,
         updatedAt: ts,
@@ -308,5 +308,5 @@ export function buildBundleFromTemplate(tpl: PalaceTemplate): PalaceBundle {
     });
   });
 
-  return { palace, rooms, connections, objects, memories };
+  return { museum, rooms, connections, objects, memories };
 }

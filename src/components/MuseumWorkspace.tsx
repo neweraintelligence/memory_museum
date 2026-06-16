@@ -19,12 +19,12 @@ import { canPlaceObject, nextRotation } from '../lib/objectPlacement';
 import type { Grade } from '../lib/srs';
 import type { WallSide } from '../types';
 
-export default function PalaceWorkspace() {
-  const { palaceId = '' } = useParams();
+export default function MuseumWorkspace() {
+  const { museumId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const palace = useStore((s) => s.palaces.find((p) => p.id === palaceId && !p.deleted));
+  const museum = useStore((s) => s.museums.find((p) => p.id === museumId && !p.deleted));
   const allRooms = useStore((s) => s.rooms);
   const allObjects = useStore((s) => s.objects);
   const allMemories = useStore((s) => s.memories);
@@ -32,9 +32,9 @@ export default function PalaceWorkspace() {
   const rooms = useMemo(
     () =>
       allRooms
-        .filter((r) => r.palaceId === palaceId && !r.deleted)
+        .filter((r) => r.museumId === museumId && !r.deleted)
         .sort((a, b) => a.orderIndex - b.orderIndex),
-    [allRooms, palaceId],
+    [allRooms, museumId],
   );
   const createRoom = useStore((s) => s.createRoom);
   const deleteRoom = useStore((s) => s.deleteRoom);
@@ -257,11 +257,11 @@ export default function PalaceWorkspace() {
     deleteObject,
   ]);
 
-  if (!palace) {
+  if (!museum) {
     return (
       <div className="page">
         <div className="empty">
-          Palace not found. <a onClick={() => navigate('/')}>Back to dashboard</a>
+          Museum not found. <a onClick={() => navigate('/')}>Back to dashboard</a>
         </div>
       </div>
     );
@@ -399,7 +399,7 @@ export default function PalaceWorkspace() {
       <button
         style={{ width: '100%', marginTop: 12 }}
         onClick={() => {
-          const nr = createRoom(palaceId);
+          const nr = createRoom(museumId);
           setCurrentRoomId(nr.id);
           setView('room');
         }}
@@ -421,9 +421,9 @@ export default function PalaceWorkspace() {
           collapsedIconAccent
           title={
             <>
-              <Icon icon={UI_ICONS.box} size={18} className="side-head-icon side-head-icon--palace" />
+              <Icon icon={UI_ICONS.box} size={18} className="side-head-icon side-head-icon--museum" />
               <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {palace.name}
+                {museum.name}
               </span>
             </>
           }
@@ -433,9 +433,9 @@ export default function PalaceWorkspace() {
       ) : (
         <div className="side left">
           <div className="side-head">
-            <Icon icon={UI_ICONS.box} size={18} className="side-head-icon side-head-icon--palace" />
+            <Icon icon={UI_ICONS.box} size={18} className="side-head-icon side-head-icon--museum" />
             <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {palace.name}
+              {museum.name}
             </span>
           </div>
           <div className="side-body">{leftPanelBody}</div>
@@ -445,7 +445,7 @@ export default function PalaceWorkspace() {
       {/* Center */}
       {view === 'map' ? (
         <MapView
-          palaceId={palaceId}
+          museumId={museumId}
           onEnterRoom={(roomId) => {
             setCurrentRoomId(roomId);
             setView('room');

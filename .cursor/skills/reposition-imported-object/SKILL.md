@@ -1,7 +1,7 @@
 ---
 name: reposition-imported-object
 description: >-
-  Import and reposition isometric PNG floor objects in Memory Palace — tile
+  Import and reposition isometric PNG floor objects in Memory Museum — tile
   anchoring, rotation sprites, ground/center auto-detect, and fine-tuning.
   Use when adding sprite props, importing PNG furniture, fixing floating or
   off-center objects, or when the user says "position like the chair",

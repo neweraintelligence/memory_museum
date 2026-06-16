@@ -34,7 +34,7 @@ export default function ModeBar({
     return (
       <div className="modebar fade-in">
         <div className="muted" style={{ textAlign: 'center' }}>
-          This palace has no memory objects yet. Switch to Build mode to place some.
+          This museum has no memory objects yet. Switch to Build mode to place some.
         </div>
       </div>
     );
@@ -92,7 +92,7 @@ export default function ModeBar({
           </button>
         ) : (
           <span className="muted" style={{ fontSize: 12 }}>
-            {mode === 'walk' ? 'Use ← → to move through the palace' : 'How well did you recall it?'}
+            {mode === 'walk' ? 'Use ← → to move through the museum' : 'How well did you recall it?'}
           </span>
         )}
 
