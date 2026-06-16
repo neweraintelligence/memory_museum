@@ -40,6 +40,7 @@ const toRoomRow = (x: Room) => ({
   grid_w: x.gridW,
   grid_h: x.gridH,
   tiles: x.tiles,
+  walls: x.walls,
   map_x: x.mapX,
   map_y: x.mapY,
   order_index: x.orderIndex,
@@ -194,7 +195,9 @@ export async function flush(): Promise<void> {
   const userId = await ensureAuth();
   if (!userId) return;
 
-  for (const table of Object.keys(pending) as TableName[]) {
+  // Flush in dependency order: museums → rooms → connections → objects → memories
+  const flushOrder: TableName[] = ['museums', 'rooms', 'connections', 'objects', 'memories'];
+  for (const table of flushOrder) {
     const map = pending[table];
     if (map.size === 0) continue;
     const rows = Array.from(map.values());
