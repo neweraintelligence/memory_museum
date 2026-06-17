@@ -59,13 +59,14 @@ const LEGACY_UI_THEME_IDS: Record<string, UiThemeId> = {
   brutalism: 'utilitarian',
   brutalist: 'utilitarian',
   'brutal-95': 'utilitarian',
-  'project-manager': 'clarity',
+  'project-manager': 'clairvoyant',
+  clarity: 'clairvoyant',
   'dusty-library': 'bookworm',
 };
 
 const LEGACY_WALLPAPER_KEYS: Partial<Record<UiThemeId, string>> = {
   utilitarian: 'brutal-95',
-  clarity: 'project-manager',
+  clairvoyant: 'project-manager',
   bookworm: 'dusty-library',
 };
 

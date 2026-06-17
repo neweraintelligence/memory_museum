@@ -8,10 +8,10 @@ export const UI_THEMES: UiTheme[] = [
     defaultWallpaperEnabled: true,
   },
   {
-    id: 'clarity',
-    label: 'Clarity',
-    description: 'Sage site-office glass UI — minimal chrome, museum-first.',
-    defaultWallpaperEnabled: false,
+    id: 'clairvoyant',
+    label: 'Clairvoyant',
+    description: 'Dark teal glass UI — minimal chrome, museum-first.',
+    defaultWallpaperEnabled: true,
   },
   {
     id: 'bookworm',

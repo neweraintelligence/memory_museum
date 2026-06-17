@@ -385,6 +385,38 @@ button.cloud-pill-segment:active {
   line-height: 0;
 }
 
+/* ── Console ──────────────────────────────────────────────────── */
+.console-input {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 12;
+  width: 180px;
+  padding: 6px 10px;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--bg-card, rgba(0,0,0,0.15));
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 4px;
+  outline: none;
+  opacity: 0.35;
+  transition: opacity 0.2s, border-color 0.3s;
+}
+.console-input:focus {
+  opacity: 1;
+}
+.console-input::placeholder {
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+.console-ok {
+  border-color: #4a4;
+}
+.console-err {
+  border-color: #a44;
+}
+
 .muted {
   color: var(--text-dim);
 }

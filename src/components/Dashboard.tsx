@@ -6,6 +6,7 @@ import { Icon } from '../themes/Icon';
 import { UI_ICONS } from '../themes/icons';
 import { MUSEUM_THEMES } from '../themes/styles';
 import { MUSEUM_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
+import { Console } from './Console';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -170,6 +171,8 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <Console />
 
       <button
         type="button"

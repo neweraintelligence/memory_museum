@@ -16,7 +16,7 @@ export default function App() {
   const themeId = useTheme((s) => s.themeId);
   const location = useLocation();
   const museumFocus =
-    themeId === 'clarity' && location.pathname.startsWith('/museum/');
+    themeId === 'clairvoyant' && location.pathname.startsWith('/museum/');
 
   useEffect(() => {
     void init();
