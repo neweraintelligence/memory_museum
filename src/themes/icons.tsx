@@ -79,6 +79,7 @@ import {
   LuEye,
   LuEyeOff,
   LuImage,
+  LuPencil,
 } from 'react-icons/lu';
 import { shade } from '../lib/color';
 
@@ -185,6 +186,7 @@ export const UI_ICONS = {
   eye: LuEye,
   eyeOff: LuEyeOff,
   wallpaper: LuImage,
+  pencil: LuPencil,
 } as const;
 
 // NOTE: the DOM `<Icon>` component lives in ./Icon so that this module exports

@@ -12,6 +12,7 @@ interface UIState {
   wallEditing: boolean;
   /** X-ray walls: drop wall faces to a low outline so you can see/click behind them. */
   xrayWalls: boolean;
+  dataModalOpen: boolean;
   leftPanelOpen: boolean;
   rightPanelOpen: boolean;
   setMode: (m: AppMode) => void;
@@ -22,6 +23,7 @@ interface UIState {
   setSearchOpen: (v: boolean) => void;
   setFloorEditing: (v: boolean) => void;
   setWallEditing: (v: boolean) => void;
+  setDataModalOpen: (v: boolean) => void;
   setXrayWalls: (v: boolean) => void;
   toggleXrayWalls: () => void;
   toggleLeftPanel: () => void;
@@ -36,6 +38,7 @@ export const useUI = create<UIState>((set) => ({
   searchOpen: false,
   floorEditing: false,
   wallEditing: false,
+  dataModalOpen: false,
   xrayWalls: false,
   leftPanelOpen: true,
   rightPanelOpen: true,
@@ -57,6 +60,7 @@ export const useUI = create<UIState>((set) => ({
     set(floorEditing ? { floorEditing, wallEditing: false, placingKind: null, selectedObjectId: null } : { floorEditing }),
   setWallEditing: (wallEditing) =>
     set(wallEditing ? { wallEditing, floorEditing: false, placingKind: null, selectedObjectId: null } : { wallEditing }),
+  setDataModalOpen: (dataModalOpen) => set({ dataModalOpen }),
   setXrayWalls: (xrayWalls) => set({ xrayWalls }),
   toggleXrayWalls: () => set((s) => ({ xrayWalls: !s.xrayWalls })),
   toggleLeftPanel: () => set((s) => ({ leftPanelOpen: !s.leftPanelOpen })),

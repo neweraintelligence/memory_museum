@@ -10,7 +10,16 @@
       "Bash(npx tsc:*)",
       "Bash(npx vite:*)",
       "Bash(node:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(npm install:*)",
+      "Bash(\"I:/Launch Bay/Productivity/Memory Museum/.env.example\":*)",
+      "Bash(npm run:*)",
+      "mcp__render__list_services",
+      "mcp__render__list_workspaces",
+      "Bash(cat:*)",
+      "Bash(python -m json.tool)",
+      "Bash(python3:*)",
+      "Bash(test:*)"
     ]
   }
 }

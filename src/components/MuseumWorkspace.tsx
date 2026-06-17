@@ -37,6 +37,7 @@ export default function MuseumWorkspace() {
     [allRooms, museumId],
   );
   const createRoom = useStore((s) => s.createRoom);
+  const updateRoom = useStore((s) => s.updateRoom);
   const deleteRoom = useStore((s) => s.deleteRoom);
   const duplicateRoom = useStore((s) => s.duplicateRoom);
   const addObject = useStore((s) => s.addObject);
@@ -70,6 +71,20 @@ export default function MuseumWorkspace() {
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [renamingRoomId, setRenamingRoomId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
+  const renameInputRef = useRef<HTMLInputElement>(null);
+
+  const commitRoomRename = (roomId: string) => {
+    const trimmed = renameDraft.trim();
+    if (trimmed) updateRoom(roomId, { name: trimmed });
+    setRenamingRoomId(null);
+  };
+
+  const startRoomRename = (roomId: string, name: string) => {
+    setRenamingRoomId(roomId);
+    setRenameDraft(name);
+  };
 
   // Ensure a current room is selected.
   useEffect(() => {
@@ -86,6 +101,14 @@ export default function MuseumWorkspace() {
   useEffect(() => {
     setFloorEditing(false);
   }, [currentRoomId, setFloorEditing]);
+
+  useEffect(() => {
+    if (renamingRoomId) renameInputRef.current?.select();
+  }, [renamingRoomId]);
+
+  useEffect(() => {
+    if (mode !== 'build') setRenamingRoomId(null);
+  }, [mode]);
 
   // Handle deep-links from search (?room=..&obj=..).
   useEffect(() => {
@@ -358,11 +381,45 @@ export default function MuseumWorkspace() {
               <Icon icon={roomIcon(r.type)} size={18} className="room-list-type-icon" />
             </span>
           </span>
-          <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {r.name}
-          </span>
+          {renamingRoomId === r.id ? (
+            <input
+              ref={renameInputRef}
+              className="room-list-rename-input"
+              value={renameDraft}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => setRenameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitRoomRename(r.id);
+                }
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  setRenamingRoomId(null);
+                }
+              }}
+              onBlur={() => commitRoomRename(r.id)}
+            />
+          ) : (
+            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {r.name}
+            </span>
+          )}
           {mode === 'build' && (
             <span className="room-list-actions" aria-hidden={currentRoomId !== r.id}>
+              <button
+                className={`icon-btn ghost room-list-action-btn${currentRoomId !== r.id ? ' room-list-action-btn--placeholder' : ''}`}
+                title="Rename"
+                tabIndex={currentRoomId === r.id ? 0 : -1}
+                onClick={(e) => {
+                  if (currentRoomId !== r.id) return;
+                  e.stopPropagation();
+                  startRoomRename(r.id, r.name);
+                }}
+              >
+                <Icon icon={UI_ICONS.pencil} size={12} />
+              </button>
               <button
                 className={`icon-btn ghost room-list-action-btn${currentRoomId !== r.id ? ' room-list-action-btn--placeholder' : ''}`}
                 title="Duplicate"

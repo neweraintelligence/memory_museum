@@ -6,6 +6,7 @@ import { Icon } from '../themes/Icon';
 import { UI_ICONS } from '../themes/icons';
 import type { AppMode } from '../types';
 import ThemeSwitcher from './ThemeSwitcher';
+import DataModal from './DataModal';
 
 const MODES: { id: AppMode; label: string; icon: IconType }[] = [
   { id: 'build', label: 'Build', icon: UI_ICONS.build },
@@ -28,6 +29,7 @@ export default function TopBar() {
   const setMode = useUI((s) => s.setMode);
   const setSearchOpen = useUI((s) => s.setSearchOpen);
   const cloud = useStore((s) => s.cloud);
+  const setDataModalOpen = useUI((s) => s.setDataModalOpen);
 
   return (
     <div className="topbar">
@@ -65,11 +67,12 @@ export default function TopBar() {
 
       <ThemeSwitcher />
 
-      <div className="cloud-pill" title={CLOUD_LABEL[cloud]}>
+      <div className="cloud-pill" title={CLOUD_LABEL[cloud]} style={{ cursor: 'pointer' }} onClick={() => setDataModalOpen(true)}>
         <Icon icon={cloud === 'error' || cloud === 'off' ? UI_ICONS.cloudOff : UI_ICONS.cloudOn} size={14} />
         <span className={`dot ${cloud}`} />
         <span className="cloud-pill-label">{CLOUD_LABEL[cloud]}</span>
       </div>
+      <DataModal />
     </div>
   );
 }

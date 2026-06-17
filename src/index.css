@@ -1090,6 +1090,24 @@ a {
   pointer-events: none;
 }
 
+.room-list-rename-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.3;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: none;
+}
+
+.room-list-rename-input:focus {
+  outline: none;
+}
+
 .icon-btn {
   padding: 5px 8px;
   font-size: 13px;
