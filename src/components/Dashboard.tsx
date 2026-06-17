@@ -106,9 +106,9 @@ export default function Dashboard() {
                   <span className="card-icon-carve" aria-hidden="true" />
                 </span>
                 <img
-                  src="/museum-room-icon-brutal-95.png?v=5"
+                  src="/museum-room-icon-utilitarian.png?v=5"
                   alt=""
-                  className="museum-card-icon museum-card-icon--brutal-95"
+                  className="museum-card-icon museum-card-icon--utilitarian"
                 />
                 <img
                   src="/museum-room-icon.png"
@@ -151,9 +151,9 @@ export default function Dashboard() {
                 <span className="card-icon-carve" aria-hidden="true" />
               </span>
               <img
-                src="/template-icon-brutal-95.png?v=2"
+                src="/template-icon-utilitarian.png?v=3"
                 alt=""
-                className="template-card-icon template-card-icon--brutal-95"
+                className="template-card-icon template-card-icon--utilitarian"
               />
               <img
                 src="/template-icon.png"

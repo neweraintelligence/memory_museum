@@ -1,7 +1,9 @@
-export type UiThemeId = 'brutal-95' | 'project-manager' | 'dusty-library';
+export type UiThemeId = 'utilitarian' | 'clarity' | 'bookworm';
 
 export interface UiTheme {
   id: UiThemeId;
   label: string;
   description: string;
+  /** Wallpaper on when the user has not saved a preference for this theme. */
+  defaultWallpaperEnabled: boolean;
 }

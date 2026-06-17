@@ -62,7 +62,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#f1cf95",
     ),
     StyleDef(
-        "brutalist",
+        "utilitarian",
         "concrete",
         "concrete",
         "#cec8bb",

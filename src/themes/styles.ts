@@ -67,8 +67,8 @@ export const ROOM_STYLES: RoomStyle[] = [
     ...STYLE_TEXTURES['gothic-library'],
   },
   {
-    id: 'brutalist',
-    label: 'Brutalist Concrete',
+    id: 'utilitarian',
+    label: 'Utilitarian Concrete',
     floorA: '#9a9a9a',
     floorB: '#8d8d8d',
     wallLeft: '#7d7d7d',
@@ -78,7 +78,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Raw concrete, hard shadows, monumental.',
     floorPattern: 'slab',
     wallPattern: 'concrete',
-    ...STYLE_TEXTURES.brutalist,
+    ...STYLE_TEXTURES.utilitarian,
   },
   {
     id: 'tea-room',
@@ -256,6 +256,7 @@ export const DEFAULT_STYLE = ROOM_STYLES[0].id;
 
 export function canonicalStyleId(id: string): string {
   if (id === 'enterprise-c') return 'enterprise-d';
+  if (id === 'brutalist') return 'utilitarian';
   return id;
 }
 

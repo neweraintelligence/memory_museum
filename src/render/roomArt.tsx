@@ -252,7 +252,7 @@ export function floorTileDecor(
     );
   }
 
-  // slab (brutalist): subtle crack + a few speckles
+  // slab (utilitarian): subtle crack + a few speckles
   return (
     <Fragment>
       <Line

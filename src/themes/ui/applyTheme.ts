@@ -1,6 +1,7 @@
 import type { UiThemeId } from './types';
 import {
   DEFAULT_UI_THEME,
+  getDefaultWallpaperEnabled,
   isUiThemeId,
   UI_THEME_STORAGE_KEY,
   UI_WALLPAPER_STORAGE_KEY,
@@ -11,7 +12,7 @@ const WALLPAPER_ATTR = 'data-wallpaper';
 
 type WallpaperPrefs = Partial<Record<UiThemeId, boolean>>;
 
-const BRAND_ICON_PATHS = ['/brand-icon-brutal-95.png', '/brand-icon-brain.png'] as const;
+const BRAND_ICON_PATHS = ['/brand-icon-utilitarian.png', '/brand-icon-brain.png'] as const;
 
 export function preloadBrandIcons(): void {
   for (const path of BRAND_ICON_PATHS) {
@@ -25,13 +26,17 @@ export function applyUiTheme(themeId: UiThemeId): void {
 }
 
 export function readWallpaperEnabled(themeId: UiThemeId): boolean {
+  const fallback = getDefaultWallpaperEnabled(themeId);
   try {
     const stored = localStorage.getItem(UI_WALLPAPER_STORAGE_KEY);
-    if (!stored) return true;
-    const prefs = JSON.parse(stored) as WallpaperPrefs;
-    return prefs[themeId] ?? true;
+    if (!stored) return fallback;
+    const prefs = JSON.parse(stored) as Record<string, boolean>;
+    if (themeId in prefs) return prefs[themeId] ?? fallback;
+    const legacyKey = LEGACY_WALLPAPER_KEYS[themeId];
+    if (legacyKey && legacyKey in prefs) return prefs[legacyKey] ?? fallback;
+    return fallback;
   } catch {
-    return true;
+    return fallback;
   }
 }
 
@@ -51,15 +56,26 @@ export function applyWallpaper(enabled: boolean): void {
 }
 
 const LEGACY_UI_THEME_IDS: Record<string, UiThemeId> = {
-  brutalism: 'brutal-95',
-  brutalist: 'brutal-95',
+  brutalism: 'utilitarian',
+  brutalist: 'utilitarian',
+  'brutal-95': 'utilitarian',
+  'project-manager': 'clarity',
+  'dusty-library': 'bookworm',
+};
+
+const LEGACY_WALLPAPER_KEYS: Partial<Record<UiThemeId, string>> = {
+  utilitarian: 'brutal-95',
+  clarity: 'project-manager',
+  bookworm: 'dusty-library',
 };
 
 export function readStoredUiTheme(): UiThemeId {
   try {
     const stored = localStorage.getItem(UI_THEME_STORAGE_KEY);
     if (stored && stored in LEGACY_UI_THEME_IDS) {
-      return LEGACY_UI_THEME_IDS[stored];
+      const themeId = LEGACY_UI_THEME_IDS[stored];
+      storeUiTheme(themeId);
+      return themeId;
     }
     return isUiThemeId(stored) ? stored : DEFAULT_UI_THEME;
   } catch {

@@ -342,12 +342,12 @@ export default function MuseumWorkspace() {
   const mapLayout = view === 'map';
   const themeId = useTheme((s) => s.themeId);
   const contentRef = useRef<HTMLDivElement>(null);
-  const insetLayout = roomEditor || (themeId === 'project-manager' && mapLayout);
+  const insetLayout = roomEditor || (themeId === 'clarity' && mapLayout);
   useEditorPanelInsets(contentRef, insetLayout, themeId);
 
   useEffect(() => {
     const lightCanvas =
-      themeId === 'project-manager' &&
+      themeId === 'clarity' &&
       view === 'room' &&
       !!currentRoom &&
       isLightBackground(getStyle(currentRoom.style).bg);

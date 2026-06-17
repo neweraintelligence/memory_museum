@@ -198,7 +198,7 @@ export const MUSEUM_TEMPLATES: MuseumTemplate[] = [
       {
         name: 'Modern Gallery',
         type: 'museum',
-        style: 'brutalist',
+        style: 'utilitarian',
         objects: [
           {
             kind: 'painting',

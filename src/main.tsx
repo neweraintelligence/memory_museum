@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './bootstrapTheme';
 import './themes/ui/themes.css';
-import './themes/ui/project-manager.css';
-import './themes/ui/dusty-library.css';
+import './themes/ui/clarity.css';
+import './themes/ui/bookworm.css';
 import './index.css';
 import App from './App.tsx';
 

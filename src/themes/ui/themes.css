@@ -1,6 +1,6 @@
 /* UI theme tokens — applied via data-ui-theme on <html> */
 
-[data-ui-theme='brutal-95'] {
+[data-ui-theme='utilitarian'] {
   color-scheme: light;
 
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -52,17 +52,29 @@
   --modal-shadow: var(--bevel), 0 40px 80px -24px rgba(15, 15, 13, 0.65), 0 12px 28px -10px rgba(15, 15, 13, 0.4);
   --kbd-shadow: var(--bevel), 0 1px 2px rgba(15, 15, 13, 0.2);
   --swatch-inset: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(15, 15, 13, 0.22);
-  --bg-texture: url('/brutal-95-bg.jpg');
+  --bg-texture: url('/utilitarian-bg.jpg');
 }
 
 /* ---- Global surfaces ---- */
 
-[data-ui-theme='brutal-95'] body {
+[data-ui-theme='utilitarian']::selection,
+[data-ui-theme='utilitarian'] ::selection {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='utilitarian']::-moz-selection,
+[data-ui-theme='utilitarian'] ::-moz-selection {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='utilitarian'] body {
   background-color: transparent;
   background-image: none;
 }
 
-[data-ui-theme='brutal-95']::before {
+[data-ui-theme='utilitarian']::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -70,6 +82,7 @@
   pointer-events: none;
   background-color: var(--bg);
   background-image:
+    radial-gradient(100% 100% at top left, var(--bg) 0%, rgba(157, 156, 151, 0) 60%),
     linear-gradient(rgba(157, 156, 151, 0.32), rgba(157, 156, 151, 0.32)),
     var(--bg-texture);
   background-size: cover;
@@ -77,16 +90,16 @@
   background-repeat: no-repeat;
 }
 
-[data-ui-theme='brutal-95'][data-wallpaper='off']::before {
+[data-ui-theme='utilitarian'][data-wallpaper='off']::before {
   display: none;
 }
 
-[data-ui-theme='brutal-95'][data-wallpaper='off'] body {
+[data-ui-theme='utilitarian'][data-wallpaper='off'] body {
   background-color: var(--bg);
   background-image: var(--grain), var(--mottle);
 }
 
-[data-ui-theme='brutal-95'] .wallpaper-toggle {
+[data-ui-theme='utilitarian'] .wallpaper-toggle {
   background-color: var(--panel);
   background-image: var(--form);
   border: 1px solid var(--border);
@@ -96,20 +109,20 @@
   text-shadow: var(--text-shadow);
 }
 
-[data-ui-theme='brutal-95'] .wallpaper-toggle:hover {
+[data-ui-theme='utilitarian'] .wallpaper-toggle:hover {
   background-color: var(--panel-2);
 }
 
-[data-ui-theme='brutal-95'] .wallpaper-toggle.active {
+[data-ui-theme='utilitarian'] .wallpaper-toggle.active {
   background-color: var(--accent);
   background-image: var(--form);
   border-color: var(--accent-2);
   color: var(--text-on-accent);
 }
 
-/* Brutal 95 — filled collapsed panel icon button (square, slight shadow) */
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
+/* Utilitarian — filled collapsed panel icon button (square, slight shadow) */
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
   background-color: var(--panel);
   background-image: var(--form);
   border-color: var(--border);
@@ -121,8 +134,8 @@
   filter: none;
 }
 
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
   background-color: var(--panel-2);
   border-color: var(--border);
   color: var(--text);
@@ -130,32 +143,32 @@
   box-shadow: var(--bevel), var(--shadow);
 }
 
-/* Brutal 95 — collapsed panel icons inset from screen edges */
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed.left {
+/* Utilitarian — collapsed panel icons inset from screen edges */
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed.left {
   left: calc(var(--editor-panel-side-inset) + 20px);
 }
 
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed.right {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed.right {
   right: calc(var(--editor-panel-side-inset) + 20px);
 }
 
-/* Brutal 95 — accent-colored museum cube & build hammer */
-[data-ui-theme='brutal-95'] .side-head-icon--museum,
-[data-ui-theme='brutal-95'] .side-head-icon--build,
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
-[data-ui-theme='brutal-95'] .overview-map-btn:not(.primary) .side-head-icon,
-[data-ui-theme='brutal-95'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
+/* Utilitarian — accent-colored museum cube & build hammer */
+[data-ui-theme='utilitarian'] .side-head-icon--museum,
+[data-ui-theme='utilitarian'] .side-head-icon--build,
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
+[data-ui-theme='utilitarian'] .overview-map-btn:not(.primary) .side-head-icon,
+[data-ui-theme='utilitarian'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
   color: var(--accent);
 }
 
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent:hover,
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent:hover {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent:hover,
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent:hover {
   color: var(--accent);
 }
 
-/* Brutal 95 — accent-filled save segment in cloud pill (matches delete button) */
-[data-ui-theme='brutal-95'] button.cloud-pill-save {
+/* Utilitarian — accent-filled save segment in cloud pill (matches delete button) */
+[data-ui-theme='utilitarian'] button.cloud-pill-save {
   background-color: var(--accent);
   background-image: var(--form);
   color: var(--text-on-accent);
@@ -163,7 +176,7 @@
   box-shadow: var(--bevel), var(--shadow-sm);
 }
 
-[data-ui-theme='brutal-95'] button.cloud-pill-save:hover {
+[data-ui-theme='utilitarian'] button.cloud-pill-save:hover {
   background-color: var(--accent);
   color: var(--text-on-accent);
   filter: brightness(1.04);
@@ -171,27 +184,27 @@
   box-shadow: var(--bevel), var(--shadow);
 }
 
-[data-ui-theme='brutal-95'] button.cloud-pill-save:active {
+[data-ui-theme='utilitarian'] button.cloud-pill-save:active {
   filter: brightness(0.96);
   transform: none;
   box-shadow: var(--button-active-shadow);
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--brutal-95 {
+[data-ui-theme='utilitarian'] .card-emoji .museum-card-icon--utilitarian {
   height: 31.1px;
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--brutal-95 {
+[data-ui-theme='utilitarian'] .card-emoji .template-card-icon--utilitarian {
   height: 31.1px;
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--default,
-[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--default {
+[data-ui-theme='utilitarian'] .card-emoji .museum-card-icon--default,
+[data-ui-theme='utilitarian'] .card-emoji .template-card-icon--default {
   display: none;
 }
 
-[data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--brutal-95,
-[data-ui-theme='brutal-95'] .card-emoji .template-card-icon--brutal-95 {
+[data-ui-theme='utilitarian'] .card-emoji .museum-card-icon--utilitarian,
+[data-ui-theme='utilitarian'] .card-emoji .template-card-icon--utilitarian {
   display: block;
 }
 
@@ -200,87 +213,87 @@
   display: none;
 }
 
-[data-ui-theme='brutal-95'] .room-list-item {
+[data-ui-theme='utilitarian'] .room-list-item {
   font-size: 13px;
 }
 
 /* Isometric editor — uniform room row height in Build mode (action slot always reserved). */
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating .room-list-item {
   height: 36px;
   min-height: 36px;
   padding-block: 0;
 }
 
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
   width: 18px;
   height: 18px;
   min-height: 18px;
 }
 
-[data-ui-theme='brutal-95'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+[data-ui-theme='utilitarian'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
   background-color: var(--ghost-hover-bg);
 }
 
-[data-ui-theme='brutal-95'] .room-list-item .room-list-icon--default,
-[data-ui-theme='brutal-95'] .canvas-overlay .pill .room-list-icon--default {
+[data-ui-theme='utilitarian'] .room-list-item .room-list-icon--default,
+[data-ui-theme='utilitarian'] .canvas-overlay .pill .room-list-icon--default {
   display: none;
 }
 
-[data-ui-theme='brutal-95'] .room-list-item .room-list-icon--typed,
-[data-ui-theme='brutal-95'] .canvas-overlay .pill .room-list-icon--typed {
+[data-ui-theme='utilitarian'] .room-list-item .room-list-icon--typed,
+[data-ui-theme='utilitarian'] .canvas-overlay .pill .room-list-icon--typed {
   display: flex;
   align-items: center;
   line-height: 0;
   color: var(--text);
 }
 
-[data-ui-theme='brutal-95'] .canvas-overlay .pill:not(.muted) {
+[data-ui-theme='utilitarian'] .canvas-overlay .pill:not(.muted) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-/* Brutal 95 dashboard — original stacked layout, scaled to fit the window */
-[data-ui-theme='brutal-95'] .page {
+/* Utilitarian dashboard — original stacked layout, scaled to fit the window */
+[data-ui-theme='utilitarian'] .page {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: clip;
 }
 
-[data-ui-theme='brutal-95'] .dashboard-top,
-[data-ui-theme='brutal-95'] .dashboard-top-row {
+[data-ui-theme='utilitarian'] .dashboard-top,
+[data-ui-theme='utilitarian'] .dashboard-top-row {
   width: 100%;
   max-width: 100%;
   min-width: 0;
 }
 
-[data-ui-theme='brutal-95'] .dashboard-top-row {
+[data-ui-theme='utilitarian'] .dashboard-top-row {
   display: block;
   padding-top: 0;
 }
 
-[data-ui-theme='brutal-95'] .dashboard-top {
+[data-ui-theme='utilitarian'] .dashboard-top {
   /* Match .section-title spacing (26px + label + 12px) before the next grid */
   margin-bottom: calc(26px + 13px + 12px);
 }
 
-[data-ui-theme='brutal-95'] .dashboard-top-row .page-head {
+[data-ui-theme='utilitarian'] .dashboard-top-row .page-head {
   margin-bottom: 22px;
   max-width: 100%;
   flex-wrap: wrap;
 }
 
-[data-ui-theme='brutal-95'] .page-head .muted {
+[data-ui-theme='utilitarian'] .page-head .muted {
   position: relative;
   top: 4px;
 }
 
-[data-ui-theme='brutal-95'] .page-head h1 .page-title-lead::after {
+[data-ui-theme='utilitarian'] .page-head h1 .page-title-lead::after {
   content: ' ';
 }
 
-[data-ui-theme='brutal-95'] .create-museum-bar {
+[data-ui-theme='utilitarian'] .create-museum-bar {
   width: 50%;
   max-width: 50%;
   margin-left: 0;
@@ -289,13 +302,13 @@
   box-sizing: border-box;
 }
 
-[data-ui-theme='brutal-95'] .create-museum-bar > .row {
+[data-ui-theme='utilitarian'] .create-museum-bar > .row {
   width: 100%;
   min-width: 0;
   align-items: flex-end;
 }
 
-[data-ui-theme='brutal-95'] .create-museum-bar > .row > button.primary {
+[data-ui-theme='utilitarian'] .create-museum-bar > .row > button.primary {
   margin-bottom: 12px;
   height: 36px;
   padding-block: 0;
@@ -304,65 +317,65 @@
   flex-shrink: 0;
 }
 
-[data-ui-theme='brutal-95'] .create-museum-field--name,
-[data-ui-theme='brutal-95'] .create-museum-field--theme {
+[data-ui-theme='utilitarian'] .create-museum-field--name,
+[data-ui-theme='utilitarian'] .create-museum-field--theme {
   flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
 }
 
-[data-ui-theme='brutal-95'] .create-museum-field input,
-[data-ui-theme='brutal-95'] .create-museum-field select {
+[data-ui-theme='utilitarian'] .create-museum-field input,
+[data-ui-theme='utilitarian'] .create-museum-field select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   height: 36px;
 }
 
-[data-ui-theme='brutal-95'] .create-museum-bar .field label {
+[data-ui-theme='utilitarian'] .create-museum-bar .field label {
   line-height: 14px;
 }
 
-[data-ui-theme='brutal-95'] .page .grid {
+[data-ui-theme='utilitarian'] .page .grid {
   width: 100%;
   grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
 }
 
-[data-ui-theme='brutal-95'] .brand {
+[data-ui-theme='utilitarian'] .brand {
   gap: 14px;
 }
 
-[data-ui-theme='brutal-95'] .brand .brand-icon {
+[data-ui-theme='utilitarian'] .brand .brand-icon {
   height: 31px;
   width: 31px;
-  background-image: url('/brand-icon-brutal-95.png');
+  background-image: url('/brand-icon-utilitarian.png');
 }
 
-[data-ui-theme='brutal-95'] .brand-text {
+[data-ui-theme='utilitarian'] .brand-text {
   transition: color 0.18s ease, text-shadow 0.18s ease;
 }
 
-[data-ui-theme='brutal-95'] .brand-text:hover {
+[data-ui-theme='utilitarian'] .brand-text:hover {
   color: #b83228;
   text-shadow: 0 0 4px rgba(120, 26, 22, 0.28);
 }
 
-[data-ui-theme='brutal-95'] .card.clickable:has(.museum-card-actions) {
+[data-ui-theme='utilitarian'] .card.clickable:has(.museum-card-actions) {
   position: relative;
 }
 
-[data-ui-theme='brutal-95'] .museum-card-actions {
+[data-ui-theme='utilitarian'] .museum-card-actions {
   position: absolute;
   top: 10px;
   right: 10px;
   margin: 0;
 }
 
-[data-ui-theme='brutal-95'] .card.clickable:has(.museum-card-actions) h3 {
+[data-ui-theme='utilitarian'] .card.clickable:has(.museum-card-actions) h3 {
   padding-right: 72px;
 }
 
-[data-ui-theme='brutal-95'] .card.clickable button.danger {
+[data-ui-theme='utilitarian'] .card.clickable button.danger {
   background-color: var(--accent);
   background-image: var(--form);
   border-color: var(--accent-2);
@@ -370,77 +383,77 @@
   text-shadow: var(--text-shadow);
 }
 
-[data-ui-theme='brutal-95'] .card.clickable button.danger:hover {
+[data-ui-theme='utilitarian'] .card.clickable button.danger:hover {
   background-color: var(--accent);
 }
 
-/* Brutal 95 Map Room Cards */
-[data-ui-theme='brutal-95'] .map-room-card {
+/* Utilitarian Map Room Cards */
+[data-ui-theme='utilitarian'] .map-room-card {
   border-left: 6px solid var(--accent);
   padding-left: 14px; /* Adjust padding to compensate for thick border */
 }
 
-[data-ui-theme='brutal-95'] .map-room-card.unconnected {
+[data-ui-theme='utilitarian'] .map-room-card.unconnected {
   border-left-color: var(--text-dim);
 }
 
-[data-ui-theme='brutal-95'] .map-room-icon {
+[data-ui-theme='utilitarian'] .map-room-icon {
   line-height: 0;
   margin-bottom: 6px;
   color: var(--text);
 }
 
-[data-ui-theme='brutal-95'] .map-room-title {
+[data-ui-theme='utilitarian'] .map-room-title {
   font-weight: 600;
   font-size: 14px;
   color: var(--text);
 }
 
 @media (max-width: 767px) {
-  [data-ui-theme='brutal-95'] .brand {
+  [data-ui-theme='utilitarian'] .brand {
     gap: 9px;
   }
 
-  [data-ui-theme='brutal-95'] .brand-text {
+  [data-ui-theme='utilitarian'] .brand-text {
     font-size: calc(12px * 1.25);
     font-weight: 700;
   }
 
-  [data-ui-theme='brutal-95'] .theme-switcher-select {
+  [data-ui-theme='utilitarian'] .theme-switcher-select {
     width: calc(108px * 1.1 * 1.1);
     max-width: calc(108px * 1.1 * 1.1);
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-bar {
+  [data-ui-theme='utilitarian'] .create-museum-bar {
     width: 100%;
     max-width: 100%;
     padding: 10px 12px;
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-bar .field label {
+  [data-ui-theme='utilitarian'] .create-museum-bar .field label {
     font-size: 10px;
     line-height: 1.2;
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-field input,
-  [data-ui-theme='brutal-95'] .create-museum-field select {
+  [data-ui-theme='utilitarian'] .create-museum-field input,
+  [data-ui-theme='utilitarian'] .create-museum-field select {
     height: 32px;
     font-size: 12px;
     padding: 5px 7px;
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-bar > .row > .create-museum-field--name {
+  [data-ui-theme='utilitarian'] .create-museum-bar > .row > .create-museum-field--name {
     flex: 5 1 0 !important;
     max-width: none !important;
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-bar > .row > .create-museum-field--theme {
+  [data-ui-theme='utilitarian'] .create-museum-bar > .row > .create-museum-field--theme {
     flex: 3 1 0 !important;
     max-width: none !important;
   }
 
-  [data-ui-theme='brutal-95'] .create-museum-bar > .row > button.primary,
-  [data-ui-theme='brutal-95'] .create-museum-bar > .row > button.create-museum-submit {
+  [data-ui-theme='utilitarian'] .create-museum-bar > .row > button.primary,
+  [data-ui-theme='utilitarian'] .create-museum-bar > .row > button.create-museum-submit {
     flex: 2 1 0 !important;
     flex-shrink: 1 !important;
     margin-bottom: 0 !important;
@@ -449,27 +462,27 @@
     font-size: 10px;
   }
 
-  [data-ui-theme='brutal-95'] .page {
+  [data-ui-theme='utilitarian'] .page {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid {
+  [data-ui-theme='utilitarian'] .page .grid {
     width: 100%;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     justify-items: stretch;
     gap: 8px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card {
+  [data-ui-theme='utilitarian'] .page .grid > .card {
     width: 100%;
     max-width: none;
     box-sizing: border-box;
     padding: 12px 8px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card h3 {
+  [data-ui-theme='utilitarian'] .page .grid > .card h3 {
     font-size: 12px;
     line-height: 1.2;
     overflow: hidden;
@@ -477,7 +490,7 @@
     white-space: nowrap;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card .meta {
+  [data-ui-theme='utilitarian'] .page .grid > .card .meta {
     font-size: 10px;
     line-height: 1.25;
     display: -webkit-box;
@@ -486,38 +499,38 @@
     overflow: hidden;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card .card-emoji {
+  [data-ui-theme='utilitarian'] .page .grid > .card .card-emoji {
     margin-bottom: 4px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card.clickable:has(.museum-card-actions) h3 {
+  [data-ui-theme='utilitarian'] .page .grid > .card.clickable:has(.museum-card-actions) h3 {
     padding-right: 36px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card .museum-card-actions {
+  [data-ui-theme='utilitarian'] .page .grid > .card .museum-card-actions {
     top: 6px;
     right: 6px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card .museum-card-actions button {
+  [data-ui-theme='utilitarian'] .page .grid > .card .museum-card-actions button {
     padding: 3px 5px;
     font-size: 9px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card .row .tag {
+  [data-ui-theme='utilitarian'] .page .grid > .card .row .tag {
     font-size: 9px;
     padding: 1px 5px;
   }
 
-  [data-ui-theme='brutal-95'] .page .grid > .card > .row {
+  [data-ui-theme='utilitarian'] .page .grid > .card > .row {
     flex-wrap: wrap;
     gap: 4px;
     margin-top: 8px !important;
   }
 
   /* Expanded place/build panels — fluid layout, wraps to fit */
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed),
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed),
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) {
     min-width: 0;
     box-sizing: border-box;
     top: var(--editor-panel-top, 72px);
@@ -528,8 +541,8 @@
     flex-direction: column;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed),
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed),
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) {
     width: min(33.33vw, calc(100vw - 16px)) !important;
     max-width: 33.33vw !important;
     font-size: clamp(calc(7.7px * 1.15 * 1.1), calc(1.98vw * 1.15 * 1.1), calc(9.9px * 1.15 * 1.1));
@@ -537,8 +550,8 @@
     right: auto !important;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.right:not(.collapsed),
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.right:not(.collapsed) {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.right:not(.collapsed),
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.right:not(.collapsed) {
     width: min(50vw, calc(100vw - 16px)) !important;
     max-width: 50vw !important;
     font-size: clamp(9px, 2.5vw, 11px);
@@ -546,37 +559,37 @@
     left: auto !important;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
     width: 100%;
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top {
     flex: none;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
     flex: 1;
     min-height: 0;
     overflow: hidden;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner {
     width: 100%;
     max-width: 100%;
     min-width: 0;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-body,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-body {
     overflow: auto;
     overflow-x: hidden;
     height: 100%;
@@ -586,15 +599,15 @@
     padding: 0.65em 0.75em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-head,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-head {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-head,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-head {
     padding: 0.65em 0.75em;
     gap: 0.4em;
     flex-wrap: wrap;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title {
     flex: 1 1 3em;
     min-width: 0;
     overflow: hidden;
@@ -602,14 +615,14 @@
     white-space: nowrap;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn {
     flex: none;
     padding: 0.35em 0.45em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .section-title,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .section-title {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .section-title,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .section-title {
     margin: 0.75em 0 0.45em;
     font-size: 0.95em;
     letter-spacing: 0.08em;
@@ -617,8 +630,8 @@
     word-break: break-word;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn {
     width: 100%;
     max-width: 100%;
     margin-bottom: 0.65em;
@@ -627,8 +640,8 @@
     line-height: 1.25;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) button,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) button {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) button,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) button {
     max-width: 100%;
     padding: 0.45em 0.6em;
     font-size: 0.95em;
@@ -638,8 +651,8 @@
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item {
     height: auto !important;
     min-height: 0 !important;
     padding: 0.4em 0.5em;
@@ -649,14 +662,14 @@
     font-size: 1em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon {
     flex: none;
     flex-shrink: 0;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon),
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon) {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon),
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon) {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
@@ -664,16 +677,16 @@
     white-space: nowrap;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions {
     flex: 0 1 auto;
     flex-wrap: wrap;
     gap: 0.2em;
     margin-left: auto;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn {
     width: 1.35em;
     height: 1.35em;
     min-height: 1.35em;
@@ -682,8 +695,8 @@
     flex: none;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input {
     flex: 1 1 100%;
     min-width: 0;
     width: 100%;
@@ -692,15 +705,15 @@
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .palette,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .palette {
     width: 100%;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 3.25em), 1fr));
     gap: 0.35em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .palette-item,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .palette-item {
     min-width: 0;
     width: 100%;
     padding: 0.35em 0.2em;
@@ -708,8 +721,8 @@
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph {
     width: 100%;
     height: auto;
     min-height: 0;
@@ -718,16 +731,16 @@
     margin-inline: auto;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg {
     width: 100% !important;
     height: 100% !important;
     max-width: 1.75em;
     max-height: 1.75em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name {
     width: 100%;
     font-size: 0.82em;
     line-height: 1.15;
@@ -737,15 +750,15 @@
     text-align: center;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .style-grid,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .style-grid {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .style-grid,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .style-grid {
     width: 100%;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 5.5em), 1fr));
     gap: 0.35em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .style-chip,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .style-chip {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .style-chip,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .style-chip {
     min-width: 0;
     width: 100%;
     padding: 0.45em;
@@ -756,35 +769,35 @@
     word-break: break-word;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .swatch,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .swatch {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .swatch,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .swatch {
     width: 100%;
     height: 0.65em;
     min-height: 6px;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .field,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .field {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .field,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field {
     width: 100%;
     max-width: 100%;
     margin-bottom: 0.55em;
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .field label,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .field label {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .field label,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field label {
     margin-bottom: 0.2em;
     font-size: 0.9em;
     line-height: 1.2;
     word-break: break-word;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) input,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) textarea,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) select,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) input,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) textarea,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) select {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) input,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) textarea,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) select,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) input,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) textarea,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) select {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -792,8 +805,8 @@
     font-size: 0.95em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .tag,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .tag {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .tag,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .tag {
     max-width: 100%;
     font-size: 0.85em;
     white-space: normal;
@@ -801,41 +814,41 @@
     line-height: 1.2;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .muted,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .muted,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) p,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) p {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .muted,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .muted,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) p,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) p {
     font-size: 0.95em;
     line-height: 1.3;
     word-break: break-word;
     max-width: 100%;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon {
     width: 1.1em !important;
     height: 1.1em !important;
     flex: none;
   }
 
-  /* Left palaces panel — tighter room list, two-line museum title */
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top {
+  /* Left museum panel — tighter room list, two-line museum title */
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top {
     overflow: visible;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head {
     padding: 0.5em 0.55em;
     gap: 0.3em;
     overflow: visible;
     align-items: flex-start;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title {
     overflow: visible;
     white-space: normal;
     flex-wrap: wrap;
@@ -843,8 +856,8 @@
     row-gap: 0.15em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span {
     flex: 1 1 0 !important;
     min-width: 0;
     overflow: hidden !important;
@@ -857,31 +870,31 @@
     -webkit-box-orient: vertical;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon {
     flex: none;
     margin-top: 0.1em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
     align-self: flex-start;
     margin-top: 0.1em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body {
     padding: 0.5em 0.55em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title {
     margin: 0.55em 0 0.35em;
     font-size: 0.9em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn {
     margin-bottom: 0.5em;
     padding: calc(0.35em * 1.15) 0.45em;
     font-size: 0.9em;
@@ -890,8 +903,8 @@
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn),
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn) {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn),
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn) {
     padding: calc(0.35em * 1.15) 0.45em;
     font-size: 0.9em;
     gap: 0.25em;
@@ -899,20 +912,20 @@
     box-sizing: border-box;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
     padding: 0.35em 0.45em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item {
     padding: 0.3em 0.35em;
     gap: 0.35em;
     font-size: 0.95em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -921,10 +934,10 @@
     min-width: 1.5em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg {
     width: 1.5em !important;
     height: 1.5em !important;
     min-width: 1.5em;
@@ -932,15 +945,15 @@
     flex: none;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
     flex: 1 1 100%;
     margin-left: 0;
     justify-content: flex-end;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -952,10 +965,10 @@
     line-height: 1;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg {
     width: 1em !important;
     height: 1em !important;
     max-width: 1em;
@@ -963,18 +976,18 @@
     flex: none;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input {
     padding: 0.15em 0.35em;
     font-size: 0.9em;
   }
 
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
-  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon,
-  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon {
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
+  [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon,
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon {
     width: 1.1em !important;
     height: 1.1em !important;
   }

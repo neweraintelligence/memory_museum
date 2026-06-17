@@ -63,7 +63,7 @@ export function pickWallSegmentTexture(
 
 export const STYLE_TEXTURES: Record<string, StyleTextureSet> = {
   'gothic-library': textureSet('gothic-library'),
-  brutalist: textureSet('brutalist'),
+  utilitarian: textureSet('utilitarian'),
   'tea-room': textureSet('tea-room'),
   spaceship: textureSet('spaceship'),
   'enterprise-d': textureSet('enterprise-d'),

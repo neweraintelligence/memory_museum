@@ -1,12 +1,12 @@
 ---
-target: dusty-library.css
+target: bookworm.css
 total_score: 24
 p0_count: 1
 p1_count: 2
 timestamp: 2026-06-15T16-42-51Z
-slug: src-themes-ui-dusty-library-css
+slug: src-themes-ui-bookworm-css
 ---
-Critique of dusty-library.css - Score 24/40
+Critique of bookworm.css - Score 24/40
 P0: Danger button semantic inversion
 P1: Palette labels 10px text-dim below legible threshold
 P1: No Undo/Redo
