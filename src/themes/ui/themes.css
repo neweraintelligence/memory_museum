@@ -154,6 +154,29 @@
   color: var(--accent);
 }
 
+/* Brutal 95 — accent-filled save segment in cloud pill (matches delete button) */
+[data-ui-theme='brutal-95'] button.cloud-pill-save {
+  background-color: var(--accent);
+  background-image: var(--form);
+  color: var(--text-on-accent);
+  text-shadow: var(--text-shadow);
+  box-shadow: var(--bevel), var(--shadow-sm);
+}
+
+[data-ui-theme='brutal-95'] button.cloud-pill-save:hover {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  filter: brightness(1.04);
+  transform: none;
+  box-shadow: var(--bevel), var(--shadow);
+}
+
+[data-ui-theme='brutal-95'] button.cloud-pill-save:active {
+  filter: brightness(0.96);
+  transform: none;
+  box-shadow: var(--button-active-shadow);
+}
+
 [data-ui-theme='brutal-95'] .card-emoji .museum-card-icon--brutal-95 {
   height: 31.1px;
 }
@@ -371,5 +394,589 @@
   font-weight: 600;
   font-size: 14px;
   color: var(--text);
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='brutal-95'] .brand {
+    gap: 9px;
+  }
+
+  [data-ui-theme='brutal-95'] .brand-text {
+    font-size: calc(12px * 1.25);
+    font-weight: 700;
+  }
+
+  [data-ui-theme='brutal-95'] .theme-switcher-select {
+    width: calc(108px * 1.1 * 1.1);
+    max-width: calc(108px * 1.1 * 1.1);
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-bar {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 12px;
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-bar .field label {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-field input,
+  [data-ui-theme='brutal-95'] .create-museum-field select {
+    height: 32px;
+    font-size: 12px;
+    padding: 5px 7px;
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-bar > .row > .create-museum-field--name {
+    flex: 5 1 0 !important;
+    max-width: none !important;
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-bar > .row > .create-museum-field--theme {
+    flex: 3 1 0 !important;
+    max-width: none !important;
+  }
+
+  [data-ui-theme='brutal-95'] .create-museum-bar > .row > button.primary,
+  [data-ui-theme='brutal-95'] .create-museum-bar > .row > button.create-museum-submit {
+    flex: 2 1 0 !important;
+    flex-shrink: 1 !important;
+    margin-bottom: 0 !important;
+    height: 32px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  [data-ui-theme='brutal-95'] .page {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    justify-items: stretch;
+    gap: 8px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 12px 8px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card h3 {
+    font-size: 12px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card .meta {
+    font-size: 10px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card .card-emoji {
+    margin-bottom: 4px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card.clickable:has(.museum-card-actions) h3 {
+    padding-right: 36px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card .museum-card-actions {
+    top: 6px;
+    right: 6px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card .museum-card-actions button {
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card .row .tag {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+
+  [data-ui-theme='brutal-95'] .page .grid > .card > .row {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px !important;
+  }
+
+  /* Expanded place/build panels — fluid layout, wraps to fit */
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed),
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) {
+    min-width: 0;
+    box-sizing: border-box;
+    top: var(--editor-panel-top, 72px);
+    bottom: var(--editor-panel-bottom, 12px);
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed),
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) {
+    width: min(33.33vw, calc(100vw - 16px)) !important;
+    max-width: 33.33vw !important;
+    font-size: clamp(calc(7.7px * 1.15 * 1.1), calc(1.98vw * 1.15 * 1.1), calc(9.9px * 1.15 * 1.1));
+    left: var(--editor-panel-side-inset, 8px) !important;
+    right: auto !important;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.right:not(.collapsed),
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.right:not(.collapsed) {
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
+    font-size: clamp(9px, 2.5vw, 11px);
+    right: var(--editor-panel-side-inset, 8px) !important;
+    left: auto !important;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-chrome-top {
+    flex: none;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body-inner {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-body,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-body {
+    overflow: auto;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.65em 0.75em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-head,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-head {
+    padding: 0.65em 0.75em;
+    gap: 0.4em;
+    flex-wrap: wrap;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-head-title {
+    flex: 1 1 3em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .side-collapse-btn {
+    flex: none;
+    padding: 0.35em 0.45em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .section-title,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .section-title {
+    margin: 0.75em 0 0.45em;
+    font-size: 0.95em;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .overview-map-btn {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0.65em;
+    box-sizing: border-box;
+    white-space: normal;
+    line-height: 1.25;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) button,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) button {
+    max-width: 100%;
+    padding: 0.45em 0.6em;
+    font-size: 0.95em;
+    gap: 0.35em;
+    white-space: normal;
+    line-height: 1.2;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.4em 0.5em;
+    gap: 0.35em;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 1em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-icon {
+    flex: none;
+    flex-shrink: 0;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon),
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon) {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-actions {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    gap: 0.2em;
+    margin-left: auto;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-item .room-list-action-btn {
+    width: 1.35em;
+    height: 1.35em;
+    min-height: 1.35em;
+    padding: 0;
+    font-size: 0.85em;
+    flex: none;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-rename-input {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+    padding: 0.2em 0.4em;
+    font-size: 0.95em;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 3.25em), 1fr));
+    gap: 0.35em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item {
+    min-width: 0;
+    width: 100%;
+    padding: 0.35em 0.2em;
+    gap: 0.2em;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1;
+    max-width: 1.75em;
+    margin-inline: auto;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .glyph svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 1.75em;
+    max-height: 1.75em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .palette-item .name {
+    width: 100%;
+    font-size: 0.82em;
+    line-height: 1.15;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .style-grid,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .style-grid {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 5.5em), 1fr));
+    gap: 0.35em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .style-chip,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .style-chip {
+    min-width: 0;
+    width: 100%;
+    padding: 0.45em;
+    gap: 0.3em;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .swatch,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .swatch {
+    width: 100%;
+    height: 0.65em;
+    min-height: 6px;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .field,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .field {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0.55em;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .field label,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .field label {
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) input,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) textarea,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) select,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) input,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) textarea,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.4em 0.5em;
+    font-size: 0.95em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .tag,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .tag {
+    max-width: 100%;
+    font-size: 0.85em;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .muted,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .muted,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) p,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) p {
+    font-size: 0.95em;
+    line-height: 1.3;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .ui-icon,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating:not(.collapsed) .room-list-type-icon {
+    width: 1.1em !important;
+    height: 1.1em !important;
+    flex: none;
+  }
+
+  /* Left palaces panel — tighter room list, two-line museum title */
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-chrome-top {
+    overflow: visible;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head {
+    padding: 0.5em 0.55em;
+    gap: 0.3em;
+    overflow: visible;
+    align-items: flex-start;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title {
+    overflow: visible;
+    white-space: normal;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: 0.15em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head-title > span {
+    flex: 1 1 0 !important;
+    min-width: 0;
+    overflow: hidden !important;
+    text-overflow: unset !important;
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .side-head-icon {
+    flex: none;
+    margin-top: 0.1em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
+    align-self: flex-start;
+    margin-top: 0.1em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body {
+    padding: 0.5em 0.55em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .section-title {
+    margin: 0.55em 0 0.35em;
+    font-size: 0.9em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn {
+    margin-bottom: 0.5em;
+    padding: calc(0.35em * 1.15) 0.45em;
+    font-size: 0.9em;
+    gap: 0.3em;
+    min-height: calc(2.2em * 1.15);
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn),
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-body > button:not(.overview-map-btn) {
+    padding: calc(0.35em * 1.15) 0.45em;
+    font-size: 0.9em;
+    gap: 0.25em;
+    min-height: calc(2.2em * 1.15);
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-collapse-btn {
+    padding: 0.35em 0.45em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item {
+    padding: 0.3em 0.35em;
+    gap: 0.35em;
+    font-size: 0.95em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.5em;
+    min-width: 1.5em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-type-icon svg {
+    width: 1.5em !important;
+    height: 1.5em !important;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    flex: none;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
+    flex: 1 1 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(1.27em * 1.2 * 1.1);
+    height: calc(1.27em * 1.2 * 1.1);
+    min-height: calc(1.27em * 1.2 * 1.1);
+    padding: 0;
+    font-size: calc(0.88em * 1.2 * 1.1);
+    line-height: 1;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn .ui-icon,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-action-btn svg {
+    width: 1em !important;
+    height: 1em !important;
+    max-width: 1em;
+    max-height: 1em;
+    flex: none;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input {
+    padding: 0.15em 0.35em;
+    font-size: 0.9em;
+  }
+
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .ui-icon,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .overview-map-btn .ui-icon,
+  [data-ui-theme='dusty-library'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon,
+  [data-ui-theme='brutal-95'] .content.editor-layout .side-floating.left:not(.collapsed) .side-head .ui-icon {
+    width: 1.1em !important;
+    height: 1.1em !important;
+  }
 }
 

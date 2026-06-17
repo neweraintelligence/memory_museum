@@ -4,6 +4,7 @@ import TopBar from './components/TopBar';
 import Dashboard from './components/Dashboard';
 import MuseumWorkspace from './components/MuseumWorkspace';
 import SearchModal from './components/SearchModal';
+import DataModal from './components/DataModal';
 import { useStore } from './state/useStore';
 import { useUI } from './state/useUI';
 import { useTheme } from './state/useTheme';
@@ -46,6 +47,7 @@ export default function App() {
         </Routes>
       )}
       <SearchModal />
+      <DataModal />
     </div>
   );
 }

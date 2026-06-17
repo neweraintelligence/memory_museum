@@ -6,7 +6,6 @@ import { Icon } from '../themes/Icon';
 import { UI_ICONS } from '../themes/icons';
 import type { AppMode } from '../types';
 import ThemeSwitcher from './ThemeSwitcher';
-import DataModal from './DataModal';
 
 const MODES: { id: AppMode; label: string; icon: IconType }[] = [
   { id: 'build', label: 'Build', icon: UI_ICONS.build },
@@ -15,7 +14,7 @@ const MODES: { id: AppMode; label: string; icon: IconType }[] = [
 ];
 
 const CLOUD_LABEL: Record<string, string> = {
-  off: 'Local only',
+  off: 'Local',
   connecting: 'Syncing…',
   on: 'Cloud synced',
   error: 'Offline',
@@ -39,7 +38,7 @@ export default function TopBar() {
             <span className="brand-icon-carve" aria-hidden="true" />
           </span>
         </span>
-        <span className="brand-text">Memory Museum{'\u00A0\u00A0\u00A0\u00A0\u00A0'}</span>
+        <span className="brand-text">Memory Museum</span>
       </div>
 
       {showModes && (
@@ -67,12 +66,24 @@ export default function TopBar() {
 
       <ThemeSwitcher />
 
-      <div className="cloud-pill" title={CLOUD_LABEL[cloud]} style={{ cursor: 'pointer' }} onClick={() => setDataModalOpen(true)}>
-        <Icon icon={cloud === 'error' || cloud === 'off' ? UI_ICONS.cloudOff : UI_ICONS.cloudOn} size={14} />
-        <span className={`dot ${cloud}`} />
-        <span className="cloud-pill-label">{CLOUD_LABEL[cloud]}</span>
+      <div className="cloud-pill">
+        <div className="cloud-pill-segment cloud-pill-sync" title={CLOUD_LABEL[cloud]}>
+          <Icon icon={cloud === 'error' || cloud === 'off' ? UI_ICONS.cloudOff : UI_ICONS.cloudOn} size={14} />
+          <span className={`dot ${cloud}`} />
+          <span className="cloud-pill-label">{CLOUD_LABEL[cloud]}</span>
+        </div>
+        <span className="cloud-pill-divider" aria-hidden="true" />
+        <button
+          type="button"
+          className="cloud-pill-segment cloud-pill-save"
+          title="Save"
+          aria-label="Save"
+          onClick={() => setDataModalOpen(true)}
+        >
+          <Icon icon={UI_ICONS.save} size={14} />
+          <span className="cloud-pill-label">Save</span>
+        </button>
       </div>
-      <DataModal />
     </div>
   );
 }

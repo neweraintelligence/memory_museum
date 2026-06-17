@@ -2,6 +2,7 @@ import { useLayoutEffect, type RefObject } from 'react';
 
 const PANEL_GAP = 10;
 const PANEL_EXTRA_TOP = 52;
+const MOBILE_MQ = '(max-width: 767px)';
 
 /** Keep floating editor panels below the top bar as the window or bar height changes. */
 export function useEditorPanelInsets(
@@ -23,6 +24,7 @@ export function useEditorPanelInsets(
       el?.style.removeProperty('--editor-panel-bottom');
       el?.style.removeProperty('--editor-panel-collapsed-size');
       el?.style.removeProperty('--editor-panel-collapsed-bottom');
+      el?.style.removeProperty('--editor-panel-collapsed-bottom-session');
     };
 
     const apply = () => {
@@ -34,14 +36,22 @@ export function useEditorPanelInsets(
 
       const contentTop = container.getBoundingClientRect().top;
       const topbarBottom = topbar.getBoundingClientRect().bottom;
-      const overlayTop = Math.max(14, topbarBottom - contentTop + PANEL_GAP);
-      const panelTop = Math.max(14, topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP);
-      
+      const isMobile = window.matchMedia(MOBILE_MQ).matches;
+      const overlayTop = Math.max(isMobile ? 10 : 14, topbarBottom - contentTop + PANEL_GAP);
+      const panelTop = Math.max(
+        isMobile ? 10 : 14,
+        topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP,
+      );
+
       container.style.setProperty('--canvas-overlay-top', `${overlayTop}px`);
       container.style.setProperty('--editor-panel-top', `${panelTop}px`);
-      container.style.setProperty('--editor-panel-bottom', '18px');
-      container.style.setProperty('--editor-panel-collapsed-size', '40px');
-      container.style.setProperty('--editor-panel-collapsed-bottom', '88px');
+      container.style.setProperty('--editor-panel-bottom', isMobile ? '12px' : '18px');
+      container.style.setProperty('--editor-panel-collapsed-size', isMobile ? '36px' : '40px');
+      container.style.setProperty('--editor-panel-collapsed-bottom', isMobile ? '68px' : '88px');
+      container.style.setProperty(
+        '--editor-panel-collapsed-bottom-session',
+        isMobile ? '148px' : '88px',
+      );
       return true;
     };
 

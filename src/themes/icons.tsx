@@ -80,6 +80,9 @@ import {
   LuEyeOff,
   LuImage,
   LuPencil,
+  LuCopy,
+  LuTrash2,
+  LuSave,
 } from 'react-icons/lu';
 import { shade } from '../lib/color';
 
@@ -171,6 +174,7 @@ export const UI_ICONS = {
   search: LuSearch,
   cloudOn: LuCloud,
   cloudOff: LuCloudOff,
+  save: LuSave,
   map: LuMap,
   location: LuMapPin,
   puzzle: LuPuzzle,
@@ -187,6 +191,8 @@ export const UI_ICONS = {
   eyeOff: LuEyeOff,
   wallpaper: LuImage,
   pencil: LuPencil,
+  copy: LuCopy,
+  trash: LuTrash2,
 } as const;
 
 // NOTE: the DOM `<Icon>` component lives in ./Icon so that this module exports

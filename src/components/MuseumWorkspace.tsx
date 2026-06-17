@@ -86,6 +86,16 @@ export default function MuseumWorkspace() {
     setRenameDraft(name);
   };
 
+  // On mobile, start with side panels collapsed so the canvas stays usable.
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 767px)').matches) return;
+    const { leftPanelOpen, rightPanelOpen, toggleLeftPanel, toggleRightPanel } =
+      useUI.getState();
+    if (leftPanelOpen) toggleLeftPanel();
+    if (rightPanelOpen) toggleRightPanel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [museumId]);
+
   // Ensure a current room is selected.
   useEffect(() => {
     if (rooms.length === 0) {
@@ -328,6 +338,7 @@ export default function MuseumWorkspace() {
   };
 
   const roomEditor = view === 'room' && !!currentRoom;
+  const sessionLayout = roomEditor && (mode === 'walk' || mode === 'review');
   const mapLayout = view === 'map';
   const themeId = useTheme((s) => s.themeId);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -431,7 +442,7 @@ export default function MuseumWorkspace() {
                   if (nr) setCurrentRoomId(nr.id);
                 }}
               >
-                ⧉
+                <Icon icon={UI_ICONS.copy} size={12} />
               </button>
               <button
                 className={`icon-btn ghost room-list-action-btn${currentRoomId !== r.id ? ' room-list-action-btn--placeholder' : ''}`}
@@ -443,7 +454,7 @@ export default function MuseumWorkspace() {
                   if (confirm(`Delete room "${r.name}"?`)) deleteRoom(r.id);
                 }}
               >
-                🗑
+                <Icon icon={UI_ICONS.trash} size={12} />
               </button>
             </span>
           )}
@@ -464,7 +475,10 @@ export default function MuseumWorkspace() {
   );
 
   return (
-    <div ref={contentRef} className={`content${roomEditor ? ' editor-layout' : ''}${mapLayout ? ' map-layout' : ''}`}>
+    <div
+      ref={contentRef}
+      className={`content${roomEditor ? ' editor-layout' : ''}${sessionLayout ? ' session-layout' : ''}${mapLayout ? ' map-layout' : ''}`}
+    >
       {/* Left sidebar */}
       {roomEditor ? (
         <EditorSidePanel

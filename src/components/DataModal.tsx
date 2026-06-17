@@ -81,13 +81,18 @@ export default function DataModal() {
     <div className="modal-backdrop" onClick={() => setOpen(false)}>
       <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 420 }}>
         <div className="modal-head">
-          <span>Data — Export / Import</span>
-          <button className="ghost" onClick={() => setOpen(false)} style={{ fontSize: 18, lineHeight: 1 }}>
+          <span className="modal-title">Data — Export / Import</span>
+          <button
+            type="button"
+            className="ghost modal-close"
+            onClick={() => setOpen(false)}
+            aria-label="Close"
+          >
             ×
           </button>
         </div>
         <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <p style={{ margin: 0, opacity: 0.7, fontSize: 13 }}>
+          <p className="muted" style={{ margin: 0, fontSize: 13 }}>
             Export all your museums to a JSON backup file, or restore from a previous export.
           </p>
           <div style={{ display: 'flex', gap: 8 }}>

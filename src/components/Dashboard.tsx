@@ -72,8 +72,14 @@ export default function Dashboard() {
                   ))}
                 </select>
               </div>
-              <button className="primary" onClick={handleCreate}>
-                + Create Museum
+              <button className="primary create-museum-submit" onClick={handleCreate}>
+                <span className="create-museum-submit-label create-museum-submit-label--desktop">
+                  + Create Museum
+                </span>
+                <span className="create-museum-submit-label create-museum-submit-label--mobile">
+                  <span className="create-museum-submit-word">Create</span>{' '}
+                  <span className="create-museum-submit-word">Museum</span>
+                </span>
               </button>
             </div>
           </div>
