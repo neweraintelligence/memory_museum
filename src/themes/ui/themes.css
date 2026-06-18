@@ -777,7 +777,8 @@
   }
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .field,
-  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field {
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) .field {
     width: 100%;
     max-width: 100%;
     margin-bottom: 0.55em;
@@ -785,7 +786,8 @@
   }
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) .field label,
-  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field label {
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) .field label,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) .field label {
     margin-bottom: 0.2em;
     font-size: 0.9em;
     line-height: 1.2;
@@ -797,7 +799,12 @@
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating:not(.collapsed) select,
   [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) input,
   [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) textarea,
-  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) select {
+  [data-ui-theme='utilitarian'] .content.editor-layout .side-floating:not(.collapsed) select,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) input,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) textarea,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) select,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) .bp-select,
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating:not(.collapsed) .bp-select-trigger {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;

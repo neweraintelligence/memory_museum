@@ -7,6 +7,7 @@ import { UI_ICONS } from '../themes/icons';
 import { MUSEUM_THEMES } from '../themes/styles';
 import { MUSEUM_TEMPLATES, buildBundleFromTemplate } from '../themes/templates';
 import { Console } from './Console';
+import ThemedSelect from './ThemedSelect';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -65,13 +66,11 @@ export default function Dashboard() {
               </div>
               <div className="field create-museum-field create-museum-field--theme">
                 <label>Theme</label>
-                <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-                  {MUSEUM_THEMES.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
+                <ThemedSelect
+                  value={theme}
+                  onChange={setTheme}
+                  options={MUSEUM_THEMES.map((t) => ({ value: t.id, label: t.label }))}
+                />
               </div>
               <button className="primary create-museum-submit" onClick={handleCreate}>
                 <span className="create-museum-submit-label create-museum-submit-label--desktop">

@@ -1,6 +1,7 @@
 import { useTheme } from '../state/useTheme';
 import { UI_THEMES } from '../themes/ui/themes';
 import type { UiThemeId } from '../themes/ui/types';
+import ThemedSelect from './ThemedSelect';
 
 export default function ThemeSwitcher() {
   const themeId = useTheme((s) => s.themeId);
@@ -10,18 +11,13 @@ export default function ThemeSwitcher() {
   return (
     <label className="theme-switcher" title={current?.description}>
       <span className="theme-switcher-label">Theme</span>
-      <select
+      <ThemedSelect
         className="theme-switcher-select"
         value={themeId}
-        onChange={(e) => setTheme(e.target.value as UiThemeId)}
+        onChange={(value) => setTheme(value as UiThemeId)}
         aria-label="UI theme"
-      >
-        {UI_THEMES.map((theme) => (
-          <option key={theme.id} value={theme.id}>
-            {theme.label}
-          </option>
-        ))}
-      </select>
+        options={UI_THEMES.map((theme) => ({ value: theme.id, label: theme.label }))}
+      />
     </label>
   );
 }

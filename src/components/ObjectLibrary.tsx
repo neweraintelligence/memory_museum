@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { OBJECT_LIBRARY, OBJECT_CATEGORIES, isWallAttachable, mustStack } from '../themes/objects';
 import { ObjectMenuIcon } from '../themes/ObjectMenuIcon';
 import { useUI } from '../state/useUI';
+import ThemedSelect from './ThemedSelect';
 
 function placementTarget(kind: string): string {
   if (isWallAttachable(kind)) return 'a wall';
@@ -23,14 +24,14 @@ export default function ObjectLibrary() {
     <div>
       <div className="field">
         <label>Category</label>
-        <select value={cat} onChange={(e) => setCat(e.target.value)}>
-          <option value="All">All objects</option>
-          {OBJECT_CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+        <ThemedSelect
+          value={cat}
+          onChange={setCat}
+          options={[
+            { value: 'All', label: 'All objects' },
+            ...OBJECT_CATEGORIES.map((c) => ({ value: c, label: c })),
+          ]}
+        />
       </div>
 
       {placingKind && (

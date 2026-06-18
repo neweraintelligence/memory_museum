@@ -343,6 +343,7 @@
   background: var(--bg);
   background-image: none;
   box-shadow: none;
+  overflow: visible;
 }
 
 [data-ui-theme='blueprint'] .brand {
@@ -472,7 +473,7 @@
 /* ---- Ghost buttons (topbar) ---- */
 
 [data-ui-theme='blueprint'] button.ghost,
-[data-ui-theme='blueprint'] .theme-switcher-select {
+[data-ui-theme='blueprint'] select.theme-switcher-select {
   padding: 6px 10px;
   min-height: 32px;
   box-sizing: border-box;
@@ -503,14 +504,13 @@
   letter-spacing: 0.08em;
 }
 
-/* ---- Theme switcher ---- */
+/* ---- Theme switcher (native fallback for non-blueprint via ThemedSelect) ---- */
 
-[data-ui-theme='blueprint'] .theme-switcher-select {
+[data-ui-theme='blueprint'] select.theme-switcher-select {
   min-width: 0;
   width: 132px;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.2;
-  background-color: transparent;
   border: 1px solid var(--border);
   border-radius: 0;
   box-shadow: none;
@@ -518,34 +518,244 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text);
+  background-color: transparent;
+}
+
+[data-ui-theme='blueprint'] select.theme-switcher-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 /* ---- Inputs ---- */
 
 [data-ui-theme='blueprint'] input,
-[data-ui-theme='blueprint'] textarea,
-[data-ui-theme='blueprint'] select {
+[data-ui-theme='blueprint'] textarea {
   background-color: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: 0;
   font-family: var(--font-body);
   font-weight: 400;
   color: var(--text);
+  box-shadow: none;
 }
+
+[data-ui-theme='blueprint'] input:focus,
+[data-ui-theme='blueprint'] textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+/* ---- Selects / dropdowns ---- */
 
 [data-ui-theme='blueprint'] select {
   appearance: none;
   -webkit-appearance: none;
+  background-color: var(--input-bg);
   background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234dabf7' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 32px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding: 7px 32px 7px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+[data-ui-theme='blueprint'] select:hover {
+  border-color: var(--accent);
+  background-color: rgba(77, 171, 247, 0.06);
+}
+
+[data-ui-theme='blueprint'] select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+[data-ui-theme='blueprint'] select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: rgba(0, 20, 60, 0.25);
 }
 
 [data-ui-theme='blueprint'] select option,
 [data-ui-theme='blueprint'] select optgroup {
   background-color: var(--bg);
   color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Custom blueprint dropdown (full color control on open menu) */
+
+[data-ui-theme='blueprint'] .bp-select {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='blueprint'] .bp-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 7px 10px 7px 10px;
+  cursor: pointer;
+  box-shadow: none;
+  text-align: left;
+  line-height: 1.2;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-ui-theme='blueprint'] .bp-select-trigger:hover:not(:disabled) {
+  border-color: var(--accent);
+  background-color: rgba(77, 171, 247, 0.08);
+}
+
+[data-ui-theme='blueprint'] .bp-select.is-open .bp-select-trigger {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+[data-ui-theme='blueprint'] .bp-select.is-disabled .bp-select-trigger {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: rgba(18, 36, 72, 0.45);
+}
+
+[data-ui-theme='blueprint'] .bp-select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-ui-theme='blueprint'] .bp-select-chevron {
+  flex-shrink: 0;
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234dabf7' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.15s ease;
+}
+
+[data-ui-theme='blueprint'] .bp-select.is-open .bp-select-chevron {
+  transform: rotate(180deg);
+}
+
+[data-ui-theme='blueprint'] .bp-select-menu {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background-color: var(--bg-2);
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(180, 210, 255, 0.08),
+    0 6px 20px rgba(10, 22, 40, 0.55);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+[data-ui-theme='blueprint'] .bp-select-option {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 7px 10px;
+  border: none;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+[data-ui-theme='blueprint'] .bp-select-option:hover {
+  background-color: rgba(77, 171, 247, 0.12);
+  color: var(--text);
+  border-left-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .bp-select-option.is-selected {
+  background-color: rgba(77, 171, 247, 0.18);
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .bp-select-option.is-selected:hover {
+  background-color: rgba(77, 171, 247, 0.24);
+  color: #e8f4ff;
+}
+
+/* Topbar theme switcher — ghost surface, not recessed input well */
+[data-ui-theme='blueprint'] .bp-select.theme-switcher-select {
+  width: 132px;
+  min-width: 0;
+}
+
+[data-ui-theme='blueprint'] .bp-select.theme-switcher-select .bp-select-trigger {
+  background-color: transparent;
+  min-height: 32px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  font-size: 10px;
+}
+
+[data-ui-theme='blueprint'] .bp-select.theme-switcher-select .bp-select-trigger:hover:not(:disabled) {
+  background-color: rgba(77, 171, 247, 0.08);
+}
+
+[data-ui-theme='blueprint'] .bp-select.theme-switcher-select .bp-select-menu {
+  min-width: 100%;
+}
+
+/* Footer toolbar: open menus upward so they stay on screen */
+[data-ui-theme='blueprint'] .topbar .theme-switcher {
+  overflow: visible;
+}
+
+[data-ui-theme='blueprint'] .topbar .bp-select-menu {
+  top: auto;
+  bottom: calc(100% + 4px);
+  z-index: 50;
 }
 
 /* ---- Side panels (glass surfaces) ---- */
@@ -700,14 +910,17 @@
 }
 
 [data-ui-theme='blueprint'] .create-museum-field input,
-[data-ui-theme='blueprint'] .create-museum-field select {
+[data-ui-theme='blueprint'] .create-museum-field select,
+[data-ui-theme='blueprint'] .create-museum-field .bp-select-trigger {
   width: 100%;
   max-width: 100%;
   height: 34px;
   box-sizing: border-box;
 }
 
-[data-ui-theme='blueprint'] .page .field label {
+[data-ui-theme='blueprint'] .page .field label,
+[data-ui-theme='blueprint'] .side .field label,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .field label {
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 400;
@@ -1300,6 +1513,11 @@
     font-size: 10px;
   }
 
+  [data-ui-theme='blueprint'] .bp-select.theme-switcher-select {
+    width: 100px;
+    max-width: 100px;
+  }
+
   [data-ui-theme='blueprint'] .page {
     width: 100%;
     max-width: 100%;
@@ -1335,10 +1553,16 @@
   }
 
   [data-ui-theme='blueprint'] .create-museum-field input,
-  [data-ui-theme='blueprint'] .create-museum-field select {
+  [data-ui-theme='blueprint'] .create-museum-field select,
+  [data-ui-theme='blueprint'] .create-museum-field .bp-select-trigger {
     height: 32px;
     font-size: 12px;
     padding: 5px 7px;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-field select {
+    padding-right: 28px;
+    background-position: right 8px center;
   }
 
   [data-ui-theme='blueprint'] .create-museum-bar > .row > button.primary,

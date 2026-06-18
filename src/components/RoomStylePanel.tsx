@@ -6,6 +6,7 @@ import { roomIcon, UI_ICONS } from '../themes/icons';
 import { getRoomTiles, roomTileSet } from '../lib/floor';
 import { autoWallKeys } from '../lib/wallAttach';
 import type { Room } from '../types';
+import ThemedSelect from './ThemedSelect';
 
 export default function RoomStylePanel({ room }: { room: Room }) {
   const updateRoom = useStore((s) => s.updateRoom);
@@ -30,17 +31,12 @@ export default function RoomStylePanel({ room }: { room: Room }) {
           <span style={{ lineHeight: 0, color: 'var(--text-dim)' }}>
             <Icon icon={roomIcon(room.type)} size={20} className="room-type-icon" />
           </span>
-          <select
+          <ThemedSelect
             style={{ flex: 1 }}
             value={room.type}
-            onChange={(e) => updateRoom(room.id, { type: e.target.value })}
-          >
-            {ROOM_TYPES.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
-              </option>
-            ))}
-          </select>
+            onChange={(type) => updateRoom(room.id, { type })}
+            options={ROOM_TYPES.map((t) => ({ value: t.id, label: t.label }))}
+          />
         </div>
       </div>
 
@@ -98,28 +94,24 @@ export default function RoomStylePanel({ room }: { room: Room }) {
         <div className="field" style={{ opacity: (room.tiles?.length ?? 0) > 0 ? 0.5 : 1 }}>
           <label>Starter rectangle{(room.tiles?.length ?? 0) > 0 ? ' (custom floor active)' : ''}</label>
         <div className="row">
-          <select
+          <ThemedSelect
             value={room.gridW}
             disabled={(room.tiles?.length ?? 0) > 0}
-            onChange={(e) => updateRoom(room.id, { gridW: Number(e.target.value) })}
-          >
-            {[4, 5, 6, 7, 8, 9, 10].map((n) => (
-              <option key={n} value={n}>
-                W {n}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={(value) => updateRoom(room.id, { gridW: Number(value) })}
+            options={[4, 5, 6, 7, 8, 9, 10].map((n) => ({
+              value: String(n),
+              label: `W ${n}`,
+            }))}
+          />
+          <ThemedSelect
             value={room.gridH}
             disabled={(room.tiles?.length ?? 0) > 0}
-            onChange={(e) => updateRoom(room.id, { gridH: Number(e.target.value) })}
-          >
-            {[4, 5, 6, 7, 8, 9, 10].map((n) => (
-              <option key={n} value={n}>
-                H {n}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => updateRoom(room.id, { gridH: Number(value) })}
+            options={[4, 5, 6, 7, 8, 9, 10].map((n) => ({
+              value: String(n),
+              label: `H ${n}`,
+            }))}
+          />
         </div>
       </div>
 
