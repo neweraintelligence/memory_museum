@@ -543,8 +543,8 @@
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed),
   [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) {
-    width: min(33.33vw, calc(100vw - 16px)) !important;
-    max-width: 33.33vw !important;
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
     font-size: clamp(calc(7.7px * 1.15 * 1.1), calc(1.98vw * 1.15 * 1.1), calc(9.9px * 1.15 * 1.1));
     left: var(--editor-panel-side-inset, 8px) !important;
     right: auto !important;
@@ -947,7 +947,8 @@
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions,
   [data-ui-theme='utilitarian'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
-    flex: 1 1 100%;
+    flex: 0 0 100%;
+    width: 100%;
     margin-left: 0;
     justify-content: flex-end;
   }

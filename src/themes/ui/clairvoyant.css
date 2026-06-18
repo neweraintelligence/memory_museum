@@ -1152,14 +1152,14 @@
     right: 52px;
   }
 
-  /* Left museum panel — 40% screen width, content reflows horizontally */
+  /* Left museum panel — 50% screen width, room actions on their own row */
   [data-ui-theme='clairvoyant'] .content.editor-layout .side-floating.left:not(.collapsed) {
-    width: min(40vw, calc(100vw - 16px)) !important;
-    max-width: 40vw !important;
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
     min-width: 0;
     left: var(--editor-panel-side-inset, 8px) !important;
     right: auto !important;
-    top: calc(var(--editor-panel-top, 72px) - 10px);
+    top: var(--editor-panel-top, 72px);
     bottom: var(--editor-panel-bottom, 12px);
     box-sizing: border-box;
     overflow: hidden;
@@ -1221,7 +1221,8 @@
   }
 
   [data-ui-theme='clairvoyant'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item.active .room-list-actions {
-    flex: 1 1 100%;
+    flex: 0 0 100%;
+    width: 100%;
     margin-left: 0;
     justify-content: flex-end;
     gap: 6px;

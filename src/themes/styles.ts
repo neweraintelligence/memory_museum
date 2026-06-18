@@ -54,7 +54,7 @@ export interface RoomStyle {
 export const ROOM_STYLES: RoomStyle[] = [
   {
     id: 'gothic-library',
-    label: 'Gothic Library',
+    label: 'Timeless Library',
     floorA: '#3b2f2a',
     floorB: '#332823',
     wallLeft: '#4a3a33',
@@ -68,7 +68,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'utilitarian',
-    label: 'Utilitarian Concrete',
+    label: 'Brutalist Atrium',
     floorA: '#9a9a9a',
     floorB: '#8d8d8d',
     wallLeft: '#7d7d7d',
@@ -82,7 +82,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'tea-room',
-    label: 'Japanese Tea Room',
+    label: 'Tea Room',
     floorA: '#cdab76',
     floorB: '#c4a26c',
     wallLeft: '#e9ddc7',
@@ -96,7 +96,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'spaceship',
-    label: 'Futuristic Spaceship',
+    label: 'Futuristic Lab',
     floorA: '#1d2740',
     floorB: '#222d4a',
     wallLeft: '#27324f',
@@ -166,7 +166,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'cozy-apartment',
-    label: 'Cozy Apartment',
+    label: 'Beach House',
     floorA: '#c79a6a',
     floorB: '#bd9162',
     wallLeft: '#e7d3bd',
@@ -194,7 +194,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'victorian-parlor',
-    label: 'Victorian Parlor',
+    label: 'Palace Ballroom',
     floorA: '#8a5a32',
     floorB: '#7e4f2b',
     wallLeft: '#5e3550',
@@ -209,7 +209,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'stone-keep',
-    label: 'Stone Keep',
+    label: 'Gothic Belfry',
     floorA: '#8f8a82',
     floorB: '#84807a',
     wallLeft: '#6f6a63',
@@ -238,7 +238,7 @@ export const ROOM_STYLES: RoomStyle[] = [
   },
   {
     id: 'reading-study',
-    label: 'Reading Study',
+    label: 'Private Study',
     floorA: '#7c2f2f',
     floorB: '#732a2a',
     wallLeft: '#5a4632',

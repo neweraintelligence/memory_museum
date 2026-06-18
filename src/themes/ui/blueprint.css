@@ -24,6 +24,7 @@
   --bad: #ff6b6b;
 
   --text-on-accent: #0a1628;
+  --text-on-glass-accent: #e8f4ff;
   --input-bg: rgba(0, 20, 60, 0.5);
   --danger-border: rgba(255, 107, 107, 0.5);
   --dot-off: rgba(120, 180, 255, 0.25);
@@ -42,33 +43,28 @@
   --heading-shadow: none;
   --text-shadow: none;
   --inset-shadow: none;
-  --bp-accent-glass-bg: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.38) 0%,
-    rgba(130, 200, 255, 0.92) 22%,
-    rgba(77, 171, 247, 0.82) 55%,
-    rgba(51, 154, 240, 0.78) 100%
-  );
-  --bp-accent-glass-bg-hover: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.48) 0%,
-    rgba(150, 210, 255, 0.95) 22%,
-    rgba(90, 185, 255, 0.88) 55%,
-    rgba(60, 165, 245, 0.84) 100%
-  );
-  --bp-accent-glass-border: rgba(255, 255, 255, 0.42);
-  --bp-accent-glass-border-hover: rgba(255, 255, 255, 0.58);
+  --bp-accent-glass-fill: rgba(32, 72, 138, 0.52);
+  --bp-accent-glass-fill-hover: rgba(42, 88, 158, 0.58);
+  --bp-accent-glass-border: rgba(150, 195, 255, 0.36);
+  --bp-accent-glass-border-hover: rgba(175, 215, 255, 0.48);
+  --bp-accent-glass-blur: blur(20px) saturate(1.5);
+  --bp-accent-glass-specular:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.52) 50%, transparent),
+    radial-gradient(110% 85% at 50% -40%, rgba(180, 220, 255, 0.24), transparent 58%);
+  --bp-accent-glass-specular-hover:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.64) 50%, transparent),
+    radial-gradient(110% 85% at 50% -40%, rgba(190, 225, 255, 0.32), transparent 58%);
   --bp-accent-glass-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(10, 40, 90, 0.18),
-    0 2px 10px rgba(77, 171, 247, 0.35);
+    inset 0 -12px 20px rgba(12, 36, 82, 0.18),
+    inset 0 1px 0 rgba(210, 230, 255, 0.18),
+    0 4px 18px rgba(20, 60, 120, 0.28);
   --bp-accent-glass-shadow-hover:
-    inset 0 1px 0 rgba(255, 255, 255, 0.65),
-    inset 0 -1px 0 rgba(10, 40, 90, 0.14),
-    0 4px 16px rgba(77, 171, 247, 0.45);
+    inset 0 -12px 20px rgba(12, 36, 82, 0.14),
+    inset 0 1px 0 rgba(220, 238, 255, 0.24),
+    0 6px 22px rgba(30, 80, 150, 0.34);
   --button-active-shadow:
-    inset 0 2px 4px rgba(10, 40, 90, 0.22),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    inset 0 3px 8px rgba(0, 6, 18, 0.38),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   --focus-ring: 0 0 0 2px rgba(77, 171, 247, 0.5);
   --active-ring: 0 0 0 1px var(--accent);
   --chrome-shadow: none;
@@ -82,7 +78,9 @@
 
   --bg-texture: url('/blueprint-bg.jpg');
   --bp-chrome-height: 52px;
-  --bp-floating-offset: calc(var(--bp-chrome-height) + 20px);
+  --bp-floating-inset: 20px;
+  --bp-floating-gap: 20px;
+  --bp-floating-offset: calc(var(--bp-chrome-height) + var(--bp-floating-gap));
 }
 
 /* ---- Selection ---- */
@@ -128,11 +126,32 @@
   background-color: var(--bg);
 }
 
+/* ---- Floating corner controls (mirrored above bottom chrome) ---- */
+
+[data-ui-theme='blueprint'] .wallpaper-toggle,
+[data-ui-theme='blueprint'] .wallpaper-toggle.active,
+[data-ui-theme='blueprint'] .console-input {
+  position: fixed;
+  bottom: var(--bp-floating-offset);
+  z-index: 45;
+}
+
+[data-ui-theme='blueprint'] .console-input {
+  left: var(--bp-floating-inset);
+  right: auto;
+  top: auto;
+}
+
+[data-ui-theme='blueprint'] .wallpaper-toggle,
+[data-ui-theme='blueprint'] .wallpaper-toggle.active {
+  right: var(--bp-floating-inset);
+  left: auto;
+  top: auto;
+}
+
 /* ---- Wallpaper toggle ---- */
 
 [data-ui-theme='blueprint'] .wallpaper-toggle {
-  right: 20px;
-  bottom: var(--bp-floating-offset);
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 0;
@@ -144,9 +163,28 @@
   letter-spacing: 0.1em;
 }
 
-[data-ui-theme='blueprint'] .console-input {
-  left: 20px;
-  bottom: var(--bp-floating-offset);
+[data-ui-theme='blueprint'] .wallpaper-toggle.active {
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--bp-accent-glass-fill);
+  background-image: none;
+  border: 1px solid var(--bp-accent-glass-border);
+  color: var(--text-on-glass-accent);
+  -webkit-backdrop-filter: var(--bp-accent-glass-blur);
+  backdrop-filter: var(--bp-accent-glass-blur);
+  box-shadow: var(--bp-accent-glass-shadow);
+}
+
+[data-ui-theme='blueprint'] .wallpaper-toggle.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--bp-accent-glass-specular);
+  background-size: 76% 1px, 100% 100%;
+  background-position: top center, center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
 }
 
 [data-ui-theme='blueprint'] .wallpaper-toggle:hover {
@@ -154,13 +192,78 @@
   border-color: var(--accent);
 }
 
-[data-ui-theme='blueprint'] .wallpaper-toggle.active {
-  background: var(--bp-accent-glass-bg);
-  border-color: var(--bp-accent-glass-border);
-  color: var(--text-on-accent);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  backdrop-filter: blur(10px) saturate(1.2);
+[data-ui-theme='blueprint'] .wallpaper-toggle.active:hover {
+  background-color: var(--bp-accent-glass-fill-hover);
+  background-image: none;
+  border-color: var(--bp-accent-glass-border-hover);
+  color: #ffffff;
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+}
+
+[data-ui-theme='blueprint'] .wallpaper-toggle.active:hover::before {
+  background-image: var(--bp-accent-glass-specular-hover);
+}
+
+/* ---- Accent glass buttons (flat fill + layered shine) ---- */
+
+[data-ui-theme='blueprint'] button.primary,
+[data-ui-theme='blueprint'] button.cloud-pill-save,
+[data-ui-theme='blueprint'] .mode-switch button.active {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--bp-accent-glass-fill);
+  background-image: none;
+  border: 1px solid var(--bp-accent-glass-border);
+  color: var(--text-on-glass-accent);
+  -webkit-backdrop-filter: var(--bp-accent-glass-blur);
+  backdrop-filter: var(--bp-accent-glass-blur);
   box-shadow: var(--bp-accent-glass-shadow);
+}
+
+[data-ui-theme='blueprint'] button.primary::before,
+[data-ui-theme='blueprint'] button.cloud-pill-save::before,
+[data-ui-theme='blueprint'] .mode-switch button.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--bp-accent-glass-specular);
+  background-size: 76% 1px, 100% 100%;
+  background-position: top center, center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-ui-theme='blueprint'] button.primary:hover::before,
+[data-ui-theme='blueprint'] button.cloud-pill-save:hover::before,
+[data-ui-theme='blueprint'] .mode-switch button.active:hover::before {
+  background-image: var(--bp-accent-glass-specular-hover);
+}
+
+[data-ui-theme='blueprint'] button.primary:hover,
+[data-ui-theme='blueprint'] button.cloud-pill-save:hover,
+[data-ui-theme='blueprint'] .mode-switch button.active:hover {
+  background-color: var(--bp-accent-glass-fill-hover);
+  background-image: none;
+  border-color: var(--bp-accent-glass-border-hover);
+  color: #ffffff;
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+}
+
+[data-ui-theme='blueprint'] button.primary:active,
+[data-ui-theme='blueprint'] button.cloud-pill-save:active,
+[data-ui-theme='blueprint'] .mode-switch button.active:active {
+  background-color: var(--bp-accent-glass-fill);
+  box-shadow: var(--button-active-shadow);
+  transform: none;
+  filter: none;
+}
+
+[data-ui-theme='blueprint'] button.primary:active::before,
+[data-ui-theme='blueprint'] button.cloud-pill-save:active::before,
+[data-ui-theme='blueprint'] .mode-switch button.active:active::before {
+  opacity: 0.65;
 }
 
 /* ---- Typography ---- */
@@ -283,22 +386,6 @@
   color: var(--text);
 }
 
-[data-ui-theme='blueprint'] .mode-switch button.active {
-  background: var(--bp-accent-glass-bg);
-  background-color: transparent;
-  border-color: var(--bp-accent-glass-border);
-  color: var(--text-on-accent);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  backdrop-filter: blur(10px) saturate(1.2);
-  box-shadow: var(--bp-accent-glass-shadow);
-}
-
-[data-ui-theme='blueprint'] .mode-switch button.active:hover {
-  background: var(--bp-accent-glass-bg-hover);
-  border-color: var(--bp-accent-glass-border-hover);
-  box-shadow: var(--bp-accent-glass-shadow-hover);
-}
-
 /* ---- Buttons ---- */
 
 [data-ui-theme='blueprint'] button {
@@ -319,32 +406,12 @@
 }
 
 [data-ui-theme='blueprint'] button.primary {
-  background: var(--bp-accent-glass-bg);
-  background-color: transparent;
-  border-color: var(--bp-accent-glass-border);
-  color: var(--text-on-accent);
   font-weight: 500;
   letter-spacing: 0.04em;
   border-radius: 0;
   text-transform: uppercase;
   font-family: var(--font-mono);
   font-size: 11px;
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  backdrop-filter: blur(10px) saturate(1.2);
-  box-shadow: var(--bp-accent-glass-shadow);
-}
-
-[data-ui-theme='blueprint'] button.primary:hover {
-  background: var(--bp-accent-glass-bg-hover);
-  border-color: var(--bp-accent-glass-border-hover);
-  box-shadow: var(--bp-accent-glass-shadow-hover);
-}
-
-[data-ui-theme='blueprint'] button.primary:active {
-  background: var(--bp-accent-glass-bg);
-  box-shadow: var(--button-active-shadow);
-  transform: none;
-  filter: none;
 }
 
 [data-ui-theme='blueprint'] button.ghost {
@@ -361,13 +428,13 @@
 [data-ui-theme='blueprint'] button.danger {
   background-color: transparent;
   background-image: none;
-  color: var(--bad);
-  border-color: var(--danger-border);
+  color: var(--accent);
+  border-color: var(--border);
 }
 
 [data-ui-theme='blueprint'] button.danger:hover {
-  background-color: rgba(255, 107, 107, 0.08);
-  border-color: var(--bad);
+  background-color: rgba(77, 171, 247, 0.08);
+  border-color: var(--accent);
 }
 
 /* ---- Ghost buttons (topbar) ---- */
@@ -398,23 +465,10 @@
 }
 
 [data-ui-theme='blueprint'] button.cloud-pill-save {
-  background: var(--bp-accent-glass-bg);
-  background-color: transparent;
-  border-color: var(--bp-accent-glass-border);
-  color: var(--text-on-accent);
   font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  backdrop-filter: blur(10px) saturate(1.2);
-  box-shadow: var(--bp-accent-glass-shadow);
-}
-
-[data-ui-theme='blueprint'] button.cloud-pill-save:hover {
-  background: var(--bp-accent-glass-bg-hover);
-  border-color: var(--bp-accent-glass-border-hover);
-  box-shadow: var(--bp-accent-glass-shadow-hover);
 }
 
 /* ---- Theme switcher ---- */
@@ -577,16 +631,31 @@
   right: -5px;
 }
 
-[data-ui-theme='blueprint'] .create-museum-field--name {
-  min-width: 110px;
-}
-
+[data-ui-theme='blueprint'] .create-museum-field--name,
 [data-ui-theme='blueprint'] .create-museum-field--theme {
-  min-width: 80px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 [data-ui-theme='blueprint'] .create-museum-bar > .row {
+  width: 100%;
+  min-width: 0;
   align-items: flex-end;
+  flex-wrap: nowrap;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar .field {
+  margin-bottom: 0;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar > .row > button.primary,
+[data-ui-theme='blueprint'] .create-museum-bar > .row > button.create-museum-submit {
+  height: 34px;
+  padding: 0 12px;
+  line-height: 1;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 [data-ui-theme='blueprint'] .create-museum-bar .field label {
@@ -600,6 +669,8 @@
 
 [data-ui-theme='blueprint'] .create-museum-field input,
 [data-ui-theme='blueprint'] .create-museum-field select {
+  width: 100%;
+  max-width: 100%;
   height: 34px;
   box-sizing: border-box;
 }
@@ -1260,17 +1331,54 @@
   }
 
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) {
-    width: min(40vw, calc(100vw - 16px)) !important;
-    max-width: 40vw !important;
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
     min-width: 0;
     left: var(--editor-panel-side-inset, 8px) !important;
     right: auto !important;
-    top: 14px;
+    top: var(--editor-panel-top, 72px);
     bottom: 64px;
     box-sizing: border-box;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item {
+    height: auto !important;
+    min-height: 44px;
+    padding: 8px 10px;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon {
+    flex: none;
+    flex-shrink: 0;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon) {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.right:not(.collapsed) {
@@ -1279,7 +1387,7 @@
     min-width: 0;
     left: auto !important;
     right: var(--editor-panel-side-inset, 8px) !important;
-    top: 14px;
+    top: var(--editor-panel-top, 72px);
     bottom: 64px;
     z-index: 15;
     box-sizing: border-box;

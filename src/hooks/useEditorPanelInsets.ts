@@ -2,7 +2,23 @@ import { useLayoutEffect, type RefObject } from 'react';
 
 const PANEL_GAP = 10;
 const PANEL_EXTRA_TOP = 52;
+const MOBILE_PANEL_GAP = 8;
 const MOBILE_MQ = '(max-width: 767px)';
+
+/** On mobile, expanded side panels must clear the room pill + x-ray row(s). */
+function mobilePanelTopBelowOverlay(
+  container: HTMLElement,
+  contentTop: number,
+  fallbackTop: number,
+): number {
+  const overlay = container.querySelector<HTMLElement>('.canvas-overlay');
+  if (!overlay) return fallbackTop;
+
+  const overlayRect = overlay.getBoundingClientRect();
+  if (overlayRect.height <= 0) return fallbackTop;
+
+  return Math.max(overlayRect.bottom - contentTop + MOBILE_PANEL_GAP, fallbackTop);
+}
 
 /** Keep floating editor panels below the top bar as the window or bar height changes. */
 export function useEditorPanelInsets(
@@ -17,6 +33,7 @@ export function useEditorPanelInsets(
     let ro: ResizeObserver | null = null;
     let themeObserver: MutationObserver | null = null;
     let bound = false;
+    let observedOverlay: HTMLElement | null = null;
 
     const clearVars = (el: HTMLElement | null) => {
       el?.style.removeProperty('--canvas-overlay-top');
@@ -51,7 +68,10 @@ export function useEditorPanelInsets(
 
       if (bottomBar) {
         overlayTop = isMobile ? 10 : 14;
-        panelTop = isMobile ? 10 : 14 + PANEL_EXTRA_TOP;
+        const bottomBarPanelFallback = overlayTop + (isMobile ? 44 : PANEL_EXTRA_TOP);
+        panelTop = isMobile
+          ? mobilePanelTopBelowOverlay(container, contentTop, bottomBarPanelFallback)
+          : 14 + PANEL_EXTRA_TOP;
         const barHeight = topbarRect.bottom - topbarRect.top;
         const bottomGap = barHeight + PANEL_GAP + (isMobile ? 4 : 8);
         panelBottom = `${bottomGap}px`;
@@ -60,13 +80,22 @@ export function useEditorPanelInsets(
       } else {
         const topbarBottom = topbarRect.bottom;
         overlayTop = Math.max(isMobile ? 10 : 14, topbarBottom - contentTop + PANEL_GAP);
-        panelTop = Math.max(
+        const topBarPanelFallback = Math.max(
           isMobile ? 10 : 14,
           topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP,
         );
+        panelTop = isMobile
+          ? mobilePanelTopBelowOverlay(container, contentTop, topBarPanelFallback)
+          : topBarPanelFallback;
         panelBottom = isMobile ? '12px' : '18px';
         collapsedBottom = isMobile ? '68px' : '88px';
         collapsedBottomSession = isMobile ? '148px' : '88px';
+      }
+
+      const overlay = container.querySelector<HTMLElement>('.canvas-overlay');
+      if (overlay && overlay !== observedOverlay) {
+        ro?.observe(overlay);
+        observedOverlay = overlay;
       }
 
       container.style.setProperty('--canvas-overlay-top', `${overlayTop}px`);

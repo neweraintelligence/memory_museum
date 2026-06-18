@@ -1532,6 +1532,51 @@ html {
     bottom: var(--editor-panel-collapsed-bottom-session, 148px);
   }
 
+  /* 2b. Left museum panel — wider rows, room actions on their own line */
+  .content.editor-layout .side-floating.left:not(.collapsed) {
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
+    left: var(--editor-panel-side-inset, 8px) !important;
+    right: auto !important;
+  }
+
+  .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item {
+    height: auto !important;
+    min-height: 44px;
+    padding: 8px 10px;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item .room-list-icon {
+    flex: none;
+    flex-shrink: 0;
+  }
+
+  .content.editor-layout .side-floating.left:not(.collapsed) .room-list-item > span:not(.room-list-actions):not(.room-list-icon) {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.editor-layout .side-floating.left:not(.collapsed) .room-list-actions {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .content.editor-layout .side-floating.left:not(.collapsed) .room-list-rename-input {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   /* 3. Walk / review mode bar */
   .modebar {
     min-width: 0;
