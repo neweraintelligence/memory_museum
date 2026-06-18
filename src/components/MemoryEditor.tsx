@@ -160,7 +160,7 @@ export default function MemoryEditor({ obj }: { obj: PObject }) {
           placeholder="https://…"
           onChange={(e) => updateMemory(memory.id, { imageUrl: e.target.value })}
         />
-        {memory.imageUrl && (
+        {memory.imageUrl && /^https?:\/\//i.test(memory.imageUrl) && (
           <img
             src={memory.imageUrl}
             alt=""

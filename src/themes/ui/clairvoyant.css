@@ -991,23 +991,38 @@
     left: 8px;
     right: 8px;
     padding: 6px 8px;
-    gap: 6px;
+    gap: 4px;
+    row-gap: 4px;
+  }
+
+  [data-ui-theme='clairvoyant'] .topbar .spacer {
+    flex: 0 0 0;
+    min-width: 0;
+    width: 0;
+    overflow: hidden;
   }
 
   [data-ui-theme='clairvoyant'] .brand {
-    font-size: 16px;
-    gap: 9px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  [data-ui-theme='clairvoyant'] .brand .brand-icon {
+    height: 24px;
+    width: 24px;
   }
 
   [data-ui-theme='clairvoyant'] .brand-text {
-    font-size: calc(11px * 1.5);
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+    width: auto;
   }
 
   [data-ui-theme='clairvoyant'] .theme-switcher-select {
-    width: calc(96px * 1.1 * 1.1);
-    max-width: calc(96px * 1.1 * 1.1);
+    width: calc(96px * 1.1);
+    max-width: calc(96px * 1.1);
     font-size: 11px;
   }
 

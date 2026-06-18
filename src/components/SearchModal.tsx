@@ -134,8 +134,8 @@ export default function SearchModal() {
         </div>
         <div className="modal-body">
           {q && hits.length === 0 && <div className="empty">No matches.</div>}
-          {hits.map((h, i) => (
-            <div key={i} className="search-result" onClick={() => go(h)}>
+          {hits.map((h) => (
+            <div key={h.objectId ?? h.roomId} className="search-result" onClick={() => go(h)}>
               <span style={{ lineHeight: 0, color: 'var(--text)' }}>
                 <Icon icon={h.icon} size={22} />
               </span>

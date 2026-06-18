@@ -1021,19 +1021,35 @@
 }
 
 @media (max-width: 767px) {
+  [data-ui-theme='bookworm'] .topbar {
+    gap: 4px;
+    row-gap: 4px;
+  }
+
+  [data-ui-theme='bookworm'] .topbar .spacer {
+    flex: 0 0 0;
+    min-width: 0;
+    width: 0;
+    overflow: hidden;
+  }
+
   [data-ui-theme='bookworm'] .brand .brand-icon {
-    height: 32px;
-    width: 32px;
+    height: 26px;
+    width: 26px;
   }
 
   [data-ui-theme='bookworm'] .brand {
-    gap: 9px;
+    gap: 4px;
+    margin-left: 0;
+    font-size: 11px;
   }
 
   [data-ui-theme='bookworm'] .brand-text {
-    font-size: calc(12px * 1.2);
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+    width: auto;
   }
 
   [data-ui-theme='bookworm'] .page-head h1 {

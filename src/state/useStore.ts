@@ -88,7 +88,9 @@ interface State {
 type TName = 'museums' | 'rooms' | 'connections' | 'objects' | 'memories';
 
 function persist<T extends { id: string }>(tableName: TName, rec: T): void {
-  void (db[tableName] as unknown as Table<T, string>).put(rec);
+  (db[tableName] as unknown as Table<T, string>).put(rec).catch((err) => {
+    console.error(`[db] persist ${tableName} failed:`, err);
+  });
   queuePush(tableName, rec);
 }
 
@@ -286,6 +288,8 @@ export const useStore = create<State>((set, get) => ({
       walls: [...(room.walls ?? [])],
     });
     const objects = s.objects.filter((o) => o.roomId === id);
+    const newObjects: PObject[] = [];
+    const newMemories: Memory[] = [];
     objects.forEach((o) => {
       const copy: PObject = { ...o, id: newId(), roomId: newRoom.id, updatedAt: now() };
       persist('objects', copy);
@@ -294,11 +298,13 @@ export const useStore = create<State>((set, get) => ({
         ? { ...mem, id: newId(), objectId: copy.id, updatedAt: now() }
         : blankMemory(copy.id);
       persist('memories', memCopy);
-      set((st) => ({
-        objects: [...st.objects, copy],
-        memories: [...st.memories, memCopy],
-      }));
+      newObjects.push(copy);
+      newMemories.push(memCopy);
     });
+    set((st) => ({
+      objects: [...st.objects, ...newObjects],
+      memories: [...st.memories, ...newMemories],
+    }));
     return newRoom;
   },
 
@@ -488,17 +494,20 @@ export const useStore = create<State>((set, get) => ({
   },
 
   importBundle: (bundle) => {
+    const s = get();
+    const existingIds = new Set(s.museums.map((m) => m.id));
+    if (existingIds.has(bundle.museum.id)) return; // skip duplicate import
     persist('museums', bundle.museum);
     bundle.rooms.forEach((r) => persist('rooms', r));
     bundle.connections.forEach((c) => persist('connections', c));
     bundle.objects.forEach((o) => persist('objects', o));
     bundle.memories.forEach((m) => persist('memories', m));
-    set((s) => ({
-      museums: [...s.museums, bundle.museum],
-      rooms: [...s.rooms, ...bundle.rooms],
-      connections: [...s.connections, ...bundle.connections],
-      objects: [...s.objects, ...bundle.objects],
-      memories: [...s.memories, ...bundle.memories],
+    set((st) => ({
+      museums: [...st.museums, bundle.museum],
+      rooms: [...st.rooms, ...bundle.rooms],
+      connections: [...st.connections, ...bundle.connections],
+      objects: [...st.objects, ...bundle.objects],
+      memories: [...st.memories, ...bundle.memories],
     }));
   },
 }));

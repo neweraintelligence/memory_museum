@@ -1,4 +1,5 @@
 import type { Memory, ReviewStatus } from '../types';
+import { now } from './id';
 
 export type Grade = 'easy' | 'hard' | 'forgotten' | 'mastered' | 'needs-review';
 
@@ -17,7 +18,7 @@ export const GRADES: { id: Grade; label: string; color: string }[] = [
  * the user grades a recall attempt.
  */
 export function applyGrade(memory: Memory, grade: Grade): Partial<Memory> {
-  const ts = Date.now();
+  const ts = now();
   let ease = memory.ease || 2.5;
   let difficulty = memory.difficulty || 0; // running interval in days
 

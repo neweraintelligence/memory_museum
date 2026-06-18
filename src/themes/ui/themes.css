@@ -410,18 +410,33 @@
 }
 
 @media (max-width: 767px) {
+  [data-ui-theme='utilitarian'] .topbar {
+    gap: 4px;
+    row-gap: 4px;
+  }
+
+  [data-ui-theme='utilitarian'] .topbar .spacer {
+    flex: 0 0 0;
+    min-width: 0;
+    width: 0;
+    overflow: hidden;
+  }
+
   [data-ui-theme='utilitarian'] .brand {
-    gap: 9px;
+    gap: 4px;
+    font-size: 11px;
   }
 
   [data-ui-theme='utilitarian'] .brand-text {
-    font-size: calc(12px * 1.25);
+    font-size: 11px;
     font-weight: 700;
+    white-space: nowrap;
+    width: auto;
   }
 
   [data-ui-theme='utilitarian'] .theme-switcher-select {
-    width: calc(108px * 1.1 * 1.1);
-    max-width: calc(108px * 1.1 * 1.1);
+    width: calc(108px * 1.1);
+    max-width: calc(108px * 1.1);
   }
 
   [data-ui-theme='utilitarian'] .create-museum-bar {

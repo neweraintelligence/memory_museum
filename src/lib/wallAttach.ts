@@ -1,6 +1,5 @@
 import { gridToScreen } from './iso';
 import { tileKey } from './floor';
-import { isWallAttachable } from '../themes/objects';
 import type { WallSide } from '../types';
 
 export type WallSeg = {
@@ -184,8 +183,4 @@ export function nearestWallSeg(
     }
   }
   return best;
-}
-
-export function canAttachToWall(kind: string): boolean {
-  return isWallAttachable(kind);
 }

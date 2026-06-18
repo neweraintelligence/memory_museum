@@ -28,6 +28,7 @@ import {
   parseTileKey,
   ghostTiles,
   nearestTile,
+  tileBounds,
 } from '../lib/floor';
 import {
   canPlaceObject,
@@ -168,21 +169,8 @@ interface Props {
 const NEIGHBOR_GAP = 6;
 const NEIGHBOR_OPACITY = 0.3;
 
-function gridBounds(keys: string[]) {
-  let minX = Infinity;
-  let maxX = -Infinity;
-  let minY = Infinity;
-  let maxY = -Infinity;
-  for (const k of keys) {
-    const { gx, gy } = parseTileKey(k);
-    if (gx < minX) minX = gx;
-    if (gx > maxX) maxX = gx;
-    if (gy < minY) minY = gy;
-    if (gy > maxY) maxY = gy;
-  }
-  if (!isFinite(minX)) return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
-  return { minX, maxX, minY, maxY };
-}
+// Use the shared tileBounds from floor.ts instead of a local duplicate.
+const gridBounds = tileBounds;
 
 export default function RoomCanvas({
   room,
