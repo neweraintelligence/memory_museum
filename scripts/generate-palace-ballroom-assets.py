@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Victorian Parlor floor and wall textures.
+"""Generate Palace Ballroom floor and wall textures.
 
 The generated PNGs intentionally reuse the Industrial Loft alpha masks so the
 canvas size, isometric angles, and transparent bounds stay identical.
@@ -20,10 +20,10 @@ FLOOR_MASK_B = ROOT / "public" / "floors" / "industrial-loft-floor-b.png"
 WALL_MASK_LEFT = ROOT / "public" / "walls" / "industrial-loft-wall-left-a.png"
 WALL_MASK_RIGHT = ROOT / "public" / "walls" / "industrial-loft-wall-right-a.png"
 
-FLOOR_OUT_A = ROOT / "public" / "floors" / "victorian-parlor-floor-a.png"
-FLOOR_OUT_B = ROOT / "public" / "floors" / "victorian-parlor-floor-b.png"
-WALL_OUT_LEFT = ROOT / "public" / "walls" / "victorian-parlor-wall-left-a.png"
-WALL_OUT_RIGHT = ROOT / "public" / "walls" / "victorian-parlor-wall-right-a.png"
+FLOOR_OUT_A = ROOT / "public" / "floors" / "palace-ballroom-floor-a.png"
+FLOOR_OUT_B = ROOT / "public" / "floors" / "palace-ballroom-floor-b.png"
+WALL_OUT_LEFT = ROOT / "public" / "walls" / "palace-ballroom-wall-left-a.png"
+WALL_OUT_RIGHT = ROOT / "public" / "walls" / "palace-ballroom-wall-right-a.png"
 
 
 class AlphaDraw:

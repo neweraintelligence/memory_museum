@@ -50,7 +50,7 @@ class StyleDef:
 
 STYLES: tuple[StyleDef, ...] = (
     StyleDef(
-        "gothic-library",
+        "timeless-library",
         "dark-planks",
         "shelves",
         "#9a673e",
@@ -62,7 +62,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#f1cf95",
     ),
     StyleDef(
-        "utilitarian",
+        "brutalist-atrium",
         "concrete",
         "concrete",
         "#cec8bb",
@@ -86,7 +86,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#fff7df",
     ),
     StyleDef(
-        "spaceship",
+        "futuristic-lab",
         "metal",
         "tech",
         "#7f91a6",
@@ -146,7 +146,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#f5fff3",
     ),
     StyleDef(
-        "cozy-apartment",
+        "beach-house",
         "honey-planks",
         "soft-panels",
         "#e8b66e",
@@ -170,7 +170,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#fffaf0",
     ),
     StyleDef(
-        "stone-keep",
+        "gothic-belfry",
         "flagstone",
         "rough-stone",
         "#b4ac9f",
@@ -182,7 +182,7 @@ STYLES: tuple[StyleDef, ...] = (
         "#ded4c5",
     ),
     StyleDef(
-        "reading-study",
+        "private-study",
         "red-carpet",
         "walnut",
         "#8b3030",
@@ -195,7 +195,7 @@ STYLES: tuple[StyleDef, ...] = (
     ),
 )
 
-EXCLUDED_STYLE_SLUGS = {"industrial-loft", "victorian-parlor", "reading-study"}
+EXCLUDED_STYLE_SLUGS = {"industrial-loft", "palace-ballroom", "private-study"}
 
 
 class AlphaDraw:

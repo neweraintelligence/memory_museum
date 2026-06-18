@@ -661,11 +661,11 @@
 
 /* Collapsed panel icons inset from screen edges */
 [data-ui-theme='bookworm'] .content.editor-layout .side-floating.collapsed.left {
-  left: calc(var(--editor-panel-side-inset) + 20px);
+  left: calc(var(--editor-panel-side-inset) + 40px);
 }
 
 [data-ui-theme='bookworm'] .content.editor-layout .side-floating.collapsed.right {
-  right: calc(var(--editor-panel-side-inset) + 20px);
+  right: calc(var(--editor-panel-side-inset) + 40px);
 }
 
 /* Collapsed panel buttons */
@@ -1079,11 +1079,11 @@
   }
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating.collapsed.left {
-    left: 52px;
+    left: 42px;
   }
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating.collapsed.right {
-    right: 52px;
+    right: 42px;
   }
 
   [data-ui-theme='bookworm'] .page {

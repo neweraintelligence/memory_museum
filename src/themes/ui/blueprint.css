@@ -208,7 +208,13 @@
 
 [data-ui-theme='blueprint'] button.primary,
 [data-ui-theme='blueprint'] button.cloud-pill-save,
-[data-ui-theme='blueprint'] .mode-switch button.active {
+[data-ui-theme='blueprint'] .mode-switch button.active,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active,
+[data-ui-theme='blueprint'] .overview-map-btn.primary,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary,
+[data-ui-theme='blueprint'] .palette-item.active,
+[data-ui-theme='blueprint'] .style-chip.active {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -223,7 +229,13 @@
 
 [data-ui-theme='blueprint'] button.primary::before,
 [data-ui-theme='blueprint'] button.cloud-pill-save::before,
-[data-ui-theme='blueprint'] .mode-switch button.active::before {
+[data-ui-theme='blueprint'] .mode-switch button.active::before,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active::before,
+[data-ui-theme='blueprint'] .overview-map-btn.primary::before,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary::before,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary::before,
+[data-ui-theme='blueprint'] .palette-item.active::before,
+[data-ui-theme='blueprint'] .style-chip.active::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -237,13 +249,25 @@
 
 [data-ui-theme='blueprint'] button.primary:hover::before,
 [data-ui-theme='blueprint'] button.cloud-pill-save:hover::before,
-[data-ui-theme='blueprint'] .mode-switch button.active:hover::before {
+[data-ui-theme='blueprint'] .mode-switch button.active:hover::before,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active:hover::before,
+[data-ui-theme='blueprint'] .overview-map-btn.primary:hover::before,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary:hover::before,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary:hover::before,
+[data-ui-theme='blueprint'] .palette-item.active:hover::before,
+[data-ui-theme='blueprint'] .style-chip.active:hover::before {
   background-image: var(--bp-accent-glass-specular-hover);
 }
 
 [data-ui-theme='blueprint'] button.primary:hover,
 [data-ui-theme='blueprint'] button.cloud-pill-save:hover,
-[data-ui-theme='blueprint'] .mode-switch button.active:hover {
+[data-ui-theme='blueprint'] .mode-switch button.active:hover,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active:hover,
+[data-ui-theme='blueprint'] .overview-map-btn.primary:hover,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary:hover,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary:hover,
+[data-ui-theme='blueprint'] .palette-item.active:hover,
+[data-ui-theme='blueprint'] .style-chip.active:hover {
   background-color: var(--bp-accent-glass-fill-hover);
   background-image: none;
   border-color: var(--bp-accent-glass-border-hover);
@@ -253,7 +277,11 @@
 
 [data-ui-theme='blueprint'] button.primary:active,
 [data-ui-theme='blueprint'] button.cloud-pill-save:active,
-[data-ui-theme='blueprint'] .mode-switch button.active:active {
+[data-ui-theme='blueprint'] .mode-switch button.active:active,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active:active,
+[data-ui-theme='blueprint'] .overview-map-btn.primary:active,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary:active,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary:active {
   background-color: var(--bp-accent-glass-fill);
   box-shadow: var(--button-active-shadow);
   transform: none;
@@ -262,7 +290,11 @@
 
 [data-ui-theme='blueprint'] button.primary:active::before,
 [data-ui-theme='blueprint'] button.cloud-pill-save:active::before,
-[data-ui-theme='blueprint'] .mode-switch button.active:active::before {
+[data-ui-theme='blueprint'] .mode-switch button.active:active::before,
+[data-ui-theme='blueprint'] .canvas-overlay .xray-toggle.active:active::before,
+[data-ui-theme='blueprint'] .overview-map-btn.primary:active::before,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary:active::before,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button.primary:active::before {
   opacity: 0.65;
 }
 
@@ -784,23 +816,21 @@
 
 [data-ui-theme='blueprint'] .palette-item,
 [data-ui-theme='blueprint'] .style-chip {
-  background-color: transparent;
-  background-image: none;
   border: 1px solid var(--border);
   box-shadow: none;
   border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .palette-item:not(.active),
+[data-ui-theme='blueprint'] .style-chip:not(.active) {
+  background-color: transparent;
+  background-image: none;
 }
 
 [data-ui-theme='blueprint'] .palette-item:hover,
 [data-ui-theme='blueprint'] .style-chip:hover {
   transform: none;
   border-color: var(--accent);
-}
-
-[data-ui-theme='blueprint'] .palette-item.active,
-[data-ui-theme='blueprint'] .style-chip.active {
-  border-color: var(--accent);
-  box-shadow: var(--active-ring);
 }
 
 /* ---- Room list ---- */
@@ -860,6 +890,72 @@
   color: var(--text-dim);
 }
 
+[data-ui-theme='blueprint'] .canvas-overlay-trailing {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  pointer-events: none;
+  flex-shrink: 0;
+  width: max-content;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay-trailing > * {
+  pointer-events: auto;
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay-trailing .xray-toggle {
+  margin-left: 0;
+  width: 100%;
+  justify-content: center;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay-zoom-slot:empty {
+  display: none;
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay-trailing .zoom-controls {
+  position: static;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 5px 6px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay-trailing .zoom-controls button {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 44px;
+  padding: 5px 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 0;
+}
+
 /* ---- Modebar (bottom toolbar for Walk/Review) ---- */
 
 [data-ui-theme='blueprint'] .modebar {
@@ -869,15 +965,6 @@
   box-shadow: none;
   bottom: 58px;
   min-width: 380px;
-}
-
-/* ---- Zoom controls ---- */
-
-[data-ui-theme='blueprint'] .zoom-controls {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 0;
-  box-shadow: none;
 }
 
 /* ---- Floor hint ---- */
@@ -1012,8 +1099,8 @@
   border-color: var(--accent);
 }
 
-[data-ui-theme='blueprint'] .content.editor-layout .side-floating .palette-item,
-[data-ui-theme='blueprint'] .content.editor-layout .side-floating .style-chip {
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .palette-item:not(.active),
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .style-chip:not(.active) {
   background-color: transparent;
 }
 
@@ -1040,12 +1127,30 @@
 }
 
 /* Collapsed panel positioning */
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed {
+  bottom: calc(var(--editor-panel-collapsed-bottom, 88px) + 25px);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout.session-layout .side-floating.collapsed {
+  bottom: calc(var(--editor-panel-collapsed-bottom-session, 148px) + 25px);
+}
+
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.left {
-  left: calc(var(--editor-panel-side-inset) + 20px);
+  left: calc(var(--editor-panel-side-inset) + 40px);
 }
 
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.right {
-  right: calc(var(--editor-panel-side-inset) + 20px);
+  right: calc(var(--editor-panel-side-inset) + 40px);
+}
+
+@media (min-width: 768px) {
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed {
+    bottom: calc(var(--editor-panel-collapsed-bottom, 88px) + 5px);
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .side-floating.collapsed {
+    bottom: calc(var(--editor-panel-collapsed-bottom-session, 148px) + 5px);
+  }
 }
 
 /* ---- Accent-colored icons ---- */
@@ -1054,6 +1159,11 @@
 [data-ui-theme='blueprint'] .side-head-icon--build,
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
+[data-ui-theme='blueprint'] .overview-map-btn.primary .side-head-icon,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn.primary .side-head-icon {
+  color: inherit;
+}
+
 [data-ui-theme='blueprint'] .overview-map-btn:not(.primary) .side-head-icon,
 [data-ui-theme='blueprint'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
   color: var(--accent);
@@ -1322,12 +1432,61 @@
     bottom: 52px;
   }
 
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing {
+    --bp-mobile-control-scale: calc(0.75 * 1.05);
+  }
+
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .zoom-controls {
+    --bp-mobile-zoom-side: calc(34px * var(--bp-mobile-control-scale));
+    padding: calc(4px * var(--bp-mobile-control-scale)) calc(7px * var(--bp-mobile-control-scale));
+    gap: calc(5px * var(--bp-mobile-control-scale));
+    width: max-content;
+  }
+
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .zoom-controls button:not(.zoom-percent-btn) {
+    flex: 0 0 var(--bp-mobile-zoom-side);
+    width: var(--bp-mobile-zoom-side);
+    min-width: var(--bp-mobile-zoom-side);
+    max-width: var(--bp-mobile-zoom-side);
+    padding: calc(4px * var(--bp-mobile-control-scale));
+    font-size: calc(11px * var(--bp-mobile-control-scale));
+  }
+
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .zoom-controls button.zoom-percent-btn {
+    flex: 0 0 calc(var(--bp-mobile-zoom-side) * 1.3);
+    width: calc(var(--bp-mobile-zoom-side) * 1.3);
+    min-width: calc(var(--bp-mobile-zoom-side) * 1.3);
+    max-width: calc(var(--bp-mobile-zoom-side) * 1.3);
+    padding: calc(4px * var(--bp-mobile-control-scale));
+    font-size: calc(11px * var(--bp-mobile-control-scale));
+  }
+
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .xray-toggle {
+    padding: calc(5px * var(--bp-mobile-control-scale)) calc(13px * var(--bp-mobile-control-scale));
+    font-size: calc(11px * var(--bp-mobile-control-scale));
+    gap: calc(6px * var(--bp-mobile-control-scale));
+  }
+
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .xray-toggle .ui-icon,
+  [data-ui-theme='blueprint'] .canvas-overlay-trailing .xray-toggle svg {
+    width: calc(15px * var(--bp-mobile-control-scale));
+    height: calc(15px * var(--bp-mobile-control-scale));
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed {
+    bottom: calc(var(--editor-panel-collapsed-bottom, 68px) - 5px);
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .side-floating.collapsed {
+    bottom: calc(var(--editor-panel-collapsed-bottom-session, 148px) - 5px);
+  }
+
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.left {
-    left: 52px;
+    left: 32px;
   }
 
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.right {
-    right: 52px;
+    right: 32px;
   }
 
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) {

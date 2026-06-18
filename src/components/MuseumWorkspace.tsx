@@ -342,6 +342,7 @@ export default function MuseumWorkspace() {
   const mapLayout = view === 'map';
   const themeId = useTheme((s) => s.themeId);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [zoomOverlaySlot, setZoomOverlaySlot] = useState<HTMLDivElement | null>(null);
   const insetLayout = roomEditor || ((themeId === 'clairvoyant' || themeId === 'blueprint') && mapLayout);
   useEditorPanelInsets(contentRef, insetLayout, themeId);
 
@@ -534,15 +535,30 @@ export default function MuseumWorkspace() {
             {mode === 'build' && (
               <span className="pill muted">{roomObjects.length} objects</span>
             )}
-            <button
-              className={`pill pill-btn xray-toggle${xrayWalls ? ' active' : ''}`}
-              title={xrayWalls ? 'Show walls' : 'See behind walls (X-ray)'}
-              aria-pressed={xrayWalls}
-              onClick={toggleXrayWalls}
-            >
-              <Icon icon={xrayWalls ? UI_ICONS.eyeOff : UI_ICONS.eye} size={15} />
-              <span className="xray-toggle-label">{xrayWalls ? 'Walls hidden' : 'X-ray walls'}</span>
-            </button>
+            {themeId === 'blueprint' ? (
+              <div className="canvas-overlay-trailing">
+                <div ref={setZoomOverlaySlot} className="canvas-overlay-zoom-slot" />
+                <button
+                  className={`pill pill-btn xray-toggle${xrayWalls ? ' active' : ''}`}
+                  title={xrayWalls ? 'Show walls' : 'See behind walls (X-ray)'}
+                  aria-pressed={xrayWalls}
+                  onClick={toggleXrayWalls}
+                >
+                  <Icon icon={xrayWalls ? UI_ICONS.eyeOff : UI_ICONS.eye} size={15} />
+                  <span className="xray-toggle-label">{xrayWalls ? 'Walls hidden' : 'X-ray walls'}</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                className={`pill pill-btn xray-toggle${xrayWalls ? ' active' : ''}`}
+                title={xrayWalls ? 'Show walls' : 'See behind walls (X-ray)'}
+                aria-pressed={xrayWalls}
+                onClick={toggleXrayWalls}
+              >
+                <Icon icon={xrayWalls ? UI_ICONS.eyeOff : UI_ICONS.eye} size={15} />
+                <span className="xray-toggle-label">{xrayWalls ? 'Walls hidden' : 'X-ray walls'}</span>
+              </button>
+            )}
           </div>
 
           <RoomCanvas
@@ -558,6 +574,7 @@ export default function MuseumWorkspace() {
             selectedId={selectedId}
             highlightId={highlightId}
             focusHighlight={mode !== 'build'}
+            zoomPortalTarget={themeId === 'blueprint' ? zoomOverlaySlot : undefined}
             swNeighbor={
               neighbors.sw
                 ? { room: neighbors.sw, objects: objectsByRoom.get(neighbors.sw.id) ?? [] }

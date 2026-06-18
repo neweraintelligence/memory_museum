@@ -47,7 +47,7 @@ export const MUSEUM_TEMPLATES: MuseumTemplate[] = [
       {
         name: 'Study Hall',
         type: 'library',
-        style: 'gothic-library',
+        style: 'timeless-library',
         objects: [
           {
             kind: 'books',
@@ -88,7 +88,7 @@ export const MUSEUM_TEMPLATES: MuseumTemplate[] = [
       {
         name: 'Review Cloister',
         type: 'corridor',
-        style: 'gothic-library',
+        style: 'timeless-library',
         objects: [
           {
             kind: 'scroll',
@@ -198,7 +198,7 @@ export const MUSEUM_TEMPLATES: MuseumTemplate[] = [
       {
         name: 'Modern Gallery',
         type: 'museum',
-        style: 'utilitarian',
+        style: 'brutalist-atrium',
         objects: [
           {
             kind: 'painting',

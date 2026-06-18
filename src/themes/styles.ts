@@ -25,8 +25,8 @@ export type WallPattern =
 
 import { INDUSTRIAL_LOFT_FLOOR } from './floorTilesets/industrialLoftFloor';
 import { INDUSTRIAL_LOFT_WALL } from './wallTilesets/industrialLoftWall';
-import { VICTORIAN_PARLOR_FLOOR } from './floorTilesets/victorianParlorFloor';
-import { VICTORIAN_PARLOR_WALL } from './wallTilesets/victorianParlorWall';
+import { PALACE_BALLROOM_FLOOR } from './floorTilesets/palaceBallroomFloor';
+import { PALACE_BALLROOM_WALL } from './wallTilesets/palaceBallroomWall';
 import { STYLE_TEXTURES, type StyleWallTextures } from './styleTextures';
 
 export interface RoomStyle {
@@ -53,7 +53,7 @@ export interface RoomStyle {
 
 export const ROOM_STYLES: RoomStyle[] = [
   {
-    id: 'gothic-library',
+    id: 'timeless-library',
     label: 'Timeless Library',
     floorA: '#3b2f2a',
     floorB: '#332823',
@@ -64,10 +64,10 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Dark wood, candlelight, towering shelves.',
     floorPattern: 'none',
     wallPattern: 'shelves',
-    ...STYLE_TEXTURES['gothic-library'],
+    ...STYLE_TEXTURES['timeless-library'],
   },
   {
-    id: 'utilitarian',
+    id: 'brutalist-atrium',
     label: 'Brutalist Atrium',
     floorA: '#9a9a9a',
     floorB: '#8d8d8d',
@@ -78,7 +78,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Raw concrete, hard shadows, monumental.',
     floorPattern: 'slab',
     wallPattern: 'concrete',
-    ...STYLE_TEXTURES.utilitarian,
+    ...STYLE_TEXTURES['brutalist-atrium'],
   },
   {
     id: 'tea-room',
@@ -95,7 +95,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     ...STYLE_TEXTURES['tea-room'],
   },
   {
-    id: 'spaceship',
+    id: 'futuristic-lab',
     label: 'Futuristic Lab',
     floorA: '#1d2740',
     floorB: '#222d4a',
@@ -106,7 +106,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cold metal, neon seams, deep space.',
     floorPattern: 'metal',
     wallPattern: 'tech',
-    ...STYLE_TEXTURES.spaceship,
+    ...STYLE_TEXTURES['futuristic-lab'],
   },
   {
     id: 'enterprise-d',
@@ -165,7 +165,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     ...STYLE_TEXTURES.greenhouse,
   },
   {
-    id: 'cozy-apartment',
+    id: 'beach-house',
     label: 'Beach House',
     floorA: '#c79a6a',
     floorB: '#bd9162',
@@ -176,7 +176,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Warm wood, soft rugs, golden hour.',
     floorPattern: 'slab',
     wallPattern: 'panels',
-    ...STYLE_TEXTURES['cozy-apartment'],
+    ...STYLE_TEXTURES['beach-house'],
   },
   {
     id: 'marble-hall',
@@ -193,7 +193,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     ...STYLE_TEXTURES['marble-hall'],
   },
   {
-    id: 'victorian-parlor',
+    id: 'palace-ballroom',
     label: 'Palace Ballroom',
     floorA: '#8a5a32',
     floorB: '#7e4f2b',
@@ -204,11 +204,11 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Herringbone parquet, damask wallpaper, candlelit.',
     floorPattern: 'parquet',
     wallPattern: 'wallpaper',
-    ...VICTORIAN_PARLOR_FLOOR,
-    ...VICTORIAN_PARLOR_WALL,
+    ...PALACE_BALLROOM_FLOOR,
+    ...PALACE_BALLROOM_WALL,
   },
   {
-    id: 'stone-keep',
+    id: 'gothic-belfry',
     label: 'Gothic Belfry',
     floorA: '#8f8a82',
     floorB: '#84807a',
@@ -219,7 +219,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Cut flagstones, heavy masonry, torch-lit keep.',
     floorPattern: 'stone',
     wallPattern: 'stone',
-    ...STYLE_TEXTURES['stone-keep'],
+    ...STYLE_TEXTURES['gothic-belfry'],
   },
   {
     id: 'industrial-loft',
@@ -237,7 +237,7 @@ export const ROOM_STYLES: RoomStyle[] = [
     ...INDUSTRIAL_LOFT_WALL,
   },
   {
-    id: 'reading-study',
+    id: 'private-study',
     label: 'Private Study',
     floorA: '#7c2f2f',
     floorB: '#732a2a',
@@ -248,16 +248,32 @@ export const ROOM_STYLES: RoomStyle[] = [
     mood: 'Plush carpet, walnut paneling, lamplit calm.',
     floorPattern: 'carpet',
     wallPattern: 'wood',
-    ...STYLE_TEXTURES['reading-study'],
+    ...STYLE_TEXTURES['private-study'],
   },
 ];
 
 export const DEFAULT_STYLE = ROOM_STYLES[0].id;
 
+/**
+ * Maps legacy/aliased style ids to their current canonical id. Architectural
+ * styles were renamed (slug + label); these aliases keep any saved rooms,
+ * cached state, or older clients pointing at the right style after the rename.
+ */
+const STYLE_ID_ALIASES: Record<string, string> = {
+  'enterprise-c': 'enterprise-d',
+  // Architectural style renames (old slug -> new slug).
+  'gothic-library': 'timeless-library',
+  utilitarian: 'brutalist-atrium',
+  brutalist: 'brutalist-atrium',
+  spaceship: 'futuristic-lab',
+  'cozy-apartment': 'beach-house',
+  'victorian-parlor': 'palace-ballroom',
+  'stone-keep': 'gothic-belfry',
+  'reading-study': 'private-study',
+};
+
 export function canonicalStyleId(id: string): string {
-  if (id === 'enterprise-c') return 'enterprise-d';
-  if (id === 'brutalist') return 'utilitarian';
-  return id;
+  return STYLE_ID_ALIASES[id] ?? id;
 }
 
 export function getStyle(id: string): RoomStyle {
@@ -273,11 +289,11 @@ export interface MuseumTheme {
 }
 
 export const MUSEUM_THEMES: MuseumTheme[] = [
-  { id: 'scholar', label: 'Scholar', defaultStyle: 'gothic-library', bg: '#1b1410' },
+  { id: 'scholar', label: 'Scholar', defaultStyle: 'timeless-library', bg: '#1b1410' },
   { id: 'clinical', label: 'Clinical', defaultStyle: 'clinic', bg: '#eef6f7' },
-  { id: 'cosmic', label: 'Cosmic', defaultStyle: 'spaceship', bg: '#0b1020' },
+  { id: 'cosmic', label: 'Cosmic', defaultStyle: 'futuristic-lab', bg: '#0b1020' },
   { id: 'natural', label: 'Natural', defaultStyle: 'greenhouse', bg: '#cfeede' },
-  { id: 'homely', label: 'Homely', defaultStyle: 'cozy-apartment', bg: '#efe2d2' },
+  { id: 'homely', label: 'Homely', defaultStyle: 'beach-house', bg: '#efe2d2' },
 ];
 
 export function getTheme(id: string): MuseumTheme {

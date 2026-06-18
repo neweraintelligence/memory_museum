@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Stage, Layer, Line, Circle, Group, Text } from 'react-konva';
 import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
@@ -160,6 +161,8 @@ interface Props {
   onRemoveTile: (gx: number, gy: number) => void;
   onAddWall: (gx: number, gy: number, side: WallSide) => void;
   onRemoveWall: (gx: number, gy: number, side: WallSide) => void;
+  /** Blueprint theme: render zoom controls in the canvas overlay beside X-ray. */
+  zoomPortalTarget?: HTMLElement | null;
 }
 
 const NEIGHBOR_GAP = 6;
@@ -203,6 +206,7 @@ export default function RoomCanvas({
   onRemoveTile,
   onAddWall,
   onRemoveWall,
+  zoomPortalTarget,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<Konva.Group>(null);
@@ -559,6 +563,20 @@ export default function RoomCanvas({
   const zoomButton = (factor: number) => applyZoom(zoom * factor);
   const resetView = () => setZoom(1);
 
+  const zoomControls = (
+    <div className="zoom-controls">
+      <button className="icon-btn" title="Zoom out" onClick={() => zoomButton(1 / 1.2)}>
+        −
+      </button>
+      <button className="icon-btn zoom-percent-btn" title="Reset view" onClick={resetView}>
+        {Math.round(zoom * 100)}%
+      </button>
+      <button className="icon-btn" title="Zoom in" onClick={() => zoomButton(1.2)}>
+        +
+      </button>
+    </div>
+  );
+
   const cursor = placingKind ? 'copy' : floorEditing || wallEditing ? 'pointer' : 'default';
 
   const wallInteract = (o: PObject) => ({
@@ -893,17 +911,9 @@ export default function RoomCanvas({
       </Stage>
 
       {/* Zoom controls */}
-      <div className="zoom-controls">
-        <button className="icon-btn" title="Zoom out" onClick={() => zoomButton(1 / 1.2)}>
-          −
-        </button>
-        <button className="icon-btn" title="Reset view" onClick={resetView}>
-          {Math.round(zoom * 100)}%
-        </button>
-        <button className="icon-btn" title="Zoom in" onClick={() => zoomButton(1.2)}>
-          +
-        </button>
-      </div>
+      {zoomPortalTarget !== undefined
+        ? zoomPortalTarget && createPortal(zoomControls, zoomPortalTarget)
+        : zoomControls}
 
       {floorEditing && (
         <div className="floor-hint">

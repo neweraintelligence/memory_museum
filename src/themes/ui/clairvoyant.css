@@ -1145,11 +1145,11 @@
   }
 
   [data-ui-theme='clairvoyant'] .content.editor-layout .side-floating.collapsed.left {
-    left: 52px;
+    left: 37px;
   }
 
   [data-ui-theme='clairvoyant'] .content.editor-layout .side-floating.collapsed.right {
-    right: 52px;
+    right: 37px;
   }
 
   /* Left museum panel — 50% screen width, room actions on their own row */

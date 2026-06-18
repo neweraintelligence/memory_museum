@@ -212,7 +212,7 @@ export const useStore = create<State>((set, get) => ({
       museumId,
       name: partial?.name ?? `Room ${idx + 1}`,
       type: partial?.type ?? 'custom',
-      style: partial?.style ?? 'cozy-apartment',
+      style: partial?.style ?? 'beach-house',
       gridW: partial?.gridW ?? 6,
       gridH: partial?.gridH ?? 6,
       tiles: partial?.tiles ?? [],

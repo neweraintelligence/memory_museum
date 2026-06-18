@@ -62,30 +62,30 @@ export function pickWallSegmentTexture(
 }
 
 export const STYLE_TEXTURES: Record<string, StyleTextureSet> = {
-  'gothic-library': textureSet('gothic-library'),
-  utilitarian: textureSet('utilitarian'),
+  'timeless-library': textureSet('timeless-library'),
+  'brutalist-atrium': textureSet('brutalist-atrium'),
   'tea-room': textureSet('tea-room'),
-  spaceship: textureSet('spaceship'),
+  'futuristic-lab': textureSet('futuristic-lab'),
   'enterprise-d': textureSet('enterprise-d'),
   courtroom: textureSet('courtroom'),
   clinic: textureSet('clinic'),
   greenhouse: textureSet('greenhouse'),
-  'cozy-apartment': textureSet('cozy-apartment'),
+  'beach-house': textureSet('beach-house'),
   'marble-hall': textureSet('marble-hall'),
-  'stone-keep': {
-    ...textureSet('stone-keep'),
+  'gothic-belfry': {
+    ...textureSet('gothic-belfry'),
     floorTextures: [
-      floor('stone-keep', 'a'),
-      floor('stone-keep', 'b'),
-      floor('stone-keep', 'c'),
-      floor('stone-keep', 'd'),
+      floor('gothic-belfry', 'a'),
+      floor('gothic-belfry', 'b'),
+      floor('gothic-belfry', 'c'),
+      floor('gothic-belfry', 'd'),
     ],
     wallTextures: {
-      left: wall('stone-keep', 'left', 'a'),
-      right: wall('stone-keep', 'right', 'a'),
-      leftAlt: wall('stone-keep', 'left', 'b'),
-      rightAlt: wall('stone-keep', 'right', 'b'),
+      left: wall('gothic-belfry', 'left', 'a'),
+      right: wall('gothic-belfry', 'right', 'a'),
+      leftAlt: wall('gothic-belfry', 'left', 'b'),
+      rightAlt: wall('gothic-belfry', 'right', 'b'),
     },
   },
-  'reading-study': textureSet('reading-study'),
+  'private-study': textureSet('private-study'),
 };
