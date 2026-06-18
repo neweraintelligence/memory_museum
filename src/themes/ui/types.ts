@@ -1,4 +1,4 @@
-export type UiThemeId = 'utilitarian' | 'clairvoyant' | 'bookworm';
+export type UiThemeId = 'utilitarian' | 'clairvoyant' | 'bookworm' | 'blueprint';
 
 export interface UiTheme {
   id: UiThemeId;

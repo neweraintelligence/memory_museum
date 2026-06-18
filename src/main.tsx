@@ -5,6 +5,7 @@ import './bootstrapTheme';
 import './themes/ui/themes.css';
 import './themes/ui/clairvoyant.css';
 import './themes/ui/bookworm.css';
+import './themes/ui/blueprint.css';
 import './index.css';
 import App from './App.tsx';
 

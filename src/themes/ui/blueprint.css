@@ -1,0 +1,1298 @@
+/* Blueprint — architectural drafting blue, white linework, monospaced precision */
+
+[data-ui-theme='blueprint'] {
+  color-scheme: dark;
+
+  --font-body: 'IBM Plex Sans', 'Inter', system-ui, sans-serif;
+  --font-heading: 'IBM Plex Mono', 'Space Mono', ui-monospace, monospace;
+  --font-display: 'IBM Plex Mono', 'Space Mono', ui-monospace, monospace;
+  --font-mono: 'IBM Plex Mono', 'Space Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Deep blueprint palette */
+  --bg: #0a1628;
+  --bg-2: #0e1e38;
+  --panel: #122448;
+  --panel-2: #162a52;
+  --border: rgba(120, 180, 255, 0.25);
+  --text: #d4e4ff;
+  --text-dim: rgba(180, 210, 255, 0.55);
+  --accent: #4dabf7;
+  --accent-2: #339af0;
+  --gold: #4dabf7;
+  --good: #51cf66;
+  --warn: #fcc419;
+  --bad: #ff6b6b;
+
+  --text-on-accent: #0a1628;
+  --input-bg: rgba(0, 20, 60, 0.5);
+  --danger-border: rgba(255, 107, 107, 0.5);
+  --dot-off: rgba(120, 180, 255, 0.25);
+  --dot-on: var(--accent);
+  --ghost-hover-bg: rgba(77, 171, 247, 0.1);
+  --mode-hover-bg: rgba(77, 171, 247, 0.12);
+
+  --radius: 0px;
+  --shadow: none;
+  --shadow-sm: none;
+  --bevel: none;
+  --form: none;
+  --grain: none;
+  --mottle: none;
+
+  --heading-shadow: none;
+  --text-shadow: none;
+  --inset-shadow: none;
+  --bp-accent-glass-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(130, 200, 255, 0.92) 22%,
+    rgba(77, 171, 247, 0.82) 55%,
+    rgba(51, 154, 240, 0.78) 100%
+  );
+  --bp-accent-glass-bg-hover: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(150, 210, 255, 0.95) 22%,
+    rgba(90, 185, 255, 0.88) 55%,
+    rgba(60, 165, 245, 0.84) 100%
+  );
+  --bp-accent-glass-border: rgba(255, 255, 255, 0.42);
+  --bp-accent-glass-border-hover: rgba(255, 255, 255, 0.58);
+  --bp-accent-glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(10, 40, 90, 0.18),
+    0 2px 10px rgba(77, 171, 247, 0.35);
+  --bp-accent-glass-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(10, 40, 90, 0.14),
+    0 4px 16px rgba(77, 171, 247, 0.45);
+  --button-active-shadow:
+    inset 0 2px 4px rgba(10, 40, 90, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  --focus-ring: 0 0 0 2px rgba(77, 171, 247, 0.5);
+  --active-ring: 0 0 0 1px var(--accent);
+  --chrome-shadow: none;
+  --side-shadow: none;
+  --side-shadow-left: none;
+  --card-hover-shadow: 0 0 0 1px var(--accent);
+  --modal-backdrop: rgba(4, 8, 18, 0.75);
+  --modal-shadow: 0 0 0 1px var(--accent);
+  --kbd-shadow: 0 0 0 1px var(--border);
+  --swatch-inset: inset 0 0 0 1px var(--border);
+
+  --bg-texture: url('/blueprint-bg.jpg');
+  --bp-chrome-height: 52px;
+  --bp-floating-offset: calc(var(--bp-chrome-height) + 20px);
+}
+
+/* ---- Selection ---- */
+
+[data-ui-theme='blueprint']::selection,
+[data-ui-theme='blueprint'] ::selection {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='blueprint']::-moz-selection,
+[data-ui-theme='blueprint'] ::-moz-selection {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+/* ---- Global surfaces ---- */
+
+[data-ui-theme='blueprint'] body {
+  background-color: transparent;
+  background-image: none;
+}
+
+[data-ui-theme='blueprint']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image: var(--bg-texture);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[data-ui-theme='blueprint'][data-wallpaper='on']::before {
+  background-image: var(--bg-texture);
+}
+
+[data-ui-theme='blueprint'][data-wallpaper='off']::before {
+  background-image: none;
+  background-color: var(--bg);
+}
+
+/* ---- Wallpaper toggle ---- */
+
+[data-ui-theme='blueprint'] .wallpaper-toggle {
+  right: 20px;
+  bottom: var(--bp-floating-offset);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text);
+  box-shadow: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+[data-ui-theme='blueprint'] .console-input {
+  left: 20px;
+  bottom: var(--bp-floating-offset);
+}
+
+[data-ui-theme='blueprint'] .wallpaper-toggle:hover {
+  background: var(--panel-2);
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .wallpaper-toggle.active {
+  background: var(--bp-accent-glass-bg);
+  border-color: var(--bp-accent-glass-border);
+  color: var(--text-on-accent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--bp-accent-glass-shadow);
+}
+
+/* ---- Typography ---- */
+
+[data-ui-theme='blueprint'] h1,
+[data-ui-theme='blueprint'] h2,
+[data-ui-theme='blueprint'] h3,
+[data-ui-theme='blueprint'] .section-title,
+[data-ui-theme='blueprint'] .page-head h1 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+}
+
+[data-ui-theme='blueprint'] .brand,
+[data-ui-theme='blueprint'] .page-head h1 {
+  font-weight: 400;
+}
+
+[data-ui-theme='blueprint'] .section-title {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--accent);
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 6px;
+}
+
+/* ---- Bottom-anchored toolbar ---- */
+
+[data-ui-theme='blueprint'] .topbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  width: 100%;
+  z-index: 40;
+  padding: 6px 16px;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  background-image: none;
+  box-shadow: none;
+}
+
+[data-ui-theme='blueprint'] .brand {
+  font-size: 14px;
+  gap: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+}
+
+[data-ui-theme='blueprint'] .brand .brand-icon {
+  height: 33.5px;
+  width: 33.5px;
+  margin-left: 15px;
+  opacity: 0.7;
+  background-image: url('/brand-icon-blueprint.png');
+}
+
+[data-ui-theme='blueprint'] .topbar-btn-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+[data-ui-theme='blueprint'] .mode-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+[data-ui-theme='blueprint'] .cloud-pill-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+[data-ui-theme='blueprint'] .theme-switcher-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Mode switch ---- */
+
+[data-ui-theme='blueprint'] .mode-switch {
+  background: transparent;
+  border: 1px solid var(--border);
+  box-shadow: none;
+  border-radius: 0;
+  padding: 2px;
+  gap: 0;
+}
+
+[data-ui-theme='blueprint'] .mode-switch button {
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--text-dim);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+[data-ui-theme='blueprint'] .mode-switch button:hover {
+  background-color: rgba(77, 171, 247, 0.08);
+  color: var(--text);
+}
+
+[data-ui-theme='blueprint'] .mode-switch button.active {
+  background: var(--bp-accent-glass-bg);
+  background-color: transparent;
+  border-color: var(--bp-accent-glass-border);
+  color: var(--text-on-accent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--bp-accent-glass-shadow);
+}
+
+[data-ui-theme='blueprint'] .mode-switch button.active:hover {
+  background: var(--bp-accent-glass-bg-hover);
+  border-color: var(--bp-accent-glass-border-hover);
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+}
+
+/* ---- Buttons ---- */
+
+[data-ui-theme='blueprint'] button {
+  border: 1px solid var(--border);
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border-radius: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+[data-ui-theme='blueprint'] button:hover {
+  filter: none;
+  background-color: rgba(77, 171, 247, 0.08);
+  border-color: var(--accent);
+  transform: none;
+}
+
+[data-ui-theme='blueprint'] button.primary {
+  background: var(--bp-accent-glass-bg);
+  background-color: transparent;
+  border-color: var(--bp-accent-glass-border);
+  color: var(--text-on-accent);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--bp-accent-glass-shadow);
+}
+
+[data-ui-theme='blueprint'] button.primary:hover {
+  background: var(--bp-accent-glass-bg-hover);
+  border-color: var(--bp-accent-glass-border-hover);
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+}
+
+[data-ui-theme='blueprint'] button.primary:active {
+  background: var(--bp-accent-glass-bg);
+  box-shadow: var(--button-active-shadow);
+  transform: none;
+  filter: none;
+}
+
+[data-ui-theme='blueprint'] button.ghost {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-ui-theme='blueprint'] button.ghost:hover {
+  background: var(--ghost-hover-bg);
+  border-color: var(--border);
+}
+
+[data-ui-theme='blueprint'] button.danger {
+  background-color: transparent;
+  background-image: none;
+  color: var(--bad);
+  border-color: var(--danger-border);
+}
+
+[data-ui-theme='blueprint'] button.danger:hover {
+  background-color: rgba(255, 107, 107, 0.08);
+  border-color: var(--bad);
+}
+
+/* ---- Ghost buttons (topbar) ---- */
+
+[data-ui-theme='blueprint'] button.ghost,
+[data-ui-theme='blueprint'] .theme-switcher-select {
+  padding: 6px 10px;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+/* ---- Cloud pill ---- */
+
+[data-ui-theme='blueprint'] .cloud-pill {
+  border-color: var(--border);
+  background: transparent;
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .cloud-pill-segment {
+  padding: 6px 10px;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='blueprint'] button.cloud-pill-segment:hover {
+  background: rgba(77, 171, 247, 0.08);
+}
+
+[data-ui-theme='blueprint'] button.cloud-pill-save {
+  background: var(--bp-accent-glass-bg);
+  background-color: transparent;
+  border-color: var(--bp-accent-glass-border);
+  color: var(--text-on-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--bp-accent-glass-shadow);
+}
+
+[data-ui-theme='blueprint'] button.cloud-pill-save:hover {
+  background: var(--bp-accent-glass-bg-hover);
+  border-color: var(--bp-accent-glass-border-hover);
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+}
+
+/* ---- Theme switcher ---- */
+
+[data-ui-theme='blueprint'] .theme-switcher-select {
+  min-width: 0;
+  width: 132px;
+  font-size: 11px;
+  line-height: 1.2;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+/* ---- Inputs ---- */
+
+[data-ui-theme='blueprint'] input,
+[data-ui-theme='blueprint'] textarea,
+[data-ui-theme='blueprint'] select {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text);
+}
+
+[data-ui-theme='blueprint'] select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234dabf7' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+[data-ui-theme='blueprint'] select option,
+[data-ui-theme='blueprint'] select optgroup {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* ---- Side panels (glass surfaces) ---- */
+
+[data-ui-theme='blueprint'] .side {
+  background-color: var(--panel);
+  background-image: none;
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .side-head {
+  background: rgba(77, 171, 247, 0.05);
+  border-bottom: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+}
+
+[data-ui-theme='blueprint'] .side-head .side-head-icon,
+[data-ui-theme='blueprint'] .overview-map-btn .side-head-icon,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn .side-head-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+}
+
+/* ---- Dashboard & cards ---- */
+
+[data-ui-theme='blueprint'] .page {
+  padding: 24px 32px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+[data-ui-theme='blueprint'] .page-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+
+[data-ui-theme='blueprint'] .page-head h1 {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .page-head h1 .page-title-lead::after {
+  content: ' // ';
+  color: var(--text-dim);
+}
+
+[data-ui-theme='blueprint'] .page-head .muted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+[data-ui-theme='blueprint'] .dashboard-top {
+  margin-bottom: 32px;
+}
+
+[data-ui-theme='blueprint'] .dashboard-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 0;
+}
+
+[data-ui-theme='blueprint'] .dashboard-top-row .page-head {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar {
+  width: 50%;
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  border: 1px dashed var(--border);
+  padding: 16px;
+  position: relative;
+}
+
+/* Corner tick marks on create bar */
+[data-ui-theme='blueprint'] .create-museum-bar::before,
+[data-ui-theme='blueprint'] .create-museum-bar::after {
+  content: '+';
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar::before {
+  top: -5px;
+  left: -5px;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar::after {
+  bottom: -5px;
+  right: -5px;
+}
+
+[data-ui-theme='blueprint'] .create-museum-field--name {
+  min-width: 110px;
+}
+
+[data-ui-theme='blueprint'] .create-museum-field--theme {
+  min-width: 80px;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar > .row {
+  align-items: flex-end;
+}
+
+[data-ui-theme='blueprint'] .create-museum-bar .field label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-ui-theme='blueprint'] .create-museum-field input,
+[data-ui-theme='blueprint'] .create-museum-field select {
+  height: 34px;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='blueprint'] .page .field label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-ui-theme='blueprint'] .page .section-title {
+  margin: 40px 0 14px;
+  color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .page .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* ---- Cards — wireframe blueprint style ---- */
+
+[data-ui-theme='blueprint'] .card {
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid var(--border);
+  box-shadow: none;
+  border-radius: 0;
+  padding: 20px;
+  position: relative;
+}
+
+/* Corner marks on cards */
+[data-ui-theme='blueprint'] .card::before,
+[data-ui-theme='blueprint'] .card::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+[data-ui-theme='blueprint'] .card::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+[data-ui-theme='blueprint'] .card::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+[data-ui-theme='blueprint'] .page .card h3 {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+[data-ui-theme='blueprint'] .page .card .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+[data-ui-theme='blueprint'] .card.clickable:hover {
+  transform: none;
+  border-color: var(--accent);
+  background-color: rgba(77, 171, 247, 0.04);
+}
+
+[data-ui-theme='blueprint'] .card.clickable button.danger {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+[data-ui-theme='blueprint'] .card.clickable:hover button.danger,
+[data-ui-theme='blueprint'] .card.clickable button.danger:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Tags & badges ---- */
+
+[data-ui-theme='blueprint'] .tag,
+[data-ui-theme='blueprint'] .status-badge {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ---- Palette items & style chips ---- */
+
+[data-ui-theme='blueprint'] .palette-item,
+[data-ui-theme='blueprint'] .style-chip {
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid var(--border);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .palette-item:hover,
+[data-ui-theme='blueprint'] .style-chip:hover {
+  transform: none;
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .palette-item.active,
+[data-ui-theme='blueprint'] .style-chip.active {
+  border-color: var(--accent);
+  box-shadow: var(--active-ring);
+}
+
+/* ---- Room list ---- */
+
+[data-ui-theme='blueprint'] .room-list-item {
+  font-family: var(--font-body);
+  font-size: 13px;
+  border: 1px solid transparent;
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .room-list-item:hover {
+  background: rgba(77, 171, 247, 0.06);
+  border-color: var(--border);
+}
+
+[data-ui-theme='blueprint'] .room-list-item.active {
+  border-color: var(--accent);
+  background-color: rgba(77, 171, 247, 0.08);
+}
+
+[data-ui-theme='blueprint'] .room-list-item .room-list-icon--default,
+[data-ui-theme='blueprint'] .canvas-overlay .pill .room-list-icon--default {
+  display: none;
+}
+
+[data-ui-theme='blueprint'] .room-list-item .room-list-icon--typed,
+[data-ui-theme='blueprint'] .canvas-overlay .pill .room-list-icon--typed {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay .pill:not(.muted) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- Canvas overlay ---- */
+
+[data-ui-theme='blueprint'] .canvas-overlay .pill {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+}
+
+[data-ui-theme='blueprint'] .canvas-overlay .pill.muted {
+  color: var(--text-dim);
+}
+
+/* ---- Modebar (bottom toolbar for Walk/Review) ---- */
+
+[data-ui-theme='blueprint'] .modebar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  bottom: 58px;
+  min-width: 380px;
+}
+
+/* ---- Zoom controls ---- */
+
+[data-ui-theme='blueprint'] .zoom-controls {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ---- Floor hint ---- */
+
+[data-ui-theme='blueprint'] .floor-hint {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  color: var(--accent);
+  background-image: none;
+}
+
+/* ---- Modals ---- */
+
+[data-ui-theme='blueprint'] .modal-backdrop {
+  background: var(--modal-backdrop);
+}
+
+[data-ui-theme='blueprint'] .modal {
+  background: var(--bg-2);
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[data-ui-theme='blueprint'] .modal-head {
+  background: rgba(77, 171, 247, 0.05);
+  border-bottom: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+[data-ui-theme='blueprint'] .modal-body {
+  color: var(--text);
+}
+
+[data-ui-theme='blueprint'] .modal-body .muted,
+[data-ui-theme='blueprint'] .modal-body p {
+  color: var(--text-dim);
+}
+
+[data-ui-theme='blueprint'] .modal-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-dim);
+  border-color: transparent;
+  background: transparent;
+}
+
+[data-ui-theme='blueprint'] .modal-close:hover {
+  color: var(--accent);
+  background: rgba(77, 171, 247, 0.08);
+  border-color: var(--border);
+}
+
+/* ---- Search results ---- */
+
+[data-ui-theme='blueprint'] .search-result:hover {
+  background: rgba(77, 171, 247, 0.06);
+}
+
+/* ---- Keyboard hints ---- */
+
+[data-ui-theme='blueprint'] .kbd {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  font-family: var(--font-mono);
+}
+
+/* ---- Editor floating panels ---- */
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating {
+  background-color: var(--panel);
+  background-image: none;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .side-head {
+  background: rgba(77, 171, 247, 0.05);
+  border-bottom: 1px dashed var(--border);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button:not(.primary) {
+  background-color: transparent;
+  border-color: var(--border);
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating button:not(.primary):hover {
+  background-color: rgba(77, 171, 247, 0.08);
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .room-list-item {
+  background: transparent;
+  height: 40px;
+  min-height: 40px;
+  padding-block: 0;
+  border-bottom: 1px dotted rgba(120, 180, 255, 0.12);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background-color: transparent;
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .room-list-item .room-list-action-btn:hover {
+  background-color: rgba(77, 171, 247, 0.08);
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .room-list-item:hover,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .room-list-item.active {
+  background: rgba(77, 171, 247, 0.06);
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .palette-item,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating .style-chip {
+  background-color: transparent;
+}
+
+/* Collapsed panel styling — technical marker style */
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
+  background-color: var(--panel);
+  background-image: none;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  color: var(--accent);
+  box-shadow: none;
+  filter: none;
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed button.side-expand-btn:hover {
+  background-color: rgba(77, 171, 247, 0.08);
+  border-color: var(--accent);
+  color: var(--accent);
+  filter: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Collapsed panel positioning */
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.left {
+  left: calc(var(--editor-panel-side-inset) + 20px);
+}
+
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.right {
+  right: calc(var(--editor-panel-side-inset) + 20px);
+}
+
+/* ---- Accent-colored icons ---- */
+
+[data-ui-theme='blueprint'] .side-head-icon--museum,
+[data-ui-theme='blueprint'] .side-head-icon--build,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn--accent,
+[data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed button.side-expand-btn--accent,
+[data-ui-theme='blueprint'] .overview-map-btn:not(.primary) .side-head-icon,
+[data-ui-theme='blueprint'] .edit-floor-plan-btn:not(.primary) .side-head-icon {
+  color: var(--accent);
+}
+
+/* ---- Map room cards ---- */
+
+[data-ui-theme='blueprint'] .map-room-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] .map-room-card:hover {
+  border-color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .map-room-card.unconnected {
+  background: transparent;
+  border-style: dashed;
+}
+
+[data-ui-theme='blueprint'] .map-room-icon {
+  line-height: 0;
+  margin-bottom: 6px;
+  color: var(--accent);
+}
+
+[data-ui-theme='blueprint'] .map-room-title {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+[data-ui-theme='blueprint'] .map-connection-line {
+  stroke: var(--accent);
+  stroke-dasharray: 4 3;
+}
+
+/* ---- Overview map layout ---- */
+
+[data-ui-theme='blueprint'] .content.map-layout .side.left {
+  width: 248px;
+  margin-top: 14px;
+  margin-bottom: 64px;
+  margin-left: 14px;
+  align-self: flex-start;
+  height: calc(100% - 14px - 64px);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ---- Card icons ---- */
+
+[data-ui-theme='blueprint'] .card-emoji .museum-card-icon--default,
+[data-ui-theme='blueprint'] .card-emoji .museum-card-icon--utilitarian {
+  display: none;
+}
+
+[data-ui-theme='blueprint'] .card-emoji .museum-card-icon--blueprint {
+  display: block;
+}
+
+[data-ui-theme='blueprint'] .card-emoji .template-card-icon--default,
+[data-ui-theme='blueprint'] .card-emoji .template-card-icon--utilitarian {
+  display: none;
+}
+
+[data-ui-theme='blueprint'] .card-emoji .template-card-icon--blueprint {
+  display: block;
+}
+
+[data-ui-theme='blueprint'] .card-emoji .museum-card-icon,
+[data-ui-theme='blueprint'] .card-emoji .template-card-icon {
+  height: 42px;
+  opacity: 0.8;
+}
+
+/* ---- Canvas wrap ---- */
+
+[data-ui-theme='blueprint'] .canvas-wrap {
+  background: transparent;
+}
+
+/* ---- Scrollbar ---- */
+
+[data-ui-theme='blueprint'] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-ui-theme='blueprint'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-ui-theme='blueprint'] ::-webkit-scrollbar-thumb {
+  background: rgba(77, 171, 247, 0.2);
+  border-radius: 0;
+}
+
+[data-ui-theme='blueprint'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(77, 171, 247, 0.35);
+}
+
+/* ---- Mobile ---- */
+
+@media (max-width: 767px) {
+  [data-ui-theme='blueprint'] {
+    --bp-chrome-height: 44px;
+  }
+
+  [data-ui-theme='blueprint'] .topbar {
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  [data-ui-theme='blueprint'] .brand {
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  [data-ui-theme='blueprint'] .brand-text {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  [data-ui-theme='blueprint'] .theme-switcher-select {
+    width: 100px;
+    max-width: 100px;
+    font-size: 10px;
+  }
+
+  [data-ui-theme='blueprint'] .page {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 12px 72px;
+    box-sizing: border-box;
+  }
+
+  [data-ui-theme='blueprint'] .dashboard-top-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding-top: 0;
+  }
+
+  [data-ui-theme='blueprint'] .dashboard-top-row .page-head {
+    margin-top: 0;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-bar {
+    width: 100%;
+    margin-left: 0;
+    padding: 10px 12px;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-field--name,
+  [data-ui-theme='blueprint'] .create-museum-field--theme {
+    min-width: 0;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-bar .field label {
+    font-size: 8px;
+    line-height: 1.2;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-field input,
+  [data-ui-theme='blueprint'] .create-museum-field select {
+    height: 32px;
+    font-size: 12px;
+    padding: 5px 7px;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-bar > .row > button.primary,
+  [data-ui-theme='blueprint'] .create-museum-bar > .row > button.create-museum-submit {
+    margin-bottom: 0 !important;
+    height: auto;
+    min-height: 32px;
+    padding: 4px 6px;
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-bar > .row > button.create-museum-submit .create-museum-submit-label--mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+  [data-ui-theme='blueprint'] .create-museum-bar > .row > button.create-museum-submit .create-museum-submit-word {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    justify-items: stretch;
+    gap: 8px;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 12px 8px;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card h3 {
+    font-size: 10px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card .meta {
+    font-size: 9px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card .card-emoji {
+    margin-bottom: 4px;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card .museum-card-actions {
+    margin-top: 8px !important;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card .museum-card-actions button {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card .row .tag {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+
+  [data-ui-theme='blueprint'] .page .grid > .card > .row {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px !important;
+  }
+
+  [data-ui-theme='blueprint'] .page-head h1 {
+    font-size: 14px;
+  }
+
+  [data-ui-theme='blueprint'] .modebar {
+    min-width: 0;
+    width: calc(100% - 24px);
+    bottom: 52px;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.left {
+    left: 52px;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.right {
+    right: 52px;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) {
+    width: min(40vw, calc(100vw - 16px)) !important;
+    max-width: 40vw !important;
+    min-width: 0;
+    left: var(--editor-panel-side-inset, 8px) !important;
+    right: auto !important;
+    top: 14px;
+    bottom: 64px;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout .side-floating.right:not(.collapsed) {
+    width: min(50vw, calc(100vw - 16px)) !important;
+    max-width: 50vw !important;
+    min-width: 0;
+    left: auto !important;
+    right: var(--editor-panel-side-inset, 8px) !important;
+    top: 14px;
+    bottom: 64px;
+    z-index: 15;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-ui-theme='blueprint'] .content.map-layout .side.left {
+    width: calc(100% - 16px);
+    margin-left: 8px;
+    margin-right: 8px;
+    max-height: 42vh;
+    margin-bottom: 52px;
+  }
+}

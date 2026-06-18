@@ -35,22 +35,48 @@ export function useEditorPanelInsets(
       if (!container || !topbar) return false;
 
       const contentTop = container.getBoundingClientRect().top;
-      const topbarBottom = topbar.getBoundingClientRect().bottom;
+      const topbarRect = topbar.getBoundingClientRect();
       const isMobile = window.matchMedia(MOBILE_MQ).matches;
-      const overlayTop = Math.max(isMobile ? 10 : 14, topbarBottom - contentTop + PANEL_GAP);
-      const panelTop = Math.max(
-        isMobile ? 10 : 14,
-        topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP,
-      );
+
+      /* Bottom-anchored toolbar (e.g. Blueprint theme): topbar sits at the
+         bottom of the viewport, so panels start from the top and stop above
+         the bar instead of starting below a top bar. */
+      const bottomBar = topbarRect.top > window.innerHeight * 0.5;
+
+      let overlayTop: number;
+      let panelTop: number;
+      let panelBottom: string;
+      let collapsedBottom: string;
+      let collapsedBottomSession: string;
+
+      if (bottomBar) {
+        overlayTop = isMobile ? 10 : 14;
+        panelTop = isMobile ? 10 : 14 + PANEL_EXTRA_TOP;
+        const barHeight = topbarRect.bottom - topbarRect.top;
+        const bottomGap = barHeight + PANEL_GAP + (isMobile ? 4 : 8);
+        panelBottom = `${bottomGap}px`;
+        collapsedBottom = `${bottomGap + (isMobile ? 24 : 44)}px`;
+        collapsedBottomSession = `${bottomGap + (isMobile ? 84 : 44)}px`;
+      } else {
+        const topbarBottom = topbarRect.bottom;
+        overlayTop = Math.max(isMobile ? 10 : 14, topbarBottom - contentTop + PANEL_GAP);
+        panelTop = Math.max(
+          isMobile ? 10 : 14,
+          topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP,
+        );
+        panelBottom = isMobile ? '12px' : '18px';
+        collapsedBottom = isMobile ? '68px' : '88px';
+        collapsedBottomSession = isMobile ? '148px' : '88px';
+      }
 
       container.style.setProperty('--canvas-overlay-top', `${overlayTop}px`);
       container.style.setProperty('--editor-panel-top', `${panelTop}px`);
-      container.style.setProperty('--editor-panel-bottom', isMobile ? '12px' : '18px');
+      container.style.setProperty('--editor-panel-bottom', panelBottom);
       container.style.setProperty('--editor-panel-collapsed-size', isMobile ? '36px' : '40px');
-      container.style.setProperty('--editor-panel-collapsed-bottom', isMobile ? '68px' : '88px');
+      container.style.setProperty('--editor-panel-collapsed-bottom', collapsedBottom);
       container.style.setProperty(
         '--editor-panel-collapsed-bottom-session',
-        isMobile ? '148px' : '88px',
+        collapsedBottomSession,
       );
       return true;
     };

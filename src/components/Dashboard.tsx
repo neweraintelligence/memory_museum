@@ -112,6 +112,11 @@ export default function Dashboard() {
                   className="museum-card-icon museum-card-icon--utilitarian"
                 />
                 <img
+                  src="/museum-room-icon-blueprint.png"
+                  alt=""
+                  className="museum-card-icon museum-card-icon--blueprint"
+                />
+                <img
                   src="/museum-room-icon.png"
                   alt=""
                   className="museum-card-icon museum-card-icon--default"
@@ -155,6 +160,11 @@ export default function Dashboard() {
                 src="/template-icon-utilitarian.png?v=3"
                 alt=""
                 className="template-card-icon template-card-icon--utilitarian"
+              />
+              <img
+                src="/template-icon-blueprint.png"
+                alt=""
+                className="template-card-icon template-card-icon--blueprint"
               />
               <img
                 src="/template-icon.png"

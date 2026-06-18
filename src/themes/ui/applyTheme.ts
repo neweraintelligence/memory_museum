@@ -12,7 +12,11 @@ const WALLPAPER_ATTR = 'data-wallpaper';
 
 type WallpaperPrefs = Partial<Record<UiThemeId, boolean>>;
 
-const BRAND_ICON_PATHS = ['/brand-icon-utilitarian.png', '/brand-icon-brain.png'] as const;
+const BRAND_ICON_PATHS = [
+  '/brand-icon-utilitarian.png',
+  '/brand-icon-brain.png',
+  '/brand-icon-blueprint.png',
+] as const;
 
 export function preloadBrandIcons(): void {
   for (const path of BRAND_ICON_PATHS) {

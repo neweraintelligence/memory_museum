@@ -19,6 +19,12 @@ export const UI_THEMES: UiTheme[] = [
     description: 'Dark chocolate & cream, old-world serif elegance, burgundy accents.',
     defaultWallpaperEnabled: true,
   },
+  {
+    id: 'blueprint',
+    label: 'Blueprint',
+    description: 'Architectural drafting blue, white linework, monospaced precision.',
+    defaultWallpaperEnabled: false,
+  },
 ];
 
 export const DEFAULT_UI_THEME: UiThemeId = 'utilitarian';

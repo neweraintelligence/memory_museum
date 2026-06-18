@@ -500,7 +500,9 @@ button.cloud-pill-segment:active {
 }
 
 .card-emoji .museum-card-icon--utilitarian,
-.card-emoji .template-card-icon--utilitarian {
+.card-emoji .template-card-icon--utilitarian,
+.card-emoji .museum-card-icon--blueprint,
+.card-emoji .template-card-icon--blueprint {
   display: none;
 }
 

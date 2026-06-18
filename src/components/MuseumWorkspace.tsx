@@ -342,7 +342,7 @@ export default function MuseumWorkspace() {
   const mapLayout = view === 'map';
   const themeId = useTheme((s) => s.themeId);
   const contentRef = useRef<HTMLDivElement>(null);
-  const insetLayout = roomEditor || (themeId === 'clairvoyant' && mapLayout);
+  const insetLayout = roomEditor || ((themeId === 'clairvoyant' || themeId === 'blueprint') && mapLayout);
   useEditorPanelInsets(contentRef, insetLayout, themeId);
 
   useEffect(() => {
