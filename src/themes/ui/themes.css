@@ -423,15 +423,12 @@
   }
 
   [data-ui-theme='utilitarian'] .brand {
-    gap: 4px;
-    font-size: 11px;
+    gap: 9px;
   }
 
   [data-ui-theme='utilitarian'] .brand-text {
-    font-size: 11px;
+    font-size: calc(12px * 1.25);
     font-weight: 700;
-    white-space: nowrap;
-    width: auto;
   }
 
   [data-ui-theme='utilitarian'] .theme-switcher-select {

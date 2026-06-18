@@ -1003,8 +1003,8 @@
   }
 
   [data-ui-theme='clairvoyant'] .brand {
-    font-size: 11px;
-    gap: 4px;
+    font-size: 16px;
+    gap: 9px;
   }
 
   [data-ui-theme='clairvoyant'] .brand .brand-icon {
@@ -1013,11 +1013,9 @@
   }
 
   [data-ui-theme='clairvoyant'] .brand-text {
-    font-size: 11px;
+    font-size: calc(11px * 1.5);
     font-weight: 500;
     letter-spacing: 0.01em;
-    white-space: nowrap;
-    width: auto;
   }
 
   [data-ui-theme='clairvoyant'] .theme-switcher-select {
