@@ -76,7 +76,7 @@
   --kbd-shadow: 0 0 0 1px var(--border);
   --swatch-inset: inset 0 0 0 1px var(--border);
 
-  --bg-texture: url('/blueprint-bg.jpg');
+  --bg-texture: url('/blueprint-bg.webp');
   --bp-chrome-height: 52px;
   --bp-floating-inset: 20px;
   --bp-floating-gap: 20px;

@@ -1309,6 +1309,27 @@ html {
     padding: 8px 10px;
   }
 
+  /* Dashboard/header (no mode switch): keep everything on one line and
+     right-justify the search/theme/cloud controls. Museum pages keep the
+     mode switch wrapping to its own row, so they're excluded here. */
+  .topbar:not(:has(.mode-switch)) {
+    flex-wrap: nowrap;
+  }
+
+  .topbar:not(:has(.mode-switch)) .spacer {
+    flex: 1 1 0;
+  }
+
+  .topbar:not(:has(.mode-switch)) button.ghost,
+  .topbar:not(:has(.mode-switch)) .cloud-pill {
+    flex-shrink: 0;
+  }
+
+  .topbar:not(:has(.mode-switch)) .theme-switcher {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
   .brand {
     font-size: 18px;
     gap: 9px;

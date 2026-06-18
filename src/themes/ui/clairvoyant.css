@@ -59,7 +59,7 @@
   --pm-glass-border: rgba(255, 255, 255, 0.12);
   --pm-blur: blur(24px) saturate(1.15);
   --pm-icon-scale: 1.44;
-  --bg-texture: url('/clairvoyant-bg.jpg');
+  --bg-texture: url('/clairvoyant-bg.webp');
 }
 
 /* ---- Global surfaces ---- */
@@ -995,11 +995,10 @@
     row-gap: 4px;
   }
 
-  [data-ui-theme='clairvoyant'] .topbar .spacer {
-    flex: 0 0 0;
+  [data-ui-theme='clairvoyant'] .topbar:not(:has(.mode-switch)) .spacer {
+    flex: 1 1 0;
     min-width: 0;
-    width: 0;
-    overflow: hidden;
+    width: auto;
   }
 
   [data-ui-theme='clairvoyant'] .brand {

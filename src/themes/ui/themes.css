@@ -415,11 +415,10 @@
     row-gap: 4px;
   }
 
-  [data-ui-theme='utilitarian'] .topbar .spacer {
-    flex: 0 0 0;
+  [data-ui-theme='utilitarian'] .topbar:not(:has(.mode-switch)) .spacer {
+    flex: 1 1 0;
     min-width: 0;
-    width: 0;
-    overflow: hidden;
+    width: auto;
   }
 
   [data-ui-theme='utilitarian'] .brand {
