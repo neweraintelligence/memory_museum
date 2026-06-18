@@ -54,11 +54,19 @@ export default function DataModal() {
         alert('Invalid backup file: missing museums array.');
         return;
       }
-      const roomList = data.rooms ?? [];
-      const connList = data.connections ?? [];
-      const objList = data.objects ?? [];
-      const memList = data.memories ?? [];
-      for (const museum of data.museums) {
+      // Basic shape validation: every record must have a string id.
+      const hasId = (rec: unknown): rec is { id: string } =>
+        typeof rec === 'object' && rec !== null && typeof (rec as Record<string, unknown>).id === 'string';
+      const roomList = (data.rooms ?? []).filter(hasId);
+      const connList = (data.connections ?? []).filter(hasId);
+      const objList = (data.objects ?? []).filter(hasId);
+      const memList = (data.memories ?? []).filter(hasId);
+      const validMuseums = (data.museums as unknown[]).filter(hasId);
+      if (validMuseums.length === 0) {
+        alert('Invalid backup file: no valid museums found.');
+        return;
+      }
+      for (const museum of validMuseums) {
         const museumRooms = roomList.filter((r: { museumId: string }) => r.museumId === museum.id);
         const roomIds = new Set(museumRooms.map((r: { id: string }) => r.id));
         const museumObjects = objList.filter((o: { roomId: string }) => roomIds.has(o.roomId));
