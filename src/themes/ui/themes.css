@@ -52,7 +52,7 @@
   --modal-shadow: var(--bevel), 0 40px 80px -24px rgba(15, 15, 13, 0.65), 0 12px 28px -10px rgba(15, 15, 13, 0.4);
   --kbd-shadow: var(--bevel), 0 1px 2px rgba(15, 15, 13, 0.2);
   --swatch-inset: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(15, 15, 13, 0.22);
-  --bg-texture: url('/utilitarian-bg.jpg');
+  --bg-texture: url('/utilitarian-bg.webp');
 }
 
 /* ---- Global surfaces ---- */
@@ -424,6 +424,7 @@
 
   [data-ui-theme='utilitarian'] .brand {
     gap: 9px;
+    margin-right: 4px;
   }
 
   [data-ui-theme='utilitarian'] .brand-text {

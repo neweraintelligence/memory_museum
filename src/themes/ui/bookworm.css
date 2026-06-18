@@ -60,7 +60,7 @@
   --modal-shadow: var(--bevel), 0 40px 80px -24px rgba(0, 0, 0, 0.7), 0 12px 28px -10px rgba(0, 0, 0, 0.5);
   --kbd-shadow: var(--bevel), 0 1px 2px rgba(0, 0, 0, 0.3);
   --swatch-inset: inset 0 1px 0 rgba(200, 180, 140, 0.1), inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-  --bg-texture: url('/bookworm-bg.jpg');
+  --bg-texture: url('/bookworm-bg.webp');
 }
 
 /* ---- Global surfaces ---- */
@@ -1041,6 +1041,7 @@
   [data-ui-theme='bookworm'] .brand {
     gap: 9px;
     margin-left: 0;
+    margin-right: 4px;
   }
 
   [data-ui-theme='bookworm'] .brand-text {
