@@ -17,19 +17,20 @@ export default function DataModal() {
   if (!open) return null;
 
   const handleExport = () => {
-    const live = museums.filter((m) => !m.deletedAt);
+    const live = museums.filter((m) => !m.deleted);
     const liveIds = new Set(live.map((m) => m.id));
+    const liveRooms = rooms.filter((r) => liveIds.has(r.museumId) && !r.deleted);
+    const liveRoomIds = new Set(liveRooms.map((r) => r.id));
+    const liveObjects = objects.filter((o) => liveRoomIds.has(o.roomId) && !o.deleted);
+    const liveObjectIds = new Set(liveObjects.map((o) => o.id));
     const data = {
       version: 1,
       exportedAt: new Date().toISOString(),
       museums: live,
-      rooms: rooms.filter((r) => liveIds.has(r.museumId) && !r.deletedAt),
-      connections: connections.filter((c) => liveIds.has(c.museumId) && !c.deletedAt),
-      objects: objects.filter((o) => liveIds.has(o.museumId) && !o.deletedAt),
-      memories: memories.filter((m) => {
-        const obj = objects.find((o) => o.id === m.objectId);
-        return obj && liveIds.has(obj.museumId) && !m.deletedAt;
-      }),
+      rooms: liveRooms,
+      connections: connections.filter((c) => liveIds.has(c.museumId) && !c.deleted),
+      objects: liveObjects,
+      memories: memories.filter((m) => liveObjectIds.has(m.objectId) && !m.deleted),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -58,15 +59,16 @@ export default function DataModal() {
       const objList = data.objects ?? [];
       const memList = data.memories ?? [];
       for (const museum of data.museums) {
+        const museumRooms = roomList.filter((r: { museumId: string }) => r.museumId === museum.id);
+        const roomIds = new Set(museumRooms.map((r: { id: string }) => r.id));
+        const museumObjects = objList.filter((o: { roomId: string }) => roomIds.has(o.roomId));
+        const objectIds = new Set(museumObjects.map((o: { id: string }) => o.id));
         importBundle({
           museum,
-          rooms: roomList.filter((r: { museumId: string }) => r.museumId === museum.id),
+          rooms: museumRooms,
           connections: connList.filter((c: { museumId: string }) => c.museumId === museum.id),
-          objects: objList.filter((o: { museumId: string }) => o.museumId === museum.id),
-          memories: memList.filter((m: { objectId: string }) => {
-            const obj = objList.find((o: { id: string; museumId: string }) => o.id === m.objectId);
-            return obj?.museumId === museum.id;
-          }),
+          objects: museumObjects,
+          memories: memList.filter((m: { objectId: string }) => objectIds.has(m.objectId)),
         });
       }
       setOpen(false);
