@@ -42,7 +42,8 @@ export default function Dashboard() {
     rooms.filter((r) => r.museumId === museumId && !r.deleted).length;
 
   return (
-    <div className="page fade-in">
+    <>
+      <div className="page fade-in">
       <div className="dashboard-top">
         <div className="dashboard-top-row">
           <div className="page-head">
@@ -182,6 +183,7 @@ export default function Dashboard() {
       </div>
 
       <Console />
+      </div>
 
       <button
         type="button"
@@ -193,6 +195,6 @@ export default function Dashboard() {
       >
         <Icon icon={UI_ICONS.wallpaper} size={18} />
       </button>
-    </div>
+    </>
   );
 }

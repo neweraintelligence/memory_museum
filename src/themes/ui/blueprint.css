@@ -1489,6 +1489,8 @@
 @media (max-width: 767px) {
   [data-ui-theme='blueprint'] {
     --bp-chrome-height: 44px;
+    --bp-mobile-wallpaper-inset: 12px;
+    --bp-mobile-wallpaper-top: calc(var(--bp-chrome-height) + 12px - 45px);
   }
 
   [data-ui-theme='blueprint'] .topbar {
@@ -1534,6 +1536,23 @@
 
   [data-ui-theme='blueprint'] .dashboard-top-row .page-head {
     margin-top: 0;
+  }
+
+  /* Wallpaper toggle: viewport-pinned top-right on mobile (resize-stable) */
+  [data-ui-theme='blueprint'] .wallpaper-toggle,
+  [data-ui-theme='blueprint'] .wallpaper-toggle.active {
+    position: fixed;
+    top: max(var(--bp-mobile-wallpaper-top), env(safe-area-inset-top, 0px));
+    right: max(var(--bp-mobile-wallpaper-inset), env(safe-area-inset-right, 0px));
+    bottom: auto;
+    left: auto;
+    z-index: 45;
+    transform: none;
+  }
+
+  [data-ui-theme='blueprint'] .wallpaper-toggle:hover,
+  [data-ui-theme='blueprint'] .wallpaper-toggle:active {
+    transform: none;
   }
 
   [data-ui-theme='blueprint'] .create-museum-bar {

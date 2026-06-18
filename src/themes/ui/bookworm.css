@@ -1073,9 +1073,27 @@
     flex: 2 1 0 !important;
     flex-shrink: 1 !important;
     margin-bottom: 0 !important;
-    height: 32px;
-    padding: 0 6px;
-    font-size: 10px;
+    height: auto;
+    min-height: 32px;
+    padding: 4px 6px;
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  [data-ui-theme='bookworm'] .create-museum-bar > .row > button.create-museum-submit .create-museum-submit-label--mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+  [data-ui-theme='bookworm'] .create-museum-bar > .row > button.create-museum-submit .create-museum-submit-word {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.01em;
   }
 
   [data-ui-theme='bookworm'] .content.editor-layout .side-floating.collapsed.left {
