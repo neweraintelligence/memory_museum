@@ -55,7 +55,7 @@ export default function DataModal() {
         return;
       }
       // Basic shape validation: every record must have a string id.
-      const hasId = (rec: unknown): rec is { id: string } =>
+      const hasId = (rec: unknown): boolean =>
         typeof rec === 'object' && rec !== null && typeof (rec as Record<string, unknown>).id === 'string';
       const roomList = (data.rooms ?? []).filter(hasId);
       const connList = (data.connections ?? []).filter(hasId);
@@ -66,7 +66,8 @@ export default function DataModal() {
         alert('Invalid backup file: no valid museums found.');
         return;
       }
-      for (const museum of validMuseums) {
+      for (const museum of data.museums) {
+        if (!hasId(museum)) continue;
         const museumRooms = roomList.filter((r: { museumId: string }) => r.museumId === museum.id);
         const roomIds = new Set(museumRooms.map((r: { id: string }) => r.id));
         const museumObjects = objList.filter((o: { roomId: string }) => roomIds.has(o.roomId));
