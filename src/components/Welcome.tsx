@@ -386,7 +386,7 @@ export default function Welcome() {
       <div
         ref={welcomeContentRef}
         className="welcome-content"
-        style={hasBg && !isBookworm ? { textShadow } : isBookworm ? undefined : { textShadow: 'none' }}
+        style={hasBg && !isBookworm && !isClairvoyant ? { textShadow } : isBookworm ? undefined : { textShadow: 'none' }}
       >
         {isBookworm ? (
           <div className="welcome-panel">
@@ -457,16 +457,53 @@ export default function Welcome() {
               Build a place for your knowledge to live
             </p>
 
+            {isClairvoyant ? (
+              <div className="welcome-clairvoyant-theme-picker">
+                <label className="welcome-clairvoyant-label" htmlFor="welcome-theme">
+                  Choose Your Theme
+                </label>
+                <div className="welcome-clairvoyant-controls-row">
+                  <select
+                    id="welcome-theme"
+                    className="welcome-clairvoyant-select"
+                    value={themeId}
+                    onChange={(e) => setThemeId(e.target.value as UiThemeId)}
+                  >
+                    {WELCOME_THEMES.map((t) => (
+                      <option
+                        key={t.id}
+                        value={t.id}
+                        style={{ color: '#000', backgroundColor: '#fff' }}
+                      >
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="welcome-clairvoyant-actions">
+                    <div className="welcome-glass-wrap">
+                      <button type="button" className="welcome-glass-btn" onClick={handleEnter}>
+                        <span className="welcome-glass-content welcome-glass-content--enter">Enter</span>
+                      </button>
+                      <div className="welcome-glass-shadow" aria-hidden="true" />
+                    </div>
+                    <TimeOfDayToggle
+                      timeOfDay={timeOfDay}
+                      onToggle={toggleTimeOfDay}
+                      className="welcome-time-toggle"
+                      clairvoyantIcons
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
             <div
               className={
                 isBlueprint
                   ? 'welcome-blueprint-theme'
-                  : isClairvoyant
-                    ? 'welcome-clairvoyant-theme-picker'
-                    : undefined
+                  : undefined
               }
               style={
-                isBlueprint || isClairvoyant
+                isBlueprint
                   ? undefined
                   : {
                       display: 'flex',
@@ -481,12 +518,10 @@ export default function Welcome() {
                 className={
                   isBlueprint
                     ? 'welcome-blueprint-label'
-                    : isClairvoyant
-                      ? 'welcome-clairvoyant-label'
-                      : undefined
+                    : undefined
                 }
                 style={
-                  isBlueprint || isClairvoyant
+                  isBlueprint
                     ? undefined
                     : {
                   fontSize: '1.1rem',
@@ -510,7 +545,7 @@ export default function Welcome() {
                   className="welcome-blueprint-select"
                   aria-label="Choose your theme"
                 />
-              ) : onPhotoBg ? (
+              ) : (
                 <BlueprintSelect
                   value={themeId}
                   onChange={(value) => setThemeId(value as UiThemeId)}
@@ -518,41 +553,11 @@ export default function Welcome() {
                   className="welcome-utilitarian-select"
                   aria-label="Choose your theme"
                 />
-              ) : (
-                <select
-                  className="welcome-clairvoyant-select"
-                  value={themeId}
-                  onChange={(e) => setThemeId(e.target.value as UiThemeId)}
-                >
-                  {WELCOME_THEMES.map((t) => (
-                    <option
-                      key={t.id}
-                      value={t.id}
-                      style={{ color: '#000', backgroundColor: '#fff' }}
-                    >
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
               )}
             </div>
+            )}
 
-            {isClairvoyant ? (
-              <div className="welcome-clairvoyant-actions">
-                <div className="welcome-glass-wrap">
-                  <button type="button" className="welcome-glass-btn" onClick={handleEnter}>
-                    <span className="welcome-glass-content welcome-glass-content--enter">Enter</span>
-                  </button>
-                  <div className="welcome-glass-shadow" aria-hidden="true" />
-                </div>
-                <TimeOfDayToggle
-                  timeOfDay={timeOfDay}
-                  onToggle={toggleTimeOfDay}
-                  className="welcome-time-toggle"
-                  clairvoyantIcons
-                />
-              </div>
-            ) : (
+            {!isClairvoyant && (
               <button
                 type="button"
                 className={onWelcomePhoto ? 'primary welcome-enter' : undefined}

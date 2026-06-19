@@ -61,6 +61,21 @@
   --pm-blur: blur(24px) saturate(1.15);
   --pm-icon-scale: 1.44;
   --bg-texture: url('/clairvoyant-bg.webp');
+
+  --clairvoyant-glass-hover-time: 400ms;
+  --clairvoyant-glass-hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@property --clairvoyant-glass-angle-1 {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: -75deg;
+}
+
+@property --clairvoyant-glass-angle-2 {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: -45deg;
 }
 
 /* ---- Global surfaces ---- */
@@ -93,23 +108,7 @@
 }
 
 [data-ui-theme='clairvoyant'] .wallpaper-toggle {
-  background: var(--pm-glass);
-  -webkit-backdrop-filter: var(--pm-blur);
-  backdrop-filter: var(--pm-blur);
-  border: 1px solid var(--pm-glass-border);
-  border-radius: 999px;
   color: var(--text);
-  box-shadow: var(--shadow-sm);
-}
-
-[data-ui-theme='clairvoyant'] .wallpaper-toggle:hover {
-  background: var(--pm-glass-strong);
-}
-
-[data-ui-theme='clairvoyant'] .wallpaper-toggle.active {
-  background: var(--pm-glass-strong);
-  border-color: var(--gold);
-  color: var(--gold);
 }
 
 [data-ui-theme='clairvoyant'] h1,
@@ -226,13 +225,12 @@
 }
 
 [data-ui-theme='clairvoyant'] button.ghost {
-  border-color: transparent;
-  background: transparent;
   box-shadow: none;
 }
 
-[data-ui-theme='clairvoyant'] button.ghost:hover {
-  background: var(--ghost-hover-bg);
+[data-ui-theme='clairvoyant'] .topbar button.ghost:hover {
+  filter: none;
+  transform: none;
 }
 
 /* Match theme selector + cloud pill to search button height */
@@ -244,8 +242,6 @@
 }
 
 [data-ui-theme='clairvoyant'] .cloud-pill {
-  border-color: var(--pm-glass-border);
-  background: rgba(0, 0, 0, 0.08);
   align-items: stretch;
 }
 
@@ -253,10 +249,18 @@
   padding: 7px 10px;
   min-height: 34px;
   box-sizing: border-box;
+  background: transparent;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 [data-ui-theme='clairvoyant'] button.cloud-pill-segment:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+  filter: none;
+  transform: none;
 }
 
 [data-ui-theme='clairvoyant'] .theme-switcher-select {
@@ -478,17 +482,6 @@
   line-height: 1;
   box-sizing: border-box;
   flex-shrink: 0;
-  background-color: transparent;
-  background-image: none;
-  border-color: rgba(255, 255, 255, 0.45);
-  color: var(--text);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-
-[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.65);
   color: var(--text);
 }
 
@@ -725,21 +718,15 @@
 }
 
 [data-ui-theme='clairvoyant'] .kbd {
-  background: rgba(0, 0, 0, 0.1);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
 
 [data-ui-theme='clairvoyant'] button.danger {
-  background-color: transparent;
-  background-image: none;
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.45);
 }
 
 [data-ui-theme='clairvoyant'] button.danger:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.65);
   color: var(--text);
 }
 
@@ -753,6 +740,238 @@
 [data-ui-theme='clairvoyant'] .card.clickable button.danger:focus-visible {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* ---- App chrome: liquid glass buttons (not welcome screen) ---- */
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost,
+[data-ui-theme='clairvoyant'] .cloud-pill,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary,
+[data-ui-theme='clairvoyant'] button.danger {
+  --cv-glass-border-width: clamp(1px, 0.0625em, 4px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: transparent;
+  background-image: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
+    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.28),
+    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
+  backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
+  transition:
+    background-image var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    border-color var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    box-shadow var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    color var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    transform var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'] .wallpaper-toggle {
+  border-radius: 999px;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost::before,
+[data-ui-theme='clairvoyant'] .cloud-pill::before,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle::before,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary::before,
+[data-ui-theme='clairvoyant'] button.danger::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: calc(100% - var(--cv-glass-border-width));
+  height: calc(100% - var(--cv-glass-border-width));
+  top: calc(var(--cv-glass-border-width) / 2);
+  left: calc(var(--cv-glass-border-width) / 2);
+  box-sizing: border-box;
+  border-radius: inherit;
+  overflow: clip;
+  background: linear-gradient(
+    var(--clairvoyant-glass-angle-2),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.42) 40% 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  transition:
+    background-position calc(var(--clairvoyant-glass-hover-time) * 1.25) var(--clairvoyant-glass-hover-ease),
+    --clairvoyant-glass-angle-2 calc(var(--clairvoyant-glass-hover-time) * 1.25) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost::after,
+[data-ui-theme='clairvoyant'] .cloud-pill::after,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle::after,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary::after,
+[data-ui-theme='clairvoyant'] button.danger::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  width: calc(100% + var(--cv-glass-border-width));
+  height: calc(100% + var(--cv-glass-border-width));
+  top: calc(0% - var(--cv-glass-border-width) / 2);
+  left: calc(0% - var(--cv-glass-border-width) / 2);
+  padding: var(--cv-glass-border-width);
+  box-sizing: border-box;
+  background:
+    conic-gradient(
+      from var(--clairvoyant-glass-angle-1) at 50% 50%,
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0) 5% 40%,
+      rgba(0, 0, 0, 0.45) 50%,
+      rgba(0, 0, 0, 0) 60% 95%,
+      rgba(0, 0, 0, 0.45)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.42));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  box-shadow: inset 0 0 0 calc(var(--cv-glass-border-width) / 2) rgba(255, 255, 255, 0.34);
+  pointer-events: none;
+  transition:
+    all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    --clairvoyant-glass-angle-1 500ms ease;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost > *,
+[data-ui-theme='clairvoyant'] .cloud-pill > *,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle > *,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary > *,
+[data-ui-theme='clairvoyant'] button.danger > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:hover,
+[data-ui-theme='clairvoyant'] .cloud-pill:hover,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:hover,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:hover,
+[data-ui-theme='clairvoyant'] button.danger:hover {
+  filter: none;
+  transform: scale(0.985);
+  background-color: transparent;
+  background-image: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.08)
+  );
+  border-color: rgba(255, 255, 255, 0.34);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.32),
+    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.32),
+    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.34);
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:hover::before,
+[data-ui-theme='clairvoyant'] .cloud-pill:hover::before,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:hover::before,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:hover::before,
+[data-ui-theme='clairvoyant'] button.danger:hover::before {
+  background-position: 25% 50%;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:hover::after,
+[data-ui-theme='clairvoyant'] .cloud-pill:hover::after,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:hover::after,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:hover::after,
+[data-ui-theme='clairvoyant'] button.danger:hover::after {
+  --clairvoyant-glass-angle-1: -125deg;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:active,
+[data-ui-theme='clairvoyant'] .cloud-pill:active,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:active,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:active,
+[data-ui-theme='clairvoyant'] button.danger:active {
+  filter: none;
+  transform: scale(0.975);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
+    0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.24),
+    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14),
+    0 0.225em 0.05em 0 rgba(0, 0, 0, 0.08),
+    inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.14);
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:active::before,
+[data-ui-theme='clairvoyant'] .cloud-pill:active::before,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:active::before,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:active::before,
+[data-ui-theme='clairvoyant'] button.danger:active::before {
+  background-position: 50% 15%;
+  --clairvoyant-glass-angle-2: -15deg;
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost:active::after,
+[data-ui-theme='clairvoyant'] .cloud-pill:active::after,
+[data-ui-theme='clairvoyant'] .wallpaper-toggle:active::after,
+[data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:active::after,
+[data-ui-theme='clairvoyant'] button.danger:active::after {
+  --clairvoyant-glass-angle-1: -75deg;
+}
+
+[data-ui-theme='clairvoyant'] .wallpaper-toggle.active {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+[data-ui-theme='clairvoyant'] .topbar button.ghost .kbd {
+  background: rgba(0, 0, 0, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  [data-ui-theme='clairvoyant'] .topbar button.ghost::before,
+  [data-ui-theme='clairvoyant'] .cloud-pill::before,
+  [data-ui-theme='clairvoyant'] .wallpaper-toggle::before,
+  [data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary::before,
+  [data-ui-theme='clairvoyant'] button.danger::before,
+  [data-ui-theme='clairvoyant'] .topbar button.ghost:active::before,
+  [data-ui-theme='clairvoyant'] .cloud-pill:active::before,
+  [data-ui-theme='clairvoyant'] .wallpaper-toggle:active::before,
+  [data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:active::before,
+  [data-ui-theme='clairvoyant'] button.danger:active::before {
+    --clairvoyant-glass-angle-2: -45deg;
+  }
+
+  [data-ui-theme='clairvoyant'] .topbar button.ghost::after,
+  [data-ui-theme='clairvoyant'] .cloud-pill::after,
+  [data-ui-theme='clairvoyant'] .wallpaper-toggle::after,
+  [data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary::after,
+  [data-ui-theme='clairvoyant'] button.danger::after,
+  [data-ui-theme='clairvoyant'] .topbar button.ghost:hover::after,
+  [data-ui-theme='clairvoyant'] .cloud-pill:hover::after,
+  [data-ui-theme='clairvoyant'] .wallpaper-toggle:hover::after,
+  [data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:hover::after,
+  [data-ui-theme='clairvoyant'] button.danger:hover::after,
+  [data-ui-theme='clairvoyant'] .topbar button.ghost:active::after,
+  [data-ui-theme='clairvoyant'] .cloud-pill:active::after,
+  [data-ui-theme='clairvoyant'] .wallpaper-toggle:active::after,
+  [data-ui-theme='clairvoyant'] .create-museum-bar > .row > button.primary:active::after,
+  [data-ui-theme='clairvoyant'] button.danger:active::after {
+    --clairvoyant-glass-angle-1: -75deg;
+  }
 }
 
 /* ---- Editor floating panels: extra glass ---- */
@@ -1306,9 +1525,10 @@
   --clairvoyant-glass-size: calc(36px * 1.21);
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: calc(12px * 1.21);
-  margin-top: -20px;
+  margin-top: 0;
+  flex-shrink: 0;
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-time-toggle {
@@ -1341,8 +1561,72 @@
   height: calc(18px * 1.21);
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle.welcome-glass-wrap:hover {
-  transform: none;
+@media (min-width: 768px) {
+  /* Widen Enter: +40% left (anchored right) + 5% right; transform keeps layout box unchanged. */
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions > .welcome-glass-wrap:has(.welcome-glass-content--enter) {
+    transform: scale(0.855) scaleX(1.45);
+    transform-origin: calc(100% * 8 / 9) center;
+    position: relative;
+    z-index: 2;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-glass-wrap:has(.welcome-glass-content--enter):has(.welcome-glass-btn:active) {
+    transform: scale(0.855) scaleX(1.45) rotate3d(1, 0, 0, 25deg);
+    transform-origin: calc(100% * 8 / 9) center;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-glass-wrap:has(.welcome-glass-content--enter) {
+    --clairvoyant-welcome-enter-radius: max(
+      0px,
+      calc(var(--clairvoyant-glass-size, calc(36px * 1.21)) / 2 - 1pt)
+    );
+    border-radius: var(--clairvoyant-welcome-enter-radius);
+  }
+
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-glass-wrap:has(.welcome-glass-content--enter)
+    .welcome-glass-btn,
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-glass-wrap:has(.welcome-glass-content--enter)
+    .welcome-glass-btn::after,
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-glass-wrap:has(.welcome-glass-content--enter)
+    .welcome-glass-content::after {
+    border-radius: var(--clairvoyant-welcome-enter-radius);
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions > .welcome-time-toggle.welcome-glass-wrap {
+    transform: scale(calc(0.855 * 0.97));
+    transform-origin: center;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome
+    .welcome-clairvoyant-actions
+    > .welcome-time-toggle.welcome-glass-wrap:has(.welcome-glass-btn:active) {
+    transform: scale(calc(0.855 * 0.97)) rotate3d(1, 0, 0, 25deg);
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle.welcome-glass-wrap:hover {
+    transform: scale(calc(0.855 * 0.97));
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-label {
+    font-size: calc((0.842rem + 3px) * 0.64 - 3pt);
+    transform: translateY(6px);
+  }
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle.welcome-glass-wrap:hover {
+    transform: none;
+  }
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle .welcome-glass-btn {
@@ -1364,7 +1648,7 @@
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-tagline {
-  font-size: 1.148rem;
+  font-size: calc(1.148rem * 1.2 + 1px - 0.5pt);
   font-weight: 400;
   margin: 0 0 48.96px;
   opacity: 0.8;
@@ -1374,18 +1658,38 @@
 [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-theme-picker {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 12.24px;
-  margin-bottom: 36.72px;
+  width: 100%;
+  margin: 0 auto 36.72px;
+  /* Widen the row without shifting the dropdown left edge from its fit-content position. */
+  transform: translateX(calc(-100px + max(0px, (100% - 13.5rem) / 2) + 18px));
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(12px * 1.21);
+  width: 100%;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-controls-row .welcome-clairvoyant-select {
+  flex: 0 0 auto;
+  /* Intrinsic width (longest label + padding + chevron), extended 40% on the right edge only. */
+  --clairvoyant-select-intrinsic: calc(13ch + 9px + 23px + 13px);
+  width: calc(var(--clairvoyant-select-intrinsic) * 1.4);
+  min-width: calc(var(--clairvoyant-select-intrinsic) * 1.4);
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-label {
-  font-size: 0.842rem;
+  font-size: calc(0.842rem + 3px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.7;
   color: var(--text);
+  text-align: left;
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-select {
@@ -1395,7 +1699,7 @@
   background-color: transparent;
   border: 1.53px solid hsl(0, 0%, 100%);
   color: var(--text);
-  padding: 7.65px 25px 7.65px 11px;
+  padding: 7.65px 23px 7.65px 9px;
   font-family: var(--font-body);
   font-size: 0.803rem;
   font-weight: 500;
@@ -1403,9 +1707,7 @@
   cursor: pointer;
   outline: none;
   transition: all 0.3s ease;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.25),
-    0 0 6px hsl(0, 0%, 100% / 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 9px center;
@@ -1416,18 +1718,6 @@
   color: #000;
   background-color: #fff;
   font-size: 0.727rem;
-}
-
-@property --clairvoyant-glass-angle-1 {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: -75deg;
-}
-
-@property --clairvoyant-glass-angle-2 {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: -45deg;
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap {
@@ -1477,6 +1767,10 @@
   opacity: 1;
 }
 
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-shadow {
+  display: none;
+}
+
 [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn {
   --border-width: clamp(1px, 0.0625em, 4px);
   all: unset;
@@ -1498,9 +1792,7 @@
   box-shadow:
     inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
     inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
-    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.28),
-    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14),
-    0 0 0 0 rgba(255, 255, 255, 1);
+    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.28);
   -webkit-backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
   backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
   transition: all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
@@ -1521,9 +1813,7 @@
   box-shadow:
     inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
     inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.32),
-    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.32),
-    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.34),
-    0 0 0 0 rgba(255, 255, 255, 1);
+    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.32);
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-glass-content {
@@ -1630,8 +1920,13 @@
   transition:
     all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
     --clairvoyant-glass-angle-1 500ms ease;
-  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.34);
+  box-shadow: none;
   pointer-events: none;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn::after,
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content::after {
+  display: none;
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover::after {
@@ -1662,9 +1957,7 @@
     inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
     inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
     0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.24),
-    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14),
     0 0.225em 0.05em 0 rgba(0, 0, 0, 0.08),
-    0 0.25em 0 0 rgba(255, 255, 255, 0.72),
     inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.14);
 }
 
@@ -1701,15 +1994,30 @@
   }
 
   [data-ui-theme='clairvoyant'].welcome .welcome-tagline {
-    font-size: 0.842rem;
+    font-size: calc(0.842rem * 1.2 + 1px - 1pt);
     margin-bottom: 30.6px;
   }
 
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-label {
+    font-size: 0.842rem;
+  }
+
   [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-select {
-    padding: 7px 21px 7px 9px;
+    padding: 7px 19px 7px 7px;
     font-size: 0.727rem;
     background-position: right 8px center;
     background-size: 12px;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-controls-row .welcome-clairvoyant-select {
+    --clairvoyant-select-intrinsic: calc(13ch + 7px + 19px + 12px);
+    width: calc(var(--clairvoyant-select-intrinsic) * 1.4);
+    min-width: calc(var(--clairvoyant-select-intrinsic) * 1.4);
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-controls-row {
+    flex-wrap: wrap;
+    row-gap: calc(10px * 1.21);
   }
 
   [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions {

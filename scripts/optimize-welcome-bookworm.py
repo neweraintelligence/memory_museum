@@ -49,12 +49,12 @@ sources = {
         "webp_q": 78,
     },
     "clairvoyant-welcome-day": {
-        "file": "c__Users_Cal_AppData_Roaming_Cursor_User_workspaceStorage_46c0c5b02b5d06e3891a6ea3c21208d5_images_Zen_-_Sunny-eecbe079-0931-407b-b0c8-7a6bcb56d2be.png",
+        "file": "c__Users_Cal_AppData_Roaming_Cursor_User_workspaceStorage_46c0c5b02b5d06e3891a6ea3c21208d5_images_Zen_-_Sun-70168506-f6dc-4760-9535-4f5cae872de6.png",
         "max_edge": 1280,
         "webp_q": 78,
     },
     "clairvoyant-welcome-night": {
-        "file": "c__Users_Cal_AppData_Roaming_Cursor_User_workspaceStorage_46c0c5b02b5d06e3891a6ea3c21208d5_images_Zen_-_Rainy-2387819e-4b8a-47b7-83d7-4ac63a0d5a18.png",
+        "file": "c__Users_Cal_AppData_Roaming_Cursor_User_workspaceStorage_46c0c5b02b5d06e3891a6ea3c21208d5_images_Zen_-_Rain-dc1d8130-b7f7-4d8f-a8e8-114dff308d70.png",
         "max_edge": 1280,
         "webp_q": 78,
     },
