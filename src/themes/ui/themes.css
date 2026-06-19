@@ -5,6 +5,7 @@
 
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-welcome-title: 'Manrope';
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-mono: 'Fira Code', ui-monospace, monospace;
 
@@ -1031,3 +1032,353 @@
   }
 }
 
+/* ---- Welcome / title page ---- */
+
+[data-ui-theme='utilitarian'].welcome {
+  background-color: #6a6a64;
+  color: var(--text-on-accent);
+  font-family: var(--font-body);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-content {
+  transform: translateY(40px);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-bg-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(15, 15, 13, 0.08) 0%,
+    rgba(15, 15, 13, 0.42) 100%
+  );
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-time-toggle {
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+  background-image: var(--form);
+  border: 1px solid var(--accent-2);
+  box-shadow: var(--bevel), var(--shadow-sm);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  filter: none;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.15s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-time-toggle:hover {
+  background-color: var(--accent);
+  border-color: var(--accent-2);
+  filter: brightness(1.04);
+  box-shadow: var(--bevel), var(--shadow);
+  transform: scale(1.08);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-time-toggle:active {
+  filter: brightness(0.96);
+  box-shadow: var(--button-active-shadow);
+  transform: scale(0.94);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-time-toggle svg {
+  filter: drop-shadow(0 1px 1px rgba(15, 15, 13, 0.3));
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-title {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 18px;
+  font-family: var(--font-welcome-title);
+  font-size: clamp(4.75rem, 12vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.78;
+  transition: color 0.6s ease, text-shadow 0.6s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome[data-welcome-time='day'] .welcome-title {
+  color: #111111;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.14),
+    0 4px 14px rgba(0, 0, 0, 0.1),
+    0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-ui-theme='utilitarian'].welcome[data-welcome-time='night'] .welcome-title {
+  color: #ffffff;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.42),
+    0 8px 22px rgba(0, 0, 0, 0.58),
+    0 18px 48px rgba(0, 0, 0, 0.38);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-title-line {
+  display: block;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-tagline,
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-tagline {
+  font-size: calc(1.5rem - 1px);
+  margin: 0 0 64px;
+  opacity: 0.9;
+  transition:
+    color 0.6s ease,
+    background-color 0.6s ease,
+    text-shadow 0.6s ease,
+    padding 0.6s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome[data-welcome-time='day'] .welcome-utilitarian-tagline {
+  color: #111111;
+  text-shadow: none;
+  background-color: var(--accent);
+  box-sizing: border-box;
+  width: var(--utilitarian-title-width, fit-content);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.35em calc(0.75em - 4px);
+  border-radius: 0;
+  opacity: 1;
+}
+
+[data-ui-theme='utilitarian'].welcome[data-welcome-time='night'] .welcome-utilitarian-tagline {
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select {
+  font-size: calc(1.25rem - 3px);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select.bp-select {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-trigger {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 48px 10px 24px;
+  background-color: var(--input-bg);
+  background-image: var(--form);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: calc(1.25rem - 3px);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  text-shadow: none;
+  cursor: pointer;
+  box-shadow: var(--inset-shadow);
+  text-align: left;
+  line-height: 1.2;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-trigger:hover:not(:disabled) {
+  border-color: var(--accent);
+  background-color: var(--panel);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select.is-open .bp-select-trigger {
+  border-color: var(--accent);
+  box-shadow: var(--inset-shadow), var(--focus-ring);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231a1a18' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px;
+  transition: transform 0.15s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select.is-open .bp-select-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-menu {
+  position: absolute;
+  z-index: 10001;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background-color: var(--panel);
+  background-image: var(--form);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--bevel), var(--shadow-sm);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-option {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 10px 24px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: calc(1.25rem - 3px);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  text-shadow: none;
+  line-height: 1.2;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-option:hover {
+  background-color: var(--ghost-hover-bg);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-option.is-selected {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  text-shadow: var(--text-shadow);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-option.is-selected:hover {
+  background-color: var(--accent-2);
+  color: var(--text-on-accent);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-enter {
+  background-color: var(--accent);
+  background-image: var(--form);
+  border: 1px solid var(--accent-2);
+  color: var(--text-on-accent);
+  text-shadow: var(--text-shadow);
+  font-weight: 700;
+  padding: 16px 64px;
+  font-size: 1.5rem;
+  border-radius: var(--radius);
+  margin-top: -10px;
+  cursor: pointer;
+  box-shadow: var(--bevel), var(--shadow-sm);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.15s ease;
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-enter:hover {
+  background-color: var(--accent);
+  filter: brightness(1.04);
+  box-shadow: var(--bevel), var(--shadow);
+}
+
+[data-ui-theme='utilitarian'].welcome .welcome-enter:active {
+  filter: brightness(0.96);
+  box-shadow: var(--button-active-shadow);
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='utilitarian'].welcome .welcome-content {
+    transform: translateY(24px);
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-title {
+    font-size: 4.2rem;
+    line-height: 0.8;
+    margin: 0 auto 10.8px;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-utilitarian-tagline {
+    font-size: 0.9rem !important;
+    margin-bottom: 38.4px !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-content > div {
+    gap: 9.6px !important;
+    margin-bottom: 28.8px !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-content label {
+    font-size: 0.66rem !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select {
+    font-size: 0.75rem !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-trigger {
+    padding: 7.2px 28.8px 7.2px 14.4px !important;
+    font-size: 0.75rem !important;
+    border-width: 1.2px !important;
+    border-radius: 4.8px !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-chevron {
+    right: 9.6px;
+    width: 12px;
+    height: 12px;
+    background-size: 12px;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-utilitarian-select .bp-select-option {
+    padding: 7.2px 14.4px !important;
+    font-size: 0.75rem !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-content > button {
+    padding: 9.6px 38.4px !important;
+    font-size: 0.9rem !important;
+    border-radius: calc(var(--radius) * 0.6) !important;
+    margin-top: -6px !important;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-time-toggle {
+    top: 14.4px;
+    right: 14.4px;
+    width: 21.6px;
+    height: 21.6px;
+  }
+
+  [data-ui-theme='utilitarian'].welcome .welcome-time-toggle svg {
+    width: 10.8px;
+    height: 10.8px;
+  }
+}

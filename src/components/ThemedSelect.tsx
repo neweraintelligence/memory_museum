@@ -14,9 +14,11 @@ interface ThemedSelectProps {
   className?: string;
   style?: React.CSSProperties;
   'aria-label'?: string;
+  /** Use the blueprint custom dropdown regardless of the persisted app theme. */
+  forceBlueprint?: boolean;
 }
 
-function BlueprintSelect({
+export function BlueprintSelect({
   value,
   onChange,
   options,
@@ -102,7 +104,7 @@ export default function ThemedSelect(props: ThemedSelectProps) {
   const themeId = useTheme((s) => s.themeId);
   const stringValue = String(props.value);
 
-  if (themeId === 'blueprint') {
+  if (themeId === 'blueprint' || props.forceBlueprint) {
     return <BlueprintSelect {...props} />;
   }
 

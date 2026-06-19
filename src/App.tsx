@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Dashboard from './components/Dashboard';
 import MuseumWorkspace from './components/MuseumWorkspace';
 import SearchModal from './components/SearchModal';
 import DataModal from './components/DataModal';
+import Welcome from './components/Welcome';
 import { useStore } from './state/useStore';
 import { useUI } from './state/useUI';
 import { useTheme } from './state/useTheme';
@@ -35,19 +36,33 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, [setSearchOpen]);
 
+  const hasEntered = localStorage.getItem('hasEntered') === 'true';
+
   return (
     <div className={`app-shell${museumFocus ? ' museum-focus' : ''}`}>
-      <TopBar />
-      {!loaded ? (
-        <div className="empty">Loading your museums…</div>
-      ) : (
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/museum/:museumId" element={<MuseumWorkspace />} />
-        </Routes>
-      )}
-      <SearchModal />
-      <DataModal />
+      <Routes>
+        <Route path="/" element={hasEntered ? <Navigate to="/dashboard" replace /> : <Welcome />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route
+          path="*"
+          element={
+            <>
+              <TopBar />
+              {!loaded ? (
+                <div className="empty">Loading your museums…</div>
+              ) : (
+                <Routes>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/museum/:museumId" element={<MuseumWorkspace />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              )}
+              <SearchModal />
+              <DataModal />
+            </>
+          }
+        />
+      </Routes>
     </div>
   );
 }

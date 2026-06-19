@@ -32,7 +32,7 @@ export default function TopBar() {
 
   return (
     <div className="topbar">
-      <div className="brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+      <div className="brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/welcome')}>
         <span className="logo">
           <span className="brand-icon" aria-hidden="true">
             <span className="brand-icon-carve" aria-hidden="true" />

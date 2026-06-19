@@ -25,6 +25,8 @@ export function preloadBrandIcons(): void {
   }
 }
 
+export { preloadWelcomeFont, preloadWelcomeFonts } from './welcomeFonts';
+
 export function applyUiTheme(themeId: UiThemeId): void {
   document.documentElement.setAttribute(ROOT_ATTR, themeId);
 }

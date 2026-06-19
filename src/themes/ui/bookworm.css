@@ -8,6 +8,7 @@
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-classic: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --font-brand: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --font-welcome-title: 'Cinzel';
   --font-museums: 'Castoro Titling', Georgia, 'Times New Roman', serif;
   --font-script: 'Ms Madi', 'Brush Script MT', cursive;
   --font-mono: 'Fira Code', ui-monospace, monospace;
@@ -1018,6 +1019,194 @@
 
 [data-ui-theme='bookworm'] ::-webkit-scrollbar-corner {
   background: #221a12;
+}
+
+/* ---- Welcome / title page ---- */
+
+[data-ui-theme='bookworm'].welcome {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-time-toggle {
+  color: var(--gold);
+  background-color: rgba(34, 26, 18, 0.78);
+  border: 1px solid rgba(200, 180, 140, 0.22);
+  box-shadow: var(--inset-shadow), var(--shadow-sm);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+  filter: none;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-time-toggle:hover {
+  background-color: rgba(42, 32, 24, 0.88);
+  border-color: rgba(200, 180, 140, 0.32);
+  filter: none;
+  transform: scale(1.08);
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-time-toggle:active {
+  box-shadow: var(--button-active-shadow);
+  filter: none;
+  transform: scale(0.94);
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-time-toggle svg {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-content {
+  max-width: 440px;
+  margin-top: 0;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 11px;
+  cursor: default;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 22px;
+  line-height: 0;
+  cursor: default;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-logo .brand-icon {
+  position: relative;
+  display: block;
+  height: 55px;
+  width: 55px;
+  background: none;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-title {
+  margin: 0;
+  font-family: var(--font-welcome-title);
+  font-size: 25px;
+  font-weight: 550;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: none;
+  color: var(--text);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-tagline {
+  margin: 0 0 16px;
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 600;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  opacity: 1;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-panel {
+  background-color: #3b2a1c;
+  background-image: url('/bookworm-welcome-panel.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(200, 180, 140, 0.14);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-panel-inner {
+  border: 1px solid rgba(217, 178, 90, 0.72);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 22px 20px 20px;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-theme-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-theme-picker .section-title {
+  margin: 0;
+  font-size: 10px;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-theme-select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 32px 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  background-color: var(--input-bg);
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23e8dfd0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  border: 1px solid rgba(200, 180, 140, 0.15);
+  box-shadow: var(--inset-shadow);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  text-align-last: center;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-theme-select:focus {
+  border-color: var(--selection);
+  box-shadow: var(--inset-shadow), var(--focus-ring);
+  outline: none;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-enter {
+  width: 100%;
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  box-shadow: var(--bevel), var(--shadow-sm);
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-enter:hover {
+  filter: brightness(1.18);
+  transform: none;
+}
+
+[data-ui-theme='bookworm'].welcome .welcome-enter:active {
+  filter: brightness(0.96);
+  transform: none;
+  box-shadow: var(--button-active-shadow);
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='bookworm'].welcome .welcome-logo .brand-icon {
+    height: 44px;
+    width: 44px;
+  }
+
+  [data-ui-theme='bookworm'].welcome .welcome-title {
+    font-size: 20px;
+    letter-spacing: 0.1em;
+  }
+
+  [data-ui-theme='bookworm'].welcome .welcome-panel {
+    padding: 12px;
+  }
+
+  [data-ui-theme='bookworm'].welcome .welcome-panel-inner {
+    padding: 16px 16px 18px;
+  }
 }
 
 @media (max-width: 767px) {

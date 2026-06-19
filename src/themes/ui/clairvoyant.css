@@ -5,6 +5,7 @@
 
   --font-body: 'Urbanist', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-heading: 'Urbanist', system-ui, sans-serif;
+  --font-welcome-title: 'Urbanist';
   --font-display: 'Urbanist', system-ui, sans-serif;
   --font-mono: 'Fira Code', ui-monospace, monospace;
 
@@ -1268,6 +1269,190 @@
     margin-left: 8px;
     margin-right: 8px;
     max-height: 42vh;
+  }
+}
+
+/* ---- Welcome / title page ---- */
+
+[data-ui-theme='clairvoyant'].welcome {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-content {
+  transform: translateY(75px);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-bg {
+  background-color: var(--bg);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-bg-layer {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-bg-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(12, 32, 30, 0.06) 0%,
+    rgba(12, 32, 30, 0.48) 100%
+  );
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle {
+  color: var(--text);
+  background: var(--pm-glass);
+  border: 1px solid var(--pm-glass-border);
+  box-shadow: var(--shadow-sm);
+  -webkit-backdrop-filter: var(--pm-blur);
+  backdrop-filter: var(--pm-blur);
+  filter: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle:hover {
+  background: var(--pm-glass-strong);
+  border-color: rgba(255, 255, 255, 0.22);
+  filter: none;
+  transform: scale(1.08);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle:active {
+  background: var(--pm-glass-strong);
+  box-shadow: var(--button-active-shadow);
+  filter: none;
+  transform: scale(0.94);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-title {
+  margin: 0 0 12.24px;
+  font-family: var(--font-welcome-title);
+  font-size: 3.06rem;
+  font-weight: 350;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-tagline {
+  font-size: 1.148rem;
+  font-weight: 400;
+  margin: 0 0 48.96px;
+  opacity: 0.8;
+  color: var(--text);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-theme-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12.24px;
+  margin-bottom: 36.72px;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-label {
+  font-size: 0.842rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  color: var(--text);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-select {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 1.53px solid hsl(0, 0%, 100%);
+  color: var(--text);
+  padding: 7.65px 25px 7.65px 11px;
+  font-family: var(--font-body);
+  font-size: 0.803rem;
+  font-weight: 500;
+  border-radius: 6.12px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    0 0 6px hsl(0, 0%, 100% / 0.08);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  background-size: 13px;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-select option {
+  color: #000;
+  background-color: #fff;
+  font-size: 0.727rem;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-enter {
+  background-color: var(--accent);
+  border: none;
+  color: var(--text-on-accent);
+  font-weight: 500;
+  padding: 12.24px 48.96px;
+  font-size: 1.148rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-enter:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-enter:active {
+  transform: scale(0.95);
+  box-shadow: var(--button-active-shadow);
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='clairvoyant'].welcome .welcome-title {
+    font-size: 2.104rem;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-tagline {
+    font-size: 0.842rem;
+    margin-bottom: 30.6px;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-select {
+    padding: 7px 21px 7px 9px;
+    font-size: 0.727rem;
+    background-position: right 8px center;
+    background-size: 12px;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle {
+    top: 16px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-enter {
+    padding: 10.7px 36.7px;
+    font-size: 0.956rem;
   }
 }
 

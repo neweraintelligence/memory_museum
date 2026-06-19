@@ -42,7 +42,7 @@ export default function ModeBar({
 
   return (
     <div className="modebar fade-in">
-      <div className="row" style={{ justifyContent: 'space-between' }}>
+      <div className="modebar-header row" style={{ justifyContent: 'space-between' }}>
         <span className="muted" style={{ fontSize: 12 }}>
           {mode === 'walk' ? 'Walk-through' : 'Review'} · {roomName}
         </span>
@@ -51,11 +51,11 @@ export default function ModeBar({
         </span>
       </div>
 
-      <div className="row" style={{ gap: 10, marginTop: 8, alignItems: 'flex-start' }}>
+      <div className="modebar-content row" style={{ gap: 10, alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, marginTop: 2 }}>
           {obj && <ObjectMenuIcon kind={obj.kind} size={30} />}
         </span>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: 16 }}>
             {mode === 'review' && !revealed ? (memory?.prompt || obj?.label || 'Recall this') : memory?.title || obj?.label}
           </div>
@@ -81,25 +81,32 @@ export default function ModeBar({
         </div>
       </div>
 
-      <div className="row" style={{ gap: 8, marginTop: 12, justifyContent: 'space-between' }}>
-        <button onClick={onPrev} disabled={index === 0}>
-          ← Prev
-        </button>
+      <button className="modebar-prev" type="button" onClick={onPrev} disabled={index === 0}>
+        ← Prev
+      </button>
 
-        {mode === 'review' && !revealed ? (
-          <button className="primary" style={{ flex: 1 }} onClick={onReveal}>
-            Reveal answer
-          </button>
-        ) : (
-          <span className="muted" style={{ fontSize: 12 }}>
-            {mode === 'walk' ? 'Use ← → to move through the museum' : 'How well did you recall it?'}
-          </span>
-        )}
+      {mode === 'review' && (
+        <div className="modebar-center">
+          {!revealed ? (
+            <button className="primary modebar-center-action" type="button" onClick={onReveal}>
+              Reveal answer
+            </button>
+          ) : (
+            <span className="muted modebar-center-hint" style={{ fontSize: 12 }}>
+              How well did you recall it?
+            </span>
+          )}
+        </div>
+      )}
 
-        <button onClick={onNext} disabled={index >= total - 1 && mode === 'walk'}>
-          Next →
-        </button>
-      </div>
+      <button
+        className="modebar-next"
+        type="button"
+        onClick={onNext}
+        disabled={index >= total - 1 && mode === 'walk'}
+      >
+        Next →
+      </button>
 
       {mode === 'review' && revealed && (
         <div className="grade-row">

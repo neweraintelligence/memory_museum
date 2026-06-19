@@ -1,0 +1,82 @@
+/* Title / welcome screen — structural layout */
+
+.welcome {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  overflow: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.welcome-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.welcome-bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.6s ease;
+}
+
+.welcome-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(20, 12, 8, 0.12) 0%,
+    rgba(20, 12, 8, 0.35) 100%
+  );
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 600px;
+  padding: 0 24px;
+}
+
+.welcome-time-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.welcome-time-toggle:hover {
+  transform: scale(1.08);
+}
+
+.welcome-time-toggle:active {
+  transform: scale(0.94);
+}
+
+@font-face {
+  font-family: 'PW Scratched';
+  src: url('/fonts/Pwscratchedfont-1YzM.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Hide title until its theme font is ready — avoids fallback-font flash on load/switch. */
+.welcome:not([data-welcome-font-ready]) .welcome-title {
+  visibility: hidden;
+}

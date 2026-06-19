@@ -991,6 +991,9 @@ button.cloud-pill-segment:active {
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 8px;
   background-color: var(--panel);
   background-image: var(--form), var(--grain);
   border: 1px solid var(--border);
@@ -1000,6 +1003,59 @@ button.cloud-pill-segment:active {
   z-index: 8;
   min-width: 420px;
   max-width: 640px;
+}
+
+.modebar-header,
+.modebar-content,
+.modebar .grade-row {
+  grid-column: 1 / -1;
+}
+
+.modebar-header {
+  grid-row: 1;
+}
+
+.modebar-content {
+  grid-row: 2;
+  margin-top: 8px;
+}
+
+.modebar-prev {
+  grid-row: 3;
+  grid-column: 1;
+}
+
+.modebar-center {
+  grid-row: 3;
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modebar-next {
+  grid-row: 3;
+  grid-column: 3;
+}
+
+.modebar .grade-row {
+  grid-row: 4;
+}
+
+.modebar-prev,
+.modebar-center,
+.modebar-next {
+  margin-top: 12px;
+  align-self: start;
+}
+
+.modebar-center-action {
+  width: 100%;
+}
+
+.modebar-center-hint {
+  text-align: center;
 }
 
 .grade-row {
@@ -1610,7 +1666,7 @@ html {
     box-sizing: border-box;
   }
 
-  .modebar > .row:first-child {
+  .modebar-header {
     gap: 4px;
   }
 

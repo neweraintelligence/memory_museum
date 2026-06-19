@@ -294,7 +294,7 @@ export default function MuseumWorkspace() {
     return (
       <div className="page">
         <div className="empty">
-          Museum not found. <a onClick={() => navigate('/')}>Back to dashboard</a>
+          Museum not found. <a onClick={() => navigate('/dashboard')}>Back to dashboard</a>
         </div>
       </div>
     );

@@ -5,11 +5,12 @@ const PANEL_EXTRA_TOP = 52;
 const MOBILE_PANEL_GAP = 8;
 const MOBILE_MQ = '(max-width: 767px)';
 
-/** On mobile, expanded side panels must clear the room pill + x-ray row(s). */
-function mobilePanelTopBelowOverlay(
+/** Expanded side panels must clear the room pill + zoom/x-ray stack. */
+function panelTopBelowOverlay(
   container: HTMLElement,
   contentTop: number,
   fallbackTop: number,
+  gap: number,
 ): number {
   const overlay = container.querySelector<HTMLElement>('.canvas-overlay');
   if (!overlay) return fallbackTop;
@@ -17,7 +18,26 @@ function mobilePanelTopBelowOverlay(
   const overlayRect = overlay.getBoundingClientRect();
   if (overlayRect.height <= 0) return fallbackTop;
 
-  return Math.max(overlayRect.bottom - contentTop + MOBILE_PANEL_GAP, fallbackTop);
+  return Math.max(overlayRect.bottom - contentTop + gap, fallbackTop);
+}
+
+/** Walk/review modebar also sits under the overlay on mobile Blueprint. */
+function mobilePanelTopBelowSessionChrome(
+  container: HTMLElement,
+  contentTop: number,
+  fallbackTop: number,
+): number {
+  let top = panelTopBelowOverlay(container, contentTop, fallbackTop, MOBILE_PANEL_GAP);
+
+  if (!container.classList.contains('session-layout')) return top;
+
+  const modebar = container.querySelector<HTMLElement>('.modebar');
+  if (!modebar) return top;
+
+  const modebarRect = modebar.getBoundingClientRect();
+  if (modebarRect.height <= 0) return top;
+
+  return Math.max(modebarRect.bottom - contentTop + MOBILE_PANEL_GAP, top);
 }
 
 /** Keep floating editor panels below the top bar as the window or bar height changes. */
@@ -34,6 +54,7 @@ export function useEditorPanelInsets(
     let themeObserver: MutationObserver | null = null;
     let bound = false;
     let observedOverlay: HTMLElement | null = null;
+    let observedModebar: HTMLElement | null = null;
 
     const clearVars = (el: HTMLElement | null) => {
       el?.style.removeProperty('--canvas-overlay-top');
@@ -42,6 +63,7 @@ export function useEditorPanelInsets(
       el?.style.removeProperty('--editor-panel-collapsed-size');
       el?.style.removeProperty('--editor-panel-collapsed-bottom');
       el?.style.removeProperty('--editor-panel-collapsed-bottom-session');
+      el?.style.removeProperty('--modebar-top');
     };
 
     const apply = () => {
@@ -69,14 +91,18 @@ export function useEditorPanelInsets(
       if (bottomBar) {
         overlayTop = isMobile ? 10 : 14;
         const bottomBarPanelFallback = overlayTop + (isMobile ? 44 : PANEL_EXTRA_TOP);
-        panelTop = isMobile
-          ? mobilePanelTopBelowOverlay(container, contentTop, bottomBarPanelFallback)
-          : 14 + PANEL_EXTRA_TOP;
+        panelTop =
+          isMobile || themeId === 'blueprint'
+            ? isMobile
+              ? mobilePanelTopBelowSessionChrome(container, contentTop, bottomBarPanelFallback)
+              : panelTopBelowOverlay(container, contentTop, bottomBarPanelFallback, PANEL_GAP)
+            : 14 + PANEL_EXTRA_TOP;
         const barHeight = topbarRect.bottom - topbarRect.top;
         const bottomGap = barHeight + PANEL_GAP + (isMobile ? 4 : 8);
         panelBottom = `${bottomGap}px`;
         collapsedBottom = `${bottomGap + (isMobile ? 24 : 44)}px`;
-        collapsedBottomSession = `${bottomGap + (isMobile ? 84 : 44)}px`;
+        /* Mobile walk/review modebar sits under the canvas overlay, not above the footer. */
+        collapsedBottomSession = isMobile ? collapsedBottom : `${bottomGap + 44}px`;
       } else {
         const topbarBottom = topbarRect.bottom;
         overlayTop = Math.max(isMobile ? 10 : 14, topbarBottom - contentTop + PANEL_GAP);
@@ -85,7 +111,7 @@ export function useEditorPanelInsets(
           topbarBottom - contentTop + PANEL_GAP + PANEL_EXTRA_TOP,
         );
         panelTop = isMobile
-          ? mobilePanelTopBelowOverlay(container, contentTop, topBarPanelFallback)
+          ? panelTopBelowOverlay(container, contentTop, topBarPanelFallback, MOBILE_PANEL_GAP)
           : topBarPanelFallback;
         panelBottom = isMobile ? '12px' : '18px';
         collapsedBottom = isMobile ? '68px' : '88px';
@@ -98,6 +124,14 @@ export function useEditorPanelInsets(
         observedOverlay = overlay;
       }
 
+      const modebar = container.querySelector<HTMLElement>('.modebar');
+      if (modebar && modebar !== observedModebar) {
+        ro?.observe(modebar);
+        observedModebar = modebar;
+      } else if (!modebar && observedModebar) {
+        observedModebar = null;
+      }
+
       container.style.setProperty('--canvas-overlay-top', `${overlayTop}px`);
       container.style.setProperty('--editor-panel-top', `${panelTop}px`);
       container.style.setProperty('--editor-panel-bottom', panelBottom);
@@ -107,6 +141,16 @@ export function useEditorPanelInsets(
         '--editor-panel-collapsed-bottom-session',
         collapsedBottomSession,
       );
+
+      if (isMobile && bottomBar) {
+        container.style.setProperty(
+          '--modebar-top',
+          `${panelTopBelowOverlay(container, contentTop, overlayTop + 6, MOBILE_PANEL_GAP)}px`,
+        );
+      } else {
+        container.style.removeProperty('--modebar-top');
+      }
+
       return true;
     };
 

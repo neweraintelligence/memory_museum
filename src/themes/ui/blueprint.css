@@ -3,6 +3,7 @@
 [data-ui-theme='blueprint'] {
   color-scheme: dark;
 
+  --font-welcome-title: 'PW Scratched';
   --font-body: 'IBM Plex Sans', 'Inter', system-ui, sans-serif;
   --font-heading: 'IBM Plex Mono', 'Space Mono', ui-monospace, monospace;
   --font-display: 'IBM Plex Mono', 'Space Mono', ui-monospace, monospace;
@@ -81,6 +82,10 @@
   --bp-floating-inset: 20px;
   --bp-floating-gap: 20px;
   --bp-floating-offset: calc(var(--bp-chrome-height) + var(--bp-floating-gap));
+  --bp-panel-opacity: 85%;
+  --bp-panel-fill: color-mix(in srgb, var(--panel) var(--bp-panel-opacity), transparent);
+  --bp-panel-head-fill: color-mix(in srgb, var(--panel-2) 70%, transparent);
+  --bp-panel-blur: blur(18px) saturate(1.1);
 }
 
 /* ---- Selection ---- */
@@ -761,14 +766,16 @@
 /* ---- Side panels (glass surfaces) ---- */
 
 [data-ui-theme='blueprint'] .side {
-  background-color: var(--panel);
+  background-color: var(--bp-panel-fill);
   background-image: none;
   border: 1px solid var(--border);
   border-radius: 0;
+  -webkit-backdrop-filter: var(--bp-panel-blur);
+  backdrop-filter: var(--bp-panel-blur);
 }
 
 [data-ui-theme='blueprint'] .side-head {
-  background: rgba(77, 171, 247, 0.05);
+  background: var(--bp-panel-head-fill);
   border-bottom: 1px dashed var(--border);
   font-family: var(--font-mono);
   text-transform: uppercase;
@@ -1169,6 +1176,14 @@
   border-radius: 0;
 }
 
+@media (min-width: 768px) {
+  /* Keep room pill at the top; let the zoom + x-ray stack extend downward
+     without vertically centering against the shorter left pills. */
+  [data-ui-theme='blueprint'] .canvas-overlay {
+    align-items: flex-start;
+  }
+}
+
 /* ---- Modebar (bottom toolbar for Walk/Review) ---- */
 
 [data-ui-theme='blueprint'] .modebar {
@@ -1261,15 +1276,17 @@
 /* ---- Editor floating panels ---- */
 
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating {
-  background-color: var(--panel);
+  background-color: var(--bp-panel-fill);
   background-image: none;
   border: 1px solid var(--border);
   border-radius: 0;
   box-shadow: none;
+  -webkit-backdrop-filter: var(--bp-panel-blur);
+  backdrop-filter: var(--bp-panel-blur);
 }
 
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating .side-head {
-  background: rgba(77, 171, 247, 0.05);
+  background: var(--bp-panel-head-fill);
   border-bottom: 1px dashed var(--border);
 }
 
@@ -1320,13 +1337,15 @@
 /* Collapsed panel styling — technical marker style */
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn,
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed button.side-expand-btn {
-  background-color: var(--panel);
+  background-color: var(--bp-panel-fill);
   background-image: none;
   border: 1px solid var(--accent);
   border-radius: 0;
   color: var(--accent);
   box-shadow: none;
   filter: none;
+  -webkit-backdrop-filter: var(--bp-panel-blur);
+  backdrop-filter: var(--bp-panel-blur);
 }
 
 [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed .side-expand-btn:hover,
@@ -1669,10 +1688,50 @@
     font-size: 14px;
   }
 
-  [data-ui-theme='blueprint'] .modebar {
+  /* Walk / review modebar: under room pill + zoom/x-ray, not behind bottom footer */
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .canvas-wrap .modebar {
+    --bp-mobile-modebar-scale: 0.675;
+    top: var(--modebar-top, calc(var(--canvas-overlay-top, 10px) + 76px));
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) scale(var(--bp-mobile-modebar-scale));
+    transform-origin: top center;
+    width: calc((100% - 24px) / var(--bp-mobile-modebar-scale));
     min-width: 0;
-    width: calc(100% - 24px);
-    bottom: 52px;
+    max-width: none;
+    z-index: 9;
+    box-sizing: border-box;
+    column-gap: 6px;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .canvas-wrap .modebar-content {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 8px;
+    min-width: 0;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .canvas-wrap .modebar-prev {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 8px;
+    align-self: start;
+    flex-shrink: 0;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .canvas-wrap .modebar-next {
+    grid-column: 3;
+    grid-row: 2;
+    margin-top: 8px;
+    align-self: start;
+    flex-shrink: 0;
+  }
+
+  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .canvas-wrap .modebar-center {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin-top: 8px;
   }
 
   [data-ui-theme='blueprint'] .canvas-overlay-trailing {
@@ -1720,10 +1779,6 @@
     bottom: calc(var(--editor-panel-collapsed-bottom, 68px) - 5px);
   }
 
-  [data-ui-theme='blueprint'] .content.editor-layout.session-layout .side-floating.collapsed {
-    bottom: calc(var(--editor-panel-collapsed-bottom-session, 148px) - 5px);
-  }
-
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.collapsed.left {
     left: 32px;
   }
@@ -1733,8 +1788,8 @@
   }
 
   [data-ui-theme='blueprint'] .content.editor-layout .side-floating.left:not(.collapsed) {
-    width: min(50vw, calc(100vw - 16px)) !important;
-    max-width: 50vw !important;
+    width: min(45vw, calc(100vw - 16px)) !important;
+    max-width: 45vw !important;
     min-width: 0;
     left: var(--editor-panel-side-inset, 8px) !important;
     right: auto !important;
@@ -1804,5 +1859,257 @@
     margin-right: 8px;
     max-height: 42vh;
     margin-bottom: 52px;
+  }
+}
+
+/* ---- Welcome / title page ---- */
+
+[data-ui-theme='blueprint'].welcome {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-content {
+  transform: translate(-240px, -40px) scale(0.8);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-bg {
+  background-color: var(--bg);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-bg-layer {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-time-toggle {
+  color: var(--text);
+  background-color: rgba(10, 22, 40, 0.72);
+  border: 1px solid rgba(120, 180, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-time-toggle:hover {
+  background-color: rgba(10, 22, 40, 0.85);
+  border-color: rgba(120, 180, 255, 0.55);
+  transform: scale(1.08);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-time-toggle:active {
+  transform: scale(0.94);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-time-toggle svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-bg-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(10, 22, 40, 0.08) 0%,
+    rgba(10, 22, 40, 0.62) 100%
+  );
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-title {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 16px;
+  font-family: var(--font-welcome-title);
+  font-size: 5.2rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-title-line {
+  display: block;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-tagline {
+  margin: 0 0 64px;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
+  opacity: 0.92;
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.5),
+    0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-theme {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: var(--blueprint-title-width, auto);
+  margin: 0 auto 48px;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-label {
+  font-family: 'Lexend', var(--font-body);
+  font-size: calc(0.82rem + 6px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text);
+  opacity: 0.85;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  text-align: center;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select.bp-select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-trigger {
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 10px 36px 10px 14px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-trigger:hover:not(:disabled) {
+  border-color: var(--accent);
+  background-color: rgba(77, 171, 247, 0.06);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select.is-open .bp-select-trigger {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-chevron {
+  width: 12px;
+  height: 8px;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-menu {
+  z-index: 10001;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-option {
+  font-size: 1rem;
+  padding: 10px 14px;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--bp-accent-glass-fill);
+  background-image: none;
+  border: 1px solid var(--bp-accent-glass-border);
+  color: var(--text-on-glass-accent);
+  -webkit-backdrop-filter: var(--bp-accent-glass-blur);
+  backdrop-filter: var(--bp-accent-glass-blur);
+  box-shadow: var(--bp-accent-glass-shadow);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 16px 64px;
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--bp-accent-glass-specular);
+  background-size: 76% 1px, 100% 100%;
+  background-position: top center, center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter:hover {
+  background-color: var(--bp-accent-glass-fill-hover);
+  background-image: none;
+  border-color: var(--bp-accent-glass-border-hover);
+  color: #ffffff;
+  box-shadow: var(--bp-accent-glass-shadow-hover);
+  filter: none;
+  transform: none;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter:hover::before {
+  background-image: var(--bp-accent-glass-specular-hover);
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter:active {
+  background-color: var(--bp-accent-glass-fill);
+  box-shadow: var(--button-active-shadow);
+  transform: none;
+  filter: none;
+}
+
+[data-ui-theme='blueprint'].welcome .welcome-enter:active::before {
+  opacity: 0.65;
+}
+
+@media (max-width: 767px) {
+  [data-ui-theme='blueprint'].welcome .welcome-content {
+    transform: translate(-80px, -40px) scale(0.8);
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-title {
+    font-size: 3.4rem;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-blueprint-tagline {
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-trigger {
+    font-size: 0.9rem;
+    padding: 9px 32px 9px 12px;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-blueprint-select .bp-select-option {
+    font-size: 0.9rem;
+    padding: 9px 12px;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-enter {
+    font-size: 1.15rem;
+    padding: 14px 48px;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-time-toggle {
+    top: 14.4px;
+    right: 14.4px;
+    width: 21.6px;
+    height: 21.6px;
+  }
+
+  [data-ui-theme='blueprint'].welcome .welcome-time-toggle svg {
+    width: 10.8px;
+    height: 10.8px;
   }
 }
