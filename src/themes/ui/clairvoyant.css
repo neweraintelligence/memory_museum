@@ -1302,33 +1302,55 @@
   );
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle {
-  color: var(--text);
-  background: var(--pm-glass);
-  border: 1px solid var(--pm-glass-border);
-  box-shadow: var(--shadow-sm);
-  -webkit-backdrop-filter: var(--pm-blur);
-  backdrop-filter: var(--pm-blur);
-  filter: none;
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions {
+  --clairvoyant-glass-size: calc(36px * 1.21);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(12px * 1.21);
+  margin-top: -20px;
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle:hover {
-  background: var(--pm-glass-strong);
-  border-color: rgba(255, 255, 255, 0.22);
-  filter: none;
-  transform: scale(1.08);
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-time-toggle {
+  position: static;
+  top: auto;
+  right: auto;
+  width: var(--clairvoyant-glass-size);
+  height: var(--clairvoyant-glass-size);
+  flex-shrink: 0;
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle:active {
-  background: var(--pm-glass-strong);
-  box-shadow: var(--button-active-shadow);
-  filter: none;
-  transform: scale(0.94);
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-glass-content--enter {
+  height: var(--clairvoyant-glass-size);
+  padding: 0 calc(24px * 1.21);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: calc(0.803rem * 1.21);
+  line-height: 1;
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle svg {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-glass-content--icon {
+  width: var(--clairvoyant-glass-size);
+  height: var(--clairvoyant-glass-size);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-glass-content--icon svg {
+  width: calc(18px * 1.21);
+  height: calc(18px * 1.21);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle.welcome-glass-wrap:hover {
+  transform: none;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-time-toggle .welcome-glass-btn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 [data-ui-theme='clairvoyant'].welcome .welcome-title {
@@ -1396,29 +1418,281 @@
   font-size: 0.727rem;
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-enter {
-  background-color: var(--accent);
-  border: none;
-  color: var(--text-on-accent);
-  font-weight: 500;
-  padding: 12.24px 48.96px;
-  font-size: 1.148rem;
-  border-radius: 999px;
+@property --clairvoyant-glass-angle-1 {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: -75deg;
+}
+
+@property --clairvoyant-glass-angle-2 {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: -45deg;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap {
+  --clairvoyant-glass-hover-time: 400ms;
+  --clairvoyant-glass-hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  border-radius: 999vw;
+  background: transparent;
+  pointer-events: none;
+  transition: all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-shadow {
+  --shadow-cuttoff-fix: 2em;
+  position: absolute;
+  width: calc(100% + var(--shadow-cuttoff-fix));
+  height: calc(100% + var(--shadow-cuttoff-fix));
+  top: calc(0% - var(--shadow-cuttoff-fix) / 2);
+  left: calc(0% - var(--shadow-cuttoff-fix) / 2);
+  filter: blur(clamp(2px, 0.125em, 12px));
+  -webkit-filter: blur(clamp(2px, 0.125em, 12px));
+  overflow: visible;
+  pointer-events: none;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-shadow::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: 999vw;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.12));
+  width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+  height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+  left: calc(var(--shadow-cuttoff-fix) - 0.875em);
+  padding: 0.125em;
+  box-sizing: border-box;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
+  overflow: visible;
+  opacity: 1;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn {
+  --border-width: clamp(1px, 0.0625em, 4px);
+  all: unset;
+  box-sizing: border-box;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
+  z-index: 3;
+  display: inline-block;
+  border: none;
+  border-radius: 999vw;
+  background: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.06)
+  );
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
+    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.28),
+    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14),
+    0 0 0 0 rgba(255, 255, 255, 1);
+  -webkit-backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
+  backdrop-filter: blur(clamp(4px, 0.2em, 10px)) saturate(1.2);
+  transition: all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-enter:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow);
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover {
+  transform: scale(0.975);
+  filter: none;
+  background-color: transparent;
+  background-image: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.08)
+  );
+  -webkit-backdrop-filter: blur(clamp(2px, 0.12em, 8px)) saturate(1.25);
+  backdrop-filter: blur(clamp(2px, 0.12em, 8px)) saturate(1.25);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.32),
+    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.32),
+    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.34),
+    0 0 0 0 rgba(255, 255, 255, 1);
 }
 
-[data-ui-theme='clairvoyant'].welcome .welcome-enter:active {
-  transform: scale(0.95);
-  box-shadow: var(--button-active-shadow);
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content {
+  position: relative;
+  display: block;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  transition: all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content--enter {
+  font-family: var(--font-body);
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  font-size: 1.148rem;
+  color: var(--text);
+  text-shadow: 0 0.18em 0.08em rgba(0, 0, 0, 0.28);
+  padding: 12.24px 48.96px;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content--icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content--icon svg {
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover .welcome-glass-content--enter {
+  text-shadow: 0 0.04em 0.08em rgba(0, 0, 0, 0.34);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-content::after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 3;
+  width: calc(100% - var(--border-width));
+  height: calc(100% - var(--border-width));
+  top: calc(0% + var(--border-width) / 2);
+  left: calc(0% + var(--border-width) / 2);
+  box-sizing: border-box;
+  border-radius: 999vw;
+  overflow: clip;
+  background: linear-gradient(
+    var(--clairvoyant-glass-angle-2),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.42) 40% 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  transition:
+    background-position calc(var(--clairvoyant-glass-hover-time) * 1.25) var(--clairvoyant-glass-hover-ease),
+    --clairvoyant-glass-angle-2 calc(var(--clairvoyant-glass-hover-time) * 1.25) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover .welcome-glass-content::after {
+  background-position: 25% 50%;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:active .welcome-glass-content::after {
+  background-position: 50% 15%;
+  --clairvoyant-glass-angle-2: -15deg;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 999vw;
+  width: calc(100% + var(--border-width));
+  height: calc(100% + var(--border-width));
+  top: calc(0% - var(--border-width) / 2);
+  left: calc(0% - var(--border-width) / 2);
+  padding: var(--border-width);
+  box-sizing: border-box;
+  background:
+    conic-gradient(
+      from var(--clairvoyant-glass-angle-1) at 50% 50%,
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0) 5% 40%,
+      rgba(0, 0, 0, 0.45) 50%,
+      rgba(0, 0, 0, 0) 60% 95%,
+      rgba(0, 0, 0, 0.45)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.42));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition:
+    all var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease),
+    --clairvoyant-glass-angle-1 500ms ease;
+  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.34);
+  pointer-events: none;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover::after {
+  --clairvoyant-glass-angle-1: -125deg;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:active::after {
+  --clairvoyant-glass-angle-1: -75deg;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:hover) .welcome-glass-shadow {
+  filter: blur(clamp(2px, 0.0625em, 6px));
+  -webkit-filter: blur(clamp(2px, 0.0625em, 6px));
+  transition: filter var(--clairvoyant-glass-hover-time) var(--clairvoyant-glass-hover-ease);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:hover) .welcome-glass-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
+  opacity: 1;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:active) {
+  transform: rotate3d(1, 0, 0, 25deg);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:active) .welcome-glass-btn {
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.08),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.28),
+    0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.24),
+    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.14),
+    0 0.225em 0.05em 0 rgba(0, 0, 0, 0.08),
+    0 0.25em 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.14);
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:active) .welcome-glass-shadow {
+  filter: blur(clamp(2px, 0.125em, 12px));
+  -webkit-filter: blur(clamp(2px, 0.125em, 12px));
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:active) .welcome-glass-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+  opacity: 0.75;
+}
+
+[data-ui-theme='clairvoyant'].welcome .welcome-glass-wrap:has(.welcome-glass-btn:active) .welcome-glass-content--enter {
+  text-shadow: 0 0.04em 0.12em rgba(0, 0, 0, 0.34);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  [data-ui-theme='clairvoyant'].welcome .welcome-glass-content::after,
+  [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:active .welcome-glass-content::after {
+    --clairvoyant-glass-angle-2: -45deg;
+  }
+
+  [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn::after,
+  [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:hover::after,
+  [data-ui-theme='clairvoyant'].welcome .welcome-glass-btn:active::after {
+    --clairvoyant-glass-angle-1: -75deg;
+  }
 }
 
 @media (max-width: 767px) {
@@ -1438,21 +1712,19 @@
     background-size: 12px;
   }
 
-  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle {
-    top: 16px;
-    right: 16px;
-    width: 34px;
-    height: 34px;
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions {
+    --clairvoyant-glass-size: calc(34px * 1.21);
+    gap: calc(10px * 1.21);
   }
 
-  [data-ui-theme='clairvoyant'].welcome .welcome-time-toggle svg {
-    width: 16px;
-    height: 16px;
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-glass-content--enter {
+    padding: 0 calc(20px * 1.21);
+    font-size: calc(0.727rem * 1.21);
   }
 
-  [data-ui-theme='clairvoyant'].welcome .welcome-enter {
-    padding: 10.7px 36.7px;
-    font-size: 0.956rem;
+  [data-ui-theme='clairvoyant'].welcome .welcome-clairvoyant-actions .welcome-glass-content--icon svg {
+    width: calc(16px * 1.21);
+    height: calc(16px * 1.21);
   }
 }
 

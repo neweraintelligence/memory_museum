@@ -2,21 +2,15 @@ import type { UiTheme, UiThemeId } from './types';
 
 export const UI_THEMES: UiTheme[] = [
   {
-    id: 'utilitarian',
-    label: 'Utilitarian',
-    description: 'Raw cast concrete, warm rust accents, editorial serif titles.',
-    defaultWallpaperEnabled: true,
-  },
-  {
-    id: 'clairvoyant',
-    label: 'Clairvoyant',
-    description: 'Dark teal glass UI — minimal chrome, museum-first.',
-    defaultWallpaperEnabled: true,
-  },
-  {
     id: 'bookworm',
     label: 'Bookworm',
     description: 'Dark chocolate & cream, old-world serif elegance, burgundy accents.',
+    defaultWallpaperEnabled: true,
+  },
+  {
+    id: 'utilitarian',
+    label: 'Utilitarian',
+    description: 'Raw cast concrete, warm rust accents, editorial serif titles.',
     defaultWallpaperEnabled: true,
   },
   {
@@ -24,6 +18,12 @@ export const UI_THEMES: UiTheme[] = [
     label: 'Blueprint',
     description: 'Architectural drafting blue, white linework, monospaced precision.',
     defaultWallpaperEnabled: false,
+  },
+  {
+    id: 'clairvoyant',
+    label: 'Clairvoyant',
+    description: 'Dark teal glass UI — minimal chrome, museum-first.',
+    defaultWallpaperEnabled: true,
   },
 ];
 

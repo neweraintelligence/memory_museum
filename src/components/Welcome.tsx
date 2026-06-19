@@ -9,22 +9,6 @@ import './welcome.css';
 
 const WELCOME_THEMES = [
   {
-    id: 'utilitarian',
-    label: 'Utilitarian',
-    bg: '#9d9c97',
-    text: '#1a1a18',
-    accent: '#b4421f',
-    buttonText: '#f7f1ea',
-  },
-  {
-    id: 'clairvoyant',
-    label: 'Clairvoyant',
-    bg: '#163230',
-    text: '#ffffff',
-    accent: '#ffffff',
-    buttonText: '#2f332c',
-  },
-  {
     id: 'bookworm',
     label: 'Bookworm',
     bg: '#2a2018',
@@ -33,12 +17,28 @@ const WELCOME_THEMES = [
     buttonText: '#f0e8da',
   },
   {
+    id: 'utilitarian',
+    label: 'Utilitarian',
+    bg: '#9d9c97',
+    text: '#1a1a18',
+    accent: '#b4421f',
+    buttonText: '#f7f1ea',
+  },
+  {
     id: 'blueprint',
     label: 'Blueprint',
     bg: '#0a1628',
     text: '#d4e4ff',
     accent: '#4dabf7',
     buttonText: '#0a1628',
+  },
+  {
+    id: 'clairvoyant',
+    label: 'Clairvoyant',
+    bg: '#163230',
+    text: '#ffffff',
+    accent: '#ffffff',
+    buttonText: '#2f332c',
   },
 ] as const;
 
@@ -170,6 +170,25 @@ function TimeOfDayToggle({
       ? 'Switch to night'
       : 'Switch to day';
 
+  if (clairvoyantIcons) {
+    return (
+      <div className={`welcome-glass-wrap ${className ?? ''}`.trim()} style={style}>
+        <button
+          type="button"
+          className="welcome-glass-btn"
+          onClick={onToggle}
+          aria-label={toggleLabel}
+          title={toggleLabel}
+        >
+          <span className="welcome-glass-content welcome-glass-content--icon">
+            <TimeOfDayClairvoyantIcon timeOfDay={timeOfDay} />
+          </span>
+        </button>
+        <div className="welcome-glass-shadow" aria-hidden="true" />
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"
@@ -179,9 +198,7 @@ function TimeOfDayToggle({
       title={toggleLabel}
       style={style}
     >
-      {clairvoyantIcons ? (
-        <TimeOfDayClairvoyantIcon timeOfDay={timeOfDay} />
-      ) : blueprintIcons ? (
+      {blueprintIcons ? (
         <TimeOfDayBlueprintIcon timeOfDay={timeOfDay} />
       ) : (
         <TimeOfDaySunMoonIcon timeOfDay={timeOfDay} />
@@ -356,7 +373,7 @@ export default function Welcome() {
         </div>
       )}
 
-      {hasBg && (
+      {hasBg && !isClairvoyant && (
         <TimeOfDayToggle
           timeOfDay={timeOfDay}
           onToggle={toggleTimeOfDay}
@@ -520,33 +537,50 @@ export default function Welcome() {
               )}
             </div>
 
-            <button
-              type="button"
-              className={onWelcomePhoto ? 'primary welcome-enter' : undefined}
-              onClick={handleEnter}
-              style={
-                onWelcomePhoto
-                  ? undefined
-                  : {
-                      backgroundColor: theme.accent,
-                      color: theme.buttonText,
-                      border: 'none',
-                      padding: '16px 64px',
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      borderRadius: '40px',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s ease, opacity 0.2s ease',
-                      boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-                    }
-              }
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-              onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-              onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-            >
-              Enter
-            </button>
+            {isClairvoyant ? (
+              <div className="welcome-clairvoyant-actions">
+                <div className="welcome-glass-wrap">
+                  <button type="button" className="welcome-glass-btn" onClick={handleEnter}>
+                    <span className="welcome-glass-content welcome-glass-content--enter">Enter</span>
+                  </button>
+                  <div className="welcome-glass-shadow" aria-hidden="true" />
+                </div>
+                <TimeOfDayToggle
+                  timeOfDay={timeOfDay}
+                  onToggle={toggleTimeOfDay}
+                  className="welcome-time-toggle"
+                  clairvoyantIcons
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={onWelcomePhoto ? 'primary welcome-enter' : undefined}
+                onClick={handleEnter}
+                style={
+                  onWelcomePhoto
+                    ? undefined
+                    : {
+                        backgroundColor: theme.accent,
+                        color: theme.buttonText,
+                        border: 'none',
+                        padding: '16px 64px',
+                        fontSize: '1.5rem',
+                        fontWeight: 700,
+                        borderRadius: '40px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s ease, opacity 0.2s ease',
+                        boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+                      }
+                }
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
+                onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+              >
+                Enter
+              </button>
+            )}
           </>
         )}
       </div>
