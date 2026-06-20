@@ -184,7 +184,6 @@ function TimeOfDayToggle({
             <TimeOfDayClairvoyantIcon timeOfDay={timeOfDay} />
           </span>
         </button>
-        <div className="welcome-glass-shadow" aria-hidden="true" />
       </div>
     );
   }
@@ -484,7 +483,6 @@ export default function Welcome() {
                       <button type="button" className="welcome-glass-btn" onClick={handleEnter}>
                         <span className="welcome-glass-content welcome-glass-content--enter">Enter</span>
                       </button>
-                      <div className="welcome-glass-shadow" aria-hidden="true" />
                     </div>
                     <TimeOfDayToggle
                       timeOfDay={timeOfDay}

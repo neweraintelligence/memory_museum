@@ -1202,6 +1202,8 @@
 
   [data-ui-theme='bookworm'].welcome .welcome-panel {
     padding: 12px;
+    transform: scale(0.8);
+    transform-origin: center center;
   }
 
   [data-ui-theme='bookworm'].welcome .welcome-panel-inner {
